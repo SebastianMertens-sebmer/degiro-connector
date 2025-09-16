@@ -1,35 +1,117 @@
-# ROOT FOLDERS
-/.tox
-/.vscode
-/bat
-/build
-/dist
-/logs
-/notes
-/dump
+# DEGIRO Trading API - Git Ignore
 
-# ROOT FILES
-/src/*.egg-info
-/*.py
-!/setup.py
+# Environment files
+.env
+.env.local
+.env.production
 
-# FOLDERS
-__pycache__
+# DEGIRO credentials (NEVER commit these!)
+config/config.json
+config/credentials.json
+*.json.backup
 
-# FILES
-.coverage
-*.bat
-*.csv
-*.db
-*.json
-*.ini
-*.ipynb
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+
+# Virtual environments
+degiro_env/
+venv/
+env/
+ENV/
+
+# Logs
+logs/
 *.log
-*.pickle
-*.png
-*.sh
-*.txt
+*.log.*
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# SSH keys
+*.pem
+*.key
+id_rsa
+id_ed25519
+ssh_keys/
+
+# Database
+*.db
+*.sqlite
+*.sqlite3
+
+# Temporary files
+tmp/
+temp/
+*.tmp
+*.bak
+
+# API keys and secrets
+api_keys.txt
+secrets.txt
+credentials.txt
+
+# Docker
+.dockerignore
+
+# Test outputs
+test_results/
+coverage/
+.coverage
+.pytest_cache/
+
+# Documentation builds
+docs/_build/
+site/
+
+# Jupyter notebooks
+.ipynb_checkpoints/
+
+# Data files
+data/
+*.csv
 *.xlsx
-*.lock
-!*template.json
-!pytest.ini
+*.json.gz
+
+# Backup files
+*.backup
+backup_*
+
+# Custom Trading API - Security & Config
+custom-trading/config/.env
+custom-trading/config/config.json
+custom-trading/logs/
+custom-trading/tmp/
+custom-trading/*.pid
