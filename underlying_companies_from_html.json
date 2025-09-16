@@ -1,0 +1,4758 @@
+[
+  {
+    "id": 0,
+    "name": "All"
+  },
+  {
+    "id": 1,
+    "name": "1&1 Drillisch AG"
+  },
+  {
+    "id": 2,
+    "name": "3D SYSTEMS"
+  },
+  {
+    "id": 3,
+    "name": "3I GRP."
+  },
+  {
+    "id": 4,
+    "name": "3M"
+  },
+  {
+    "id": 5,
+    "name": "A.O. SMITH CORPORATION"
+  },
+  {
+    "id": 6,
+    "name": "A2A"
+  },
+  {
+    "id": 7,
+    "name": "AAON INC. - COMMON ST"
+  },
+  {
+    "id": 8,
+    "name": "ABB"
+  },
+  {
+    "id": 9,
+    "name": "ABN Amro"
+  },
+  {
+    "id": 10,
+    "name": "ACCOR"
+  },
+  {
+    "id": 11,
+    "name": "ACS Cons Y Serv"
+  },
+  {
+    "id": 12,
+    "name": "ACUITY BRANDS INC (HOL"
+  },
+  {
+    "id": 13,
+    "name": "ADECCO"
+  },
+  {
+    "id": 14,
+    "name": "ADIDAS"
+  },
+  {
+    "id": 15,
+    "name": "ADP"
+  },
+  {
+    "id": 16,
+    "name": "ADR on Bilibili"
+  },
+  {
+    "id": 17,
+    "name": "ADR on NICE"
+  },
+  {
+    "id": 18,
+    "name": "ADR on Sociedad Quimica y Minera de Chile"
+  },
+  {
+    "id": 19,
+    "name": "ADR on Trip.com Group Ltd"
+  },
+  {
+    "id": 20,
+    "name": "ADR on Xpeng Inc"
+  },
+  {
+    "id": 21,
+    "name": "ADVANCE AUTO PARTS INC"
+  },
+  {
+    "id": 22,
+    "name": "AECOM COMMON STOCK"
+  },
+  {
+    "id": 23,
+    "name": "AEGON"
+  },
+  {
+    "id": 24,
+    "name": "AEROVIRONMENT INC. -"
+  },
+  {
+    "id": 25,
+    "name": "AES Corp"
+  },
+  {
+    "id": 26,
+    "name": "AFLAC INCORPORATED COM"
+  },
+  {
+    "id": 27,
+    "name": "AGCO CORPORATION COMMO"
+  },
+  {
+    "id": 28,
+    "name": "AHOLD"
+  },
+  {
+    "id": 29,
+    "name": "AIG"
+  },
+  {
+    "id": 30,
+    "name": "AIR FRANCE-KLM"
+  },
+  {
+    "id": 31,
+    "name": "AIR LIQUIDE"
+  },
+  {
+    "id": 32,
+    "name": "AIR PRODUCTS AND CHEMI"
+  },
+  {
+    "id": 33,
+    "name": "AIRBUS"
+  },
+  {
+    "id": 34,
+    "name": "AKZO NOBEL"
+  },
+  {
+    "id": 35,
+    "name": "ALAMOS GOLD INC"
+  },
+  {
+    "id": 36,
+    "name": "ALBERTSONS COS INC"
+  },
+  {
+    "id": 37,
+    "name": "ALCON INC"
+  },
+  {
+    "id": 38,
+    "name": "ALEXANDRIA REAL ESTATE"
+  },
+  {
+    "id": 39,
+    "name": "ALFA LAVAL"
+  },
+  {
+    "id": 40,
+    "name": "ALIOR BANK SA"
+  },
+  {
+    "id": 41,
+    "name": "ALLEGRO MICROSYSTEMS INC. - COMMON STOCK"
+  },
+  {
+    "id": 42,
+    "name": "ALLEGRO.EU SA"
+  },
+  {
+    "id": 43,
+    "name": "ALLIANZ"
+  },
+  {
+    "id": 44,
+    "name": "ALLSTATE CORPORATION ("
+  },
+  {
+    "id": 45,
+    "name": "ALLY FINANCIAL INC. CO"
+  },
+  {
+    "id": 46,
+    "name": "ALSTOM"
+  },
+  {
+    "id": 47,
+    "name": "AMAZON"
+  },
+  {
+    "id": 48,
+    "name": "AMD"
+  },
+  {
+    "id": 49,
+    "name": "AMERICAN EAGLE OUTFITT"
+  },
+  {
+    "id": 50,
+    "name": "AMERIPRISE FINANCIAL"
+  },
+  {
+    "id": 51,
+    "name": "AMETEK"
+  },
+  {
+    "id": 52,
+    "name": "AMGEN"
+  },
+  {
+    "id": 53,
+    "name": "AMPHENOL CORPORATION C"
+  },
+  {
+    "id": 54,
+    "name": "ANDRITZ AG"
+  },
+  {
+    "id": 55,
+    "name": "ANHEUSER BUSCH INBEV"
+  },
+  {
+    "id": 56,
+    "name": "AON PLC CLASS A ORDINARY SHARES (IRELAND)"
+  },
+  {
+    "id": 57,
+    "name": "APA Corporation"
+  },
+  {
+    "id": 58,
+    "name": "APPIAN CORPORATION - C"
+  },
+  {
+    "id": 59,
+    "name": "APPLE"
+  },
+  {
+    "id": 60,
+    "name": "APPLOVIN CORP-CLASS A"
+  },
+  {
+    "id": 61,
+    "name": "ARCELOR MITTAL"
+  },
+  {
+    "id": 62,
+    "name": "ARCH CAPITAL GROUP LTD"
+  },
+  {
+    "id": 63,
+    "name": "ARES MANAGEMENT CORPOR"
+  },
+  {
+    "id": 64,
+    "name": "ARISTA NETWORKS INC."
+  },
+  {
+    "id": 65,
+    "name": "ASM INTERNATIONAL"
+  },
+  {
+    "id": 66,
+    "name": "ASML"
+  },
+  {
+    "id": 67,
+    "name": "ASR"
+  },
+  {
+    "id": 68,
+    "name": "AT&T"
+  },
+  {
+    "id": 69,
+    "name": "AT&T&Warner Bros Discovery"
+  },
+  {
+    "id": 70,
+    "name": "ATKORE INTERNATIONAL G"
+  },
+  {
+    "id": 71,
+    "name": "ATMOS ENERGY CORPORATI"
+  },
+  {
+    "id": 72,
+    "name": "ATX INDEX"
+  },
+  {
+    "id": 73,
+    "name": "AUD/USD"
+  },
+  {
+    "id": 74,
+    "name": "AUTO1 Group SE"
+  },
+  {
+    "id": 75,
+    "name": "AUTOLIV INC. COMMON S"
+  },
+  {
+    "id": 76,
+    "name": "AUTOSTORE HOLDINGS"
+  },
+  {
+    "id": 77,
+    "name": "AVIS BUDGET GROUP INC"
+  },
+  {
+    "id": 78,
+    "name": "AXA"
+  },
+  {
+    "id": 79,
+    "name": "AXCELIS TECHNOLOGIES INC"
+  },
+  {
+    "id": 80,
+    "name": "AbbVie Inc"
+  },
+  {
+    "id": 81,
+    "name": "Abbott Laboratories"
+  },
+  {
+    "id": 82,
+    "name": "Abercrombie & Fitch Co."
+  },
+  {
+    "id": 83,
+    "name": "Accenture PLC"
+  },
+  {
+    "id": 84,
+    "name": "Acciona"
+  },
+  {
+    "id": 85,
+    "name": "Adobe Sys"
+  },
+  {
+    "id": 86,
+    "name": "Adyen"
+  },
+  {
+    "id": 87,
+    "name": "Aena SME SA"
+  },
+  {
+    "id": 88,
+    "name": "Affirm Holdings Inc"
+  },
+  {
+    "id": 89,
+    "name": "Agilent Technologies"
+  },
+  {
+    "id": 90,
+    "name": "Agnico-Eagle Mines Ltd"
+  },
+  {
+    "id": 91,
+    "name": "Airbnb"
+  },
+  {
+    "id": 92,
+    "name": "Aixtron SE"
+  },
+  {
+    "id": 93,
+    "name": "Akamai Technologies Inc"
+  },
+  {
+    "id": 94,
+    "name": "Albemarle"
+  },
+  {
+    "id": 95,
+    "name": "Alcoa Corp"
+  },
+  {
+    "id": 96,
+    "name": "Alfen"
+  },
+  {
+    "id": 97,
+    "name": "Alibaba"
+  },
+  {
+    "id": 98,
+    "name": "Align Technology"
+  },
+  {
+    "id": 99,
+    "name": "Altria Group"
+  },
+  {
+    "id": 100,
+    "name": "AlzChem Group AG"
+  },
+  {
+    "id": 101,
+    "name": "Amadeus IT Group"
+  },
+  {
+    "id": 102,
+    "name": "Ambu A/S"
+  },
+  {
+    "id": 103,
+    "name": "American Airlines Group Inc"
+  },
+  {
+    "id": 104,
+    "name": "American Express"
+  },
+  {
+    "id": 105,
+    "name": "American Tower Corp"
+  },
+  {
+    "id": 106,
+    "name": "American Water Works Company Inc"
+  },
+  {
+    "id": 107,
+    "name": "Amplifon SpA"
+  },
+  {
+    "id": 108,
+    "name": "Amundi SA"
+  },
+  {
+    "id": 109,
+    "name": "Analog Devices Inc"
+  },
+  {
+    "id": 110,
+    "name": "Anglo American"
+  },
+  {
+    "id": 111,
+    "name": "AngloGold ADR"
+  },
+  {
+    "id": 112,
+    "name": "Applied Materials"
+  },
+  {
+    "id": 113,
+    "name": "Archer-Daniels"
+  },
+  {
+    "id": 114,
+    "name": "Arkema"
+  },
+  {
+    "id": 115,
+    "name": "Arm Holdings plc"
+  },
+  {
+    "id": 116,
+    "name": "Aroundtown SA"
+  },
+  {
+    "id": 117,
+    "name": "Arthur J Gallag & Co"
+  },
+  {
+    "id": 118,
+    "name": "Aston Martin Lagonda Global Holdings Ltd"
+  },
+  {
+    "id": 119,
+    "name": "AstraZeneca"
+  },
+  {
+    "id": 120,
+    "name": "Atlassian Corp"
+  },
+  {
+    "id": 121,
+    "name": "Atlassian Corp PLC"
+  },
+  {
+    "id": 122,
+    "name": "Atoss Software AG"
+  },
+  {
+    "id": 123,
+    "name": "Aurora Cannabis Inc"
+  },
+  {
+    "id": 124,
+    "name": "Aurubis AG"
+  },
+  {
+    "id": 125,
+    "name": "Austria Technologie & Systemtechnik AG"
+  },
+  {
+    "id": 126,
+    "name": "AutoDesk Inc"
+  },
+  {
+    "id": 127,
+    "name": "AutoZone"
+  },
+  {
+    "id": 128,
+    "name": "Axon Enterprise Inc"
+  },
+  {
+    "id": 129,
+    "name": "BAE Systems PLC"
+  },
+  {
+    "id": 130,
+    "name": "BAIDU"
+  },
+  {
+    "id": 131,
+    "name": "BAKER HUGHES COMPANY CLASS A"
+  },
+  {
+    "id": 132,
+    "name": "BAKKAFROST"
+  },
+  {
+    "id": 133,
+    "name": "BALL CORPORATION COMMO"
+  },
+  {
+    "id": 134,
+    "name": "BANCA MEDIOLANUM"
+  },
+  {
+    "id": 135,
+    "name": "BANCA MONTE PASCHI SIE"
+  },
+  {
+    "id": 136,
+    "name": "BANCO SANTANDER"
+  },
+  {
+    "id": 137,
+    "name": "BANK OF AMERICA"
+  },
+  {
+    "id": 138,
+    "name": "BANK PEKAO SA"
+  },
+  {
+    "id": 139,
+    "name": "BASF"
+  },
+  {
+    "id": 140,
+    "name": "BAWAG Group AG"
+  },
+  {
+    "id": 141,
+    "name": "BAYER"
+  },
+  {
+    "id": 142,
+    "name": "BB Biotech CHF"
+  },
+  {
+    "id": 143,
+    "name": "BBVA"
+  },
+  {
+    "id": 144,
+    "name": "BCA POP EMIL ROMAGNA"
+  },
+  {
+    "id": 145,
+    "name": "BHP BILLITON"
+  },
+  {
+    "id": 146,
+    "name": "BIRKENSTOCK HOLDING PLC - IPO Subscription"
+  },
+  {
+    "id": 147,
+    "name": "BJ'S WHOLESALE CLUB HO"
+  },
+  {
+    "id": 148,
+    "name": "BLACKROCK  INC. COMMON STOCK"
+  },
+  {
+    "id": 149,
+    "name": "BLOOM ENERGY CORPORATI"
+  },
+  {
+    "id": 150,
+    "name": "BMW"
+  },
+  {
+    "id": 151,
+    "name": "BNP PARIBAS"
+  },
+  {
+    "id": 152,
+    "name": "BOEING"
+  },
+  {
+    "id": 153,
+    "name": "BOOZ ALLEN HAMILTON HO"
+  },
+  {
+    "id": 154,
+    "name": "BORGWARNER INC. COMMON"
+  },
+  {
+    "id": 155,
+    "name": "BOSTON PROPERTIES INC"
+  },
+  {
+    "id": 156,
+    "name": "BOSTON SCIENTIFIC CORP"
+  },
+  {
+    "id": 157,
+    "name": "BOUYGUES"
+  },
+  {
+    "id": 158,
+    "name": "BP PLC"
+  },
+  {
+    "id": 159,
+    "name": "BRENT CRUDE OIL"
+  },
+  {
+    "id": 160,
+    "name": "BRINKER INTERNATIONAL"
+  },
+  {
+    "id": 161,
+    "name": "BROWN FORMAN INC CLASS"
+  },
+  {
+    "id": 162,
+    "name": "BUDIMEX"
+  },
+  {
+    "id": 163,
+    "name": "BUND"
+  },
+  {
+    "id": 164,
+    "name": "Babcock International Group PLC"
+  },
+  {
+    "id": 165,
+    "name": "Ballard Power Systems Inc"
+  },
+  {
+    "id": 166,
+    "name": "Baloise Holding AG"
+  },
+  {
+    "id": 167,
+    "name": "Banco BPM SpA"
+  },
+  {
+    "id": 168,
+    "name": "Banco de Sabadell"
+  },
+  {
+    "id": 169,
+    "name": "Bank of China"
+  },
+  {
+    "id": 170,
+    "name": "Bank of New York Mellon Corp/The"
+  },
+  {
+    "id": 171,
+    "name": "Barclays PLC"
+  },
+  {
+    "id": 172,
+    "name": "Barrick Gold"
+  },
+  {
+    "id": 173,
+    "name": "Barry Callebaut AG"
+  },
+  {
+    "id": 174,
+    "name": "Basilea Pharmaceutica AG"
+  },
+  {
+    "id": 175,
+    "name": "Bath & Body Works Inc"
+  },
+  {
+    "id": 176,
+    "name": "Bavarian Nordic"
+  },
+  {
+    "id": 177,
+    "name": "Baxter International Inc"
+  },
+  {
+    "id": 178,
+    "name": "Be Semiconductor Industrie"
+  },
+  {
+    "id": 179,
+    "name": "Bechtle AG"
+  },
+  {
+    "id": 180,
+    "name": "Becton Dickinson&Co"
+  },
+  {
+    "id": 181,
+    "name": "Befesa SA"
+  },
+  {
+    "id": 182,
+    "name": "Beiersdorf"
+  },
+  {
+    "id": 183,
+    "name": "Berkshire Hathaway B"
+  },
+  {
+    "id": 184,
+    "name": "Best Buy Co Inc"
+  },
+  {
+    "id": 185,
+    "name": "Beyond Meat"
+  },
+  {
+    "id": 186,
+    "name": "Bilfinger SE"
+  },
+  {
+    "id": 187,
+    "name": "Bio-Rad Laboratories Inc"
+  },
+  {
+    "id": 188,
+    "name": "BioNTech"
+  },
+  {
+    "id": 189,
+    "name": "Biogen IDEC Inc"
+  },
+  {
+    "id": 190,
+    "name": "Biomarin Pharmaceuticals Inc"
+  },
+  {
+    "id": 191,
+    "name": "BlackRock Inc"
+  },
+  {
+    "id": 192,
+    "name": "Blackstone Inc"
+  },
+  {
+    "id": 193,
+    "name": "Block Inc"
+  },
+  {
+    "id": 194,
+    "name": "Borussia Dortmund"
+  },
+  {
+    "id": 195,
+    "name": "Box Inc"
+  },
+  {
+    "id": 196,
+    "name": "Brenntag"
+  },
+  {
+    "id": 197,
+    "name": "Bristol-Myers"
+  },
+  {
+    "id": 198,
+    "name": "British American Tobacco PLC"
+  },
+  {
+    "id": 199,
+    "name": "Broadcom Inc"
+  },
+  {
+    "id": 200,
+    "name": "Brown & Brown Inc"
+  },
+  {
+    "id": 201,
+    "name": "Bunge Limited"
+  },
+  {
+    "id": 202,
+    "name": "Burberry Group PLC"
+  },
+  {
+    "id": 203,
+    "name": "Byd Company Limited"
+  },
+  {
+    "id": 204,
+    "name": "C3.ai Inc"
+  },
+  {
+    "id": 205,
+    "name": "CAC 40"
+  },
+  {
+    "id": 206,
+    "name": "CAMECO"
+  },
+  {
+    "id": 207,
+    "name": "CAMPBELL SOUP COMPANY"
+  },
+  {
+    "id": 208,
+    "name": "CANADIAN PACIFIC KANSAS CITY LIMITED COMMON SHARES"
+  },
+  {
+    "id": 209,
+    "name": "CAP GEMINI"
+  },
+  {
+    "id": 210,
+    "name": "CAPITAL ONE FINANCIAL"
+  },
+  {
+    "id": 211,
+    "name": "CARMAX INC"
+  },
+  {
+    "id": 212,
+    "name": "CARREFOUR"
+  },
+  {
+    "id": 213,
+    "name": "CARTER'S INC. COMMON"
+  },
+  {
+    "id": 214,
+    "name": "CARVANA CO. CLASS A CO"
+  },
+  {
+    "id": 215,
+    "name": "CD PROJEKT RED SA"
+  },
+  {
+    "id": 216,
+    "name": "CECE"
+  },
+  {
+    "id": 217,
+    "name": "CECONOMY AG"
+  },
+  {
+    "id": 218,
+    "name": "CELESTICA  INC. COMMON STOCK"
+  },
+  {
+    "id": 219,
+    "name": "CELESTICA INC. COMMON"
+  },
+  {
+    "id": 220,
+    "name": "CELSIUS HOLDINGS INC."
+  },
+  {
+    "id": 221,
+    "name": "CENTERRA GOLD INC"
+  },
+  {
+    "id": 222,
+    "name": "CEZ AS"
+  },
+  {
+    "id": 223,
+    "name": "CF INDUSTRIES HOLDINGS"
+  },
+  {
+    "id": 224,
+    "name": "CHARLES RIVER LABORATO"
+  },
+  {
+    "id": 225,
+    "name": "CHART INDUSTRIES INC. - COMMON STOCK"
+  },
+  {
+    "id": 226,
+    "name": "CHIME FINANCIAL INC-CL A"
+  },
+  {
+    "id": 227,
+    "name": "CHINA MOBILE HK"
+  },
+  {
+    "id": 228,
+    "name": "CHUBB LIMITED"
+  },
+  {
+    "id": 229,
+    "name": "CIENA"
+  },
+  {
+    "id": 230,
+    "name": "CIGNA CORPORATION COMM"
+  },
+  {
+    "id": 231,
+    "name": "CINCINNATI FINANCIAL C"
+  },
+  {
+    "id": 232,
+    "name": "CISCO"
+  },
+  {
+    "id": 233,
+    "name": "CITIGROUP"
+  },
+  {
+    "id": 234,
+    "name": "CME Group Inc"
+  },
+  {
+    "id": 235,
+    "name": "CMS ENERGY CORPORATION"
+  },
+  {
+    "id": 236,
+    "name": "COCA-COLA"
+  },
+  {
+    "id": 237,
+    "name": "COCA-COLA BOTTLING CO."
+  },
+  {
+    "id": 238,
+    "name": "COHERENT CORP. COMMON STOCK"
+  },
+  {
+    "id": 239,
+    "name": "COMFORT SYSTEMS USA I"
+  },
+  {
+    "id": 240,
+    "name": "COMMERZBANK"
+  },
+  {
+    "id": 241,
+    "name": "COMPASS GROUP"
+  },
+  {
+    "id": 242,
+    "name": "CONFLUENT INC. - CLASS A COMMON STOCK"
+  },
+  {
+    "id": 243,
+    "name": "CONSOLIDATED EDISON I"
+  },
+  {
+    "id": 244,
+    "name": "CONTEMPORARY AMPEREX TECHNOL"
+  },
+  {
+    "id": 245,
+    "name": "COPPER FUTURE"
+  },
+  {
+    "id": 246,
+    "name": "CORP ACCIONA ENERGIAS RENOVA"
+  },
+  {
+    "id": 247,
+    "name": "COSTAR GROUP INC. - C"
+  },
+  {
+    "id": 248,
+    "name": "CREDIT ACCEPTANCE CORP"
+  },
+  {
+    "id": 249,
+    "name": "CREDIT AGRICOLE"
+  },
+  {
+    "id": 250,
+    "name": "CRISPR Therapeutics"
+  },
+  {
+    "id": 251,
+    "name": "CROCS Inc"
+  },
+  {
+    "id": 252,
+    "name": "CSX Corp"
+  },
+  {
+    "id": 253,
+    "name": "CURTISS-WRIGHT CORPORA"
+  },
+  {
+    "id": 254,
+    "name": "CVC Capital Partners PLC"
+  },
+  {
+    "id": 255,
+    "name": "CVS Health Corp"
+  },
+  {
+    "id": 256,
+    "name": "CYFROWY POLSAT SA"
+  },
+  {
+    "id": 257,
+    "name": "Cadence Design Systems Inc"
+  },
+  {
+    "id": 258,
+    "name": "Caixabank SA"
+  },
+  {
+    "id": 259,
+    "name": "CanSino Biologics Inc"
+  },
+  {
+    "id": 260,
+    "name": "Canadian National Railway Co"
+  },
+  {
+    "id": 261,
+    "name": "Canadian Solar Inc"
+  },
+  {
+    "id": 262,
+    "name": "Cancom SE"
+  },
+  {
+    "id": 263,
+    "name": "Cardinal Health Inc"
+  },
+  {
+    "id": 264,
+    "name": "Carl Zeiss Meditech"
+  },
+  {
+    "id": 265,
+    "name": "Carlsberg A/S"
+  },
+  {
+    "id": 266,
+    "name": "Carnival"
+  },
+  {
+    "id": 267,
+    "name": "Carrier Global Corp"
+  },
+  {
+    "id": 268,
+    "name": "Caterpillar"
+  },
+  {
+    "id": 269,
+    "name": "Cellnex Telecom SA"
+  },
+  {
+    "id": 270,
+    "name": "Centene Corp"
+  },
+  {
+    "id": 271,
+    "name": "Century Aluminum"
+  },
+  {
+    "id": 272,
+    "name": "Charles Schwab Corp"
+  },
+  {
+    "id": 273,
+    "name": "Charter Communications Inc"
+  },
+  {
+    "id": 274,
+    "name": "Check Point Software Technologies Ltd"
+  },
+  {
+    "id": 275,
+    "name": "Cheniere Energy Inc"
+  },
+  {
+    "id": 276,
+    "name": "Chevron"
+  },
+  {
+    "id": 277,
+    "name": "China Telecom"
+  },
+  {
+    "id": 278,
+    "name": "Chipotle Mexican Grill Inc"
+  },
+  {
+    "id": 279,
+    "name": "Church & Dwight Inc"
+  },
+  {
+    "id": 280,
+    "name": "Cintas Corp"
+  },
+  {
+    "id": 281,
+    "name": "Circle Internet Group Inc"
+  },
+  {
+    "id": 282,
+    "name": "Clariant AG"
+  },
+  {
+    "id": 283,
+    "name": "Class A Common Stock (Rocket Lab USA Inc)"
+  },
+  {
+    "id": 284,
+    "name": "Cleveland-Cliffs Inc"
+  },
+  {
+    "id": 285,
+    "name": "Clorox Co"
+  },
+  {
+    "id": 286,
+    "name": "Cloudflare Inc"
+  },
+  {
+    "id": 287,
+    "name": "Coca-Cola European Partners PLC"
+  },
+  {
+    "id": 288,
+    "name": "Cognex Corp"
+  },
+  {
+    "id": 289,
+    "name": "Cognizant Technology Solutions"
+  },
+  {
+    "id": 290,
+    "name": "Coinbase Glb.Cl.A"
+  },
+  {
+    "id": 291,
+    "name": "Coinbase Global Inc"
+  },
+  {
+    "id": 292,
+    "name": "Colgate-Palmolive Co"
+  },
+  {
+    "id": 293,
+    "name": "Coloplast A/S"
+  },
+  {
+    "id": 294,
+    "name": "Comcast Corp"
+  },
+  {
+    "id": 295,
+    "name": "Conagra Brands"
+  },
+  {
+    "id": 296,
+    "name": "ConocoPhillips"
+  },
+  {
+    "id": 297,
+    "name": "Constellation Brands Inc"
+  },
+  {
+    "id": 298,
+    "name": "Constellation Energy Co"
+  },
+  {
+    "id": 299,
+    "name": "Constellation Software Inc"
+  },
+  {
+    "id": 300,
+    "name": "Continental"
+  },
+  {
+    "id": 301,
+    "name": "Copart"
+  },
+  {
+    "id": 302,
+    "name": "Corning Inc"
+  },
+  {
+    "id": 303,
+    "name": "Costco Wholesale Corp"
+  },
+  {
+    "id": 304,
+    "name": "Coty Inc"
+  },
+  {
+    "id": 305,
+    "name": "Coupang Inc"
+  },
+  {
+    "id": 306,
+    "name": "Covestro AG"
+  },
+  {
+    "id": 307,
+    "name": "Cracker Barrel Old Country Store Inc"
+  },
+  {
+    "id": 308,
+    "name": "CrowdStrike Holdings Inc"
+  },
+  {
+    "id": 309,
+    "name": "Crown Castle International Corp"
+  },
+  {
+    "id": 310,
+    "name": "Cts Eventim AG & Co KgaA"
+  },
+  {
+    "id": 311,
+    "name": "D-Wave Quantum Inc"
+  },
+  {
+    "id": 312,
+    "name": "DANONE"
+  },
+  {
+    "id": 313,
+    "name": "DARDEN RESTAURANTS IN"
+  },
+  {
+    "id": 314,
+    "name": "DAX"
+  },
+  {
+    "id": 315,
+    "name": "DAX/X-DAX Index"
+  },
+  {
+    "id": 316,
+    "name": "DELL TECHNOLOGIES INC."
+  },
+  {
+    "id": 317,
+    "name": "DENTSPLY SIRONA Inc"
+  },
+  {
+    "id": 318,
+    "name": "DEUTSCHE BANK"
+  },
+  {
+    "id": 319,
+    "name": "DEUTSCHE TELEKOM"
+  },
+  {
+    "id": 320,
+    "name": "DEUTZ AG"
+  },
+  {
+    "id": 321,
+    "name": "DEXCOM INC. - COMMON"
+  },
+  {
+    "id": 322,
+    "name": "DFDS A/S"
+  },
+  {
+    "id": 323,
+    "name": "DIAMONDBACK ENERGY IN"
+  },
+  {
+    "id": 324,
+    "name": "DIASORIN"
+  },
+  {
+    "id": 325,
+    "name": "DJIA"
+  },
+  {
+    "id": 326,
+    "name": "DOW INC. COMMON STOCK"
+  },
+  {
+    "id": 327,
+    "name": "DOWDUPONT INC"
+  },
+  {
+    "id": 328,
+    "name": "DR Horton Inc"
+  },
+  {
+    "id": 329,
+    "name": "DSM FIRMENICH AG"
+  },
+  {
+    "id": 330,
+    "name": "DSV A/S"
+  },
+  {
+    "id": 331,
+    "name": "DWS Group GmbH & Co KgaA"
+  },
+  {
+    "id": 332,
+    "name": "DaVita Inc"
+  },
+  {
+    "id": 333,
+    "name": "Daimler Truck Holding"
+  },
+  {
+    "id": 334,
+    "name": "Danaher Corporation"
+  },
+  {
+    "id": 335,
+    "name": "Danske Bank A/S"
+  },
+  {
+    "id": 336,
+    "name": "Darling Ingredients Inc"
+  },
+  {
+    "id": 337,
+    "name": "Dassault Aviation"
+  },
+  {
+    "id": 338,
+    "name": "Dassault Systemes"
+  },
+  {
+    "id": 339,
+    "name": "Datadog Inc"
+  },
+  {
+    "id": 340,
+    "name": "Davide Campari-Milano NV"
+  },
+  {
+    "id": 341,
+    "name": "Deere and Co"
+  },
+  {
+    "id": 342,
+    "name": "Deliveroo PLC"
+  },
+  {
+    "id": 343,
+    "name": "Delivery Hero"
+  },
+  {
+    "id": 344,
+    "name": "Delta Air Lines Inc"
+  },
+  {
+    "id": 345,
+    "name": "Dermapharm Holding SE"
+  },
+  {
+    "id": 346,
+    "name": "Deutsche Börse"
+  },
+  {
+    "id": 347,
+    "name": "Deutsche Pfandbriefbank AG"
+  },
+  {
+    "id": 348,
+    "name": "Deutsche Post"
+  },
+  {
+    "id": 349,
+    "name": "Diageo PLC"
+  },
+  {
+    "id": 350,
+    "name": "Digital Realty Trust Inc"
+  },
+  {
+    "id": 351,
+    "name": "Digital Turbine Inc"
+  },
+  {
+    "id": 352,
+    "name": "DocuSign Inc"
+  },
+  {
+    "id": 353,
+    "name": "Dollar General Corp"
+  },
+  {
+    "id": 354,
+    "name": "Dollar Tree"
+  },
+  {
+    "id": 355,
+    "name": "Dominion Resources"
+  },
+  {
+    "id": 356,
+    "name": "Dominos Pizza Inc"
+  },
+  {
+    "id": 357,
+    "name": "Donaldson Co Inc"
+  },
+  {
+    "id": 358,
+    "name": "DoorDash Inc"
+  },
+  {
+    "id": 359,
+    "name": "Douglas AG"
+  },
+  {
+    "id": 360,
+    "name": "Draegerwerk AG & Co KGaA"
+  },
+  {
+    "id": 361,
+    "name": "Draftkings Inc"
+  },
+  {
+    "id": 362,
+    "name": "Dropbox Inc"
+  },
+  {
+    "id": 363,
+    "name": "Duerr AG"
+  },
+  {
+    "id": 364,
+    "name": "Duke Energy Corp"
+  },
+  {
+    "id": 365,
+    "name": "E.ON"
+  },
+  {
+    "id": 366,
+    "name": "EBAY"
+  },
+  {
+    "id": 367,
+    "name": "EDP Renovaveis"
+  },
+  {
+    "id": 368,
+    "name": "ELASTIC N.V. ORDINARY"
+  },
+  {
+    "id": 369,
+    "name": "ELF BEAUTY INC"
+  },
+  {
+    "id": 370,
+    "name": "EMCOR GROUP INC. COMM"
+  },
+  {
+    "id": 371,
+    "name": "ENI Spa"
+  },
+  {
+    "id": 372,
+    "name": "ENTEGRIS INC. - COMMO"
+  },
+  {
+    "id": 373,
+    "name": "EQUIFAX INC. COMMON S"
+  },
+  {
+    "id": 374,
+    "name": "EQUITY RESIDENTIAL COM"
+  },
+  {
+    "id": 375,
+    "name": "ERG"
+  },
+  {
+    "id": 376,
+    "name": "ESSENTIAL UTILITIES INC"
+  },
+  {
+    "id": 377,
+    "name": "ESSILOR"
+  },
+  {
+    "id": 378,
+    "name": "ESTX Chemicals"
+  },
+  {
+    "id": 379,
+    "name": "ETORO GROUP LTD-A"
+  },
+  {
+    "id": 380,
+    "name": "EUR/AUD"
+  },
+  {
+    "id": 381,
+    "name": "EUR/CAD"
+  },
+  {
+    "id": 382,
+    "name": "EUR/CHF"
+  },
+  {
+    "id": 383,
+    "name": "EUR/GBP"
+  },
+  {
+    "id": 384,
+    "name": "EUR/HUF"
+  },
+  {
+    "id": 385,
+    "name": "EUR/JPY"
+  },
+  {
+    "id": 386,
+    "name": "EUR/NOK"
+  },
+  {
+    "id": 387,
+    "name": "EUR/PLN"
+  },
+  {
+    "id": 388,
+    "name": "EUR/SEK"
+  },
+  {
+    "id": 389,
+    "name": "EUR/USD"
+  },
+  {
+    "id": 390,
+    "name": "EUR/ZAR"
+  },
+  {
+    "id": 391,
+    "name": "EURO STOXX 50"
+  },
+  {
+    "id": 392,
+    "name": "EURO STOXX Automobiles & Parts"
+  },
+  {
+    "id": 393,
+    "name": "EURO STOXX Banks"
+  },
+  {
+    "id": 394,
+    "name": "EUROPEAN BANKS"
+  },
+  {
+    "id": 395,
+    "name": "EUROPEAN OIL & GAS"
+  },
+  {
+    "id": 396,
+    "name": "EUROPEAN TECHNOLOGY"
+  },
+  {
+    "id": 397,
+    "name": "EXTRA SPACE STORAGE IN"
+  },
+  {
+    "id": 398,
+    "name": "EXXONMOBIL"
+  },
+  {
+    "id": 399,
+    "name": "Eastman Chemical Co"
+  },
+  {
+    "id": 400,
+    "name": "Easyjet"
+  },
+  {
+    "id": 401,
+    "name": "Eaton Corporation PLC"
+  },
+  {
+    "id": 402,
+    "name": "Eckert & Ziegler Strahlen und Medizintechnik AG"
+  },
+  {
+    "id": 403,
+    "name": "Ecolab Inc"
+  },
+  {
+    "id": 404,
+    "name": "Edwards Lifesciences Corp"
+  },
+  {
+    "id": 405,
+    "name": "Eiffage"
+  },
+  {
+    "id": 406,
+    "name": "Elanco Animal Health Inc"
+  },
+  {
+    "id": 407,
+    "name": "Electronic Arts"
+  },
+  {
+    "id": 408,
+    "name": "Elevance Health Inc"
+  },
+  {
+    "id": 409,
+    "name": "Eli Lilly and Co"
+  },
+  {
+    "id": 410,
+    "name": "Elmos Semiconductor AG"
+  },
+  {
+    "id": 411,
+    "name": "Elringklinger AG"
+  },
+  {
+    "id": 412,
+    "name": "Embracer Group AB"
+  },
+  {
+    "id": 413,
+    "name": "Emerson Electric"
+  },
+  {
+    "id": 414,
+    "name": "Ems-Chemie Holding AG"
+  },
+  {
+    "id": 415,
+    "name": "Enagas"
+  },
+  {
+    "id": 416,
+    "name": "Enel"
+  },
+  {
+    "id": 417,
+    "name": "Energiekontor AG"
+  },
+  {
+    "id": 418,
+    "name": "Enphase Energy Inc"
+  },
+  {
+    "id": 419,
+    "name": "Epam Systems Inc"
+  },
+  {
+    "id": 420,
+    "name": "Equinix Inc"
+  },
+  {
+    "id": 421,
+    "name": "Equinor ASA"
+  },
+  {
+    "id": 422,
+    "name": "Eramet"
+  },
+  {
+    "id": 423,
+    "name": "Ericsson B"
+  },
+  {
+    "id": 424,
+    "name": "Erste Group Bank AG"
+  },
+  {
+    "id": 425,
+    "name": "Estee Lauder Inc"
+  },
+  {
+    "id": 426,
+    "name": "Etsy"
+  },
+  {
+    "id": 427,
+    "name": "Euro-BUND Future"
+  },
+  {
+    "id": 428,
+    "name": "Eurofins Scientific SE"
+  },
+  {
+    "id": 429,
+    "name": "Evolution AB"
+  },
+  {
+    "id": 430,
+    "name": "Evonik Industries AG"
+  },
+  {
+    "id": 431,
+    "name": "Evotec AG"
+  },
+  {
+    "id": 432,
+    "name": "Exelon Corp"
+  },
+  {
+    "id": 433,
+    "name": "Expedia Group Inc"
+  },
+  {
+    "id": 434,
+    "name": "F5 Inc"
+  },
+  {
+    "id": 435,
+    "name": "FACEBOOK"
+  },
+  {
+    "id": 436,
+    "name": "FAIR ISAAC CORPROATION"
+  },
+  {
+    "id": 437,
+    "name": "FASTENAL COMPANY - COM"
+  },
+  {
+    "id": 438,
+    "name": "FERRARI"
+  },
+  {
+    "id": 439,
+    "name": "FIGMA INC-CL A"
+  },
+  {
+    "id": 440,
+    "name": "FIRST CITIZENS BANCSHA"
+  },
+  {
+    "id": 441,
+    "name": "FIRST SOLAR"
+  },
+  {
+    "id": 442,
+    "name": "FLEXTRONICS INTERNATIO"
+  },
+  {
+    "id": 443,
+    "name": "FLOOR & DECOR HOLDINGS"
+  },
+  {
+    "id": 444,
+    "name": "FLSmidth & Co."
+  },
+  {
+    "id": 445,
+    "name": "FMC CORPORATION"
+  },
+  {
+    "id": 446,
+    "name": "FME GY"
+  },
+  {
+    "id": 447,
+    "name": "FNF GROUP OF FIDELITY"
+  },
+  {
+    "id": 448,
+    "name": "FORD MOTOR"
+  },
+  {
+    "id": 449,
+    "name": "FORTUNA SILVER MINES INC"
+  },
+  {
+    "id": 450,
+    "name": "FOX CORP CM A WI"
+  },
+  {
+    "id": 451,
+    "name": "FRANKLIN RESOURCES IN"
+  },
+  {
+    "id": 452,
+    "name": "FREEPORT-MCMORAN COPPER & GOLD"
+  },
+  {
+    "id": 453,
+    "name": "FTSE MIB"
+  },
+  {
+    "id": 454,
+    "name": "FUCHS PETROLUB SE"
+  },
+  {
+    "id": 455,
+    "name": "Faurecia"
+  },
+  {
+    "id": 456,
+    "name": "FedEx"
+  },
+  {
+    "id": 457,
+    "name": "Fidelity National Information"
+  },
+  {
+    "id": 458,
+    "name": "Fielmann AG"
+  },
+  {
+    "id": 459,
+    "name": "FinecoBank Banca Fineco SpA"
+  },
+  {
+    "id": 460,
+    "name": "First Majestic Silver Corp"
+  },
+  {
+    "id": 461,
+    "name": "Fiserv Inc"
+  },
+  {
+    "id": 462,
+    "name": "Flow Traders"
+  },
+  {
+    "id": 463,
+    "name": "Flughafen Zurich Ag"
+  },
+  {
+    "id": 464,
+    "name": "Fortinet Inc"
+  },
+  {
+    "id": 465,
+    "name": "Fortum Corporation"
+  },
+  {
+    "id": 466,
+    "name": "Fraport AG"
+  },
+  {
+    "id": 467,
+    "name": "Freenet AG"
+  },
+  {
+    "id": 468,
+    "name": "Fresenius"
+  },
+  {
+    "id": 469,
+    "name": "Fresnillo Plc"
+  },
+  {
+    "id": 470,
+    "name": "Frontline PLC"
+  },
+  {
+    "id": 471,
+    "name": "GALAPAGOS"
+  },
+  {
+    "id": 472,
+    "name": "GALDERMA GROUP AG"
+  },
+  {
+    "id": 473,
+    "name": "GAP INC. (THE) COMMON"
+  },
+  {
+    "id": 474,
+    "name": "GBP/CHF"
+  },
+  {
+    "id": 475,
+    "name": "GBP/USD"
+  },
+  {
+    "id": 476,
+    "name": "GDF SUEZ"
+  },
+  {
+    "id": 477,
+    "name": "GE HEALTHCARE TECHNOLOGIES INC. - COMMON STOCK"
+  },
+  {
+    "id": 478,
+    "name": "GE VERNOVA INC. COMMON STOCK"
+  },
+  {
+    "id": 479,
+    "name": "GEA Group AG"
+  },
+  {
+    "id": 480,
+    "name": "GENERAL ELECTRIC"
+  },
+  {
+    "id": 481,
+    "name": "GENERAL MOTORS"
+  },
+  {
+    "id": 482,
+    "name": "GENERALI"
+  },
+  {
+    "id": 483,
+    "name": "GFT Technologies SE"
+  },
+  {
+    "id": 484,
+    "name": "GLOBALFOUNDRIES INC. - ORDINARY SHARE"
+  },
+  {
+    "id": 485,
+    "name": "GN Store Nord"
+  },
+  {
+    "id": 486,
+    "name": "GOLD"
+  },
+  {
+    "id": 487,
+    "name": "GOLDMAN SACHS GROUP"
+  },
+  {
+    "id": 488,
+    "name": "GOOGLE"
+  },
+  {
+    "id": 489,
+    "name": "GREEN BRICK PARTNERS INC. - COMMON STOCK"
+  },
+  {
+    "id": 490,
+    "name": "GRIFOLS SA"
+  },
+  {
+    "id": 491,
+    "name": "GRUPA KETY SA"
+  },
+  {
+    "id": 492,
+    "name": "GSK PLC"
+  },
+  {
+    "id": 493,
+    "name": "GXO LOGISTICS INC. COMMON STOCK"
+  },
+  {
+    "id": 494,
+    "name": "Garmin Ltd"
+  },
+  {
+    "id": 495,
+    "name": "Gartner Inc"
+  },
+  {
+    "id": 496,
+    "name": "Gas Oil Futures"
+  },
+  {
+    "id": 497,
+    "name": "Gaztransport et technigaz SA"
+  },
+  {
+    "id": 498,
+    "name": "Geberit AG"
+  },
+  {
+    "id": 499,
+    "name": "Geely Automobile Holdings Ltd"
+  },
+  {
+    "id": 500,
+    "name": "General Mills, Inc."
+  },
+  {
+    "id": 501,
+    "name": "Genmab"
+  },
+  {
+    "id": 502,
+    "name": "Georg Fischer AG"
+  },
+  {
+    "id": 503,
+    "name": "Gerresheimer AG"
+  },
+  {
+    "id": 504,
+    "name": "Gilead Sciences Inc"
+  },
+  {
+    "id": 505,
+    "name": "GitLab Inc"
+  },
+  {
+    "id": 506,
+    "name": "Givaudan SA"
+  },
+  {
+    "id": 507,
+    "name": "Glencore Xstrata International PLC"
+  },
+  {
+    "id": 508,
+    "name": "Global Payments"
+  },
+  {
+    "id": 509,
+    "name": "GoDaddy Inc"
+  },
+  {
+    "id": 510,
+    "name": "Goodyear Tire & Rubber Co"
+  },
+  {
+    "id": 511,
+    "name": "Groupon Inc"
+  },
+  {
+    "id": 512,
+    "name": "Guidewire Software Inc"
+  },
+  {
+    "id": 513,
+    "name": "HALLIBURTON"
+  },
+  {
+    "id": 514,
+    "name": "HASBRO INC. - COMMON"
+  },
+  {
+    "id": 515,
+    "name": "HCA HOLDINGS INC. COM"
+  },
+  {
+    "id": 516,
+    "name": "HDFC Bank"
+  },
+  {
+    "id": 517,
+    "name": "HEICO Corp"
+  },
+  {
+    "id": 518,
+    "name": "HEINEKEN"
+  },
+  {
+    "id": 519,
+    "name": "HELLA GmbH & Co KGaA"
+  },
+  {
+    "id": 520,
+    "name": "HELMERICH & PAYNE INC"
+  },
+  {
+    "id": 521,
+    "name": "HELVETIA HOLDING AG-REG"
+  },
+  {
+    "id": 522,
+    "name": "HENKEL"
+  },
+  {
+    "id": 523,
+    "name": "HERTZ GLOBAL HLDGS INC"
+  },
+  {
+    "id": 524,
+    "name": "HEWLETT-PACKARD"
+  },
+  {
+    "id": 525,
+    "name": "HEXAGON AB"
+  },
+  {
+    "id": 526,
+    "name": "HSBC"
+  },
+  {
+    "id": 527,
+    "name": "HUSQVARNA B"
+  },
+  {
+    "id": 528,
+    "name": "HYATT HOTELS CORPORATI"
+  },
+  {
+    "id": 529,
+    "name": "Hamburger Hafen und Logistik AG"
+  },
+  {
+    "id": 530,
+    "name": "Hannover Rueck SE"
+  },
+  {
+    "id": 531,
+    "name": "Hapag-Lloyd AG"
+  },
+  {
+    "id": 532,
+    "name": "Heating Oil"
+  },
+  {
+    "id": 533,
+    "name": "HeidelbergCement"
+  },
+  {
+    "id": 534,
+    "name": "Heidelberger Druckmaschinen AG"
+  },
+  {
+    "id": 535,
+    "name": "HelloFresh SE"
+  },
+  {
+    "id": 536,
+    "name": "Hennes & Mauritz B"
+  },
+  {
+    "id": 537,
+    "name": "Hensoldt AG"
+  },
+  {
+    "id": 538,
+    "name": "Hermes Intl"
+  },
+  {
+    "id": 539,
+    "name": "Hershey Co"
+  },
+  {
+    "id": 540,
+    "name": "Hewlett Packard Enterprise Co"
+  },
+  {
+    "id": 541,
+    "name": "Hilton Worldwide Holdings Inc"
+  },
+  {
+    "id": 542,
+    "name": "Hims & Hers Health Inc"
+  },
+  {
+    "id": 543,
+    "name": "Hochtief AG"
+  },
+  {
+    "id": 544,
+    "name": "Holcim Ltd"
+  },
+  {
+    "id": 545,
+    "name": "Home Depot"
+  },
+  {
+    "id": 546,
+    "name": "Honeywell International"
+  },
+  {
+    "id": 547,
+    "name": "Hormel Foods Corp"
+  },
+  {
+    "id": 548,
+    "name": "Hornbach Holding AG & Co KGaA"
+  },
+  {
+    "id": 549,
+    "name": "Howmet Aerospace Inc"
+  },
+  {
+    "id": 550,
+    "name": "HubSpot Inc"
+  },
+  {
+    "id": 551,
+    "name": "Hugo Boss AG"
+  },
+  {
+    "id": 552,
+    "name": "Humana Inc"
+  },
+  {
+    "id": 553,
+    "name": "Hypoport SE"
+  },
+  {
+    "id": 554,
+    "name": "IBEX 35 (MADRID)"
+  },
+  {
+    "id": 555,
+    "name": "IBM"
+  },
+  {
+    "id": 556,
+    "name": "ICICI Bank Ltd ADR"
+  },
+  {
+    "id": 557,
+    "name": "IDEX CORPORATION COMMO"
+  },
+  {
+    "id": 558,
+    "name": "IDEXX Laboratories Inc"
+  },
+  {
+    "id": 559,
+    "name": "ING"
+  },
+  {
+    "id": 560,
+    "name": "INTEL"
+  },
+  {
+    "id": 561,
+    "name": "INTERACTIVE BROKERS GR"
+  },
+  {
+    "id": 562,
+    "name": "INTERCON. HOTEL"
+  },
+  {
+    "id": 563,
+    "name": "INTERNATIONA FLAVORS &"
+  },
+  {
+    "id": 564,
+    "name": "INVESCO LTD COMMON STO"
+  },
+  {
+    "id": 565,
+    "name": "IONOS Group SE"
+  },
+  {
+    "id": 566,
+    "name": "IONQ Inc"
+  },
+  {
+    "id": 567,
+    "name": "IRON MOUNTAIN INCORPOR"
+  },
+  {
+    "id": 568,
+    "name": "ISH WD SML CP U"
+  },
+  {
+    "id": 569,
+    "name": "ISS A/S"
+  },
+  {
+    "id": 570,
+    "name": "ITALIAN GOVERNMENT BOND FUTURE (EURO-BTP)"
+  },
+  {
+    "id": 571,
+    "name": "ITM Power PLC"
+  },
+  {
+    "id": 572,
+    "name": "Iberdrola SA"
+  },
+  {
+    "id": 573,
+    "name": "Illinois Tool Works Inc"
+  },
+  {
+    "id": 574,
+    "name": "Illumina Inc"
+  },
+  {
+    "id": 575,
+    "name": "Incyte Genomics"
+  },
+  {
+    "id": 576,
+    "name": "Inditex"
+  },
+  {
+    "id": 577,
+    "name": "Indra Sistemas"
+  },
+  {
+    "id": 578,
+    "name": "Infineon"
+  },
+  {
+    "id": 579,
+    "name": "Infosys Ltd ADR"
+  },
+  {
+    "id": 580,
+    "name": "Ingersoll-Rand Inc"
+  },
+  {
+    "id": 581,
+    "name": "Ingredion Inc"
+  },
+  {
+    "id": 582,
+    "name": "Intercontinental Exchange Inc"
+  },
+  {
+    "id": 583,
+    "name": "International Consolidated Airlines Group SA GBP"
+  },
+  {
+    "id": 584,
+    "name": "International Paper Co"
+  },
+  {
+    "id": 585,
+    "name": "Intesa SanPaolo S.p.A."
+  },
+  {
+    "id": 586,
+    "name": "Intuit Inc"
+  },
+  {
+    "id": 587,
+    "name": "Intuitive Surgical Inc"
+  },
+  {
+    "id": 588,
+    "name": "Investor AB"
+  },
+  {
+    "id": 589,
+    "name": "Iveco Group"
+  },
+  {
+    "id": 590,
+    "name": "JABIL CIRCUIT INC. CO"
+  },
+  {
+    "id": 591,
+    "name": "JB Hunt Transport Services Inc"
+  },
+  {
+    "id": 592,
+    "name": "JD.com"
+  },
+  {
+    "id": 593,
+    "name": "JDE Peet's"
+  },
+  {
+    "id": 594,
+    "name": "JM Smucker Co"
+  },
+  {
+    "id": 595,
+    "name": "JOHNSON CONTROLS INTER"
+  },
+  {
+    "id": 596,
+    "name": "JP Morgan Chase"
+  },
+  {
+    "id": 597,
+    "name": "Jenoptik AG"
+  },
+  {
+    "id": 598,
+    "name": "JetBlue Airways Corp"
+  },
+  {
+    "id": 599,
+    "name": "Jinkosolar Holding Co Ltd"
+  },
+  {
+    "id": 600,
+    "name": "Johnson & Johnson"
+  },
+  {
+    "id": 601,
+    "name": "Julius Baer Group Ltd"
+  },
+  {
+    "id": 602,
+    "name": "Jungheinrich AG"
+  },
+  {
+    "id": 603,
+    "name": "Juventus FC SpA"
+  },
+  {
+    "id": 604,
+    "name": "Jyske Bank A/S"
+  },
+  {
+    "id": 605,
+    "name": "K+S"
+  },
+  {
+    "id": 606,
+    "name": "KB HOME COMMON STOCK"
+  },
+  {
+    "id": 607,
+    "name": "KBC"
+  },
+  {
+    "id": 608,
+    "name": "KERING"
+  },
+  {
+    "id": 609,
+    "name": "KEURIG DR PEPPER INC"
+  },
+  {
+    "id": 610,
+    "name": "KEYSIGHT TECHNOLOGIES"
+  },
+  {
+    "id": 611,
+    "name": "KGHM POLSKA MIEDZ SA"
+  },
+  {
+    "id": 612,
+    "name": "KIMCO REALTY CORPORATI"
+  },
+  {
+    "id": 613,
+    "name": "KINSALE CAPITAL GROUP INC. - COMMON STOCK"
+  },
+  {
+    "id": 614,
+    "name": "KKR & CO. INC. CLASS A"
+  },
+  {
+    "id": 615,
+    "name": "KLA-TENCOR CORPORATION"
+  },
+  {
+    "id": 616,
+    "name": "KONGSBERG GRUPPEN"
+  },
+  {
+    "id": 617,
+    "name": "KONTRON AG"
+  },
+  {
+    "id": 618,
+    "name": "KPN KONINKLIJKE"
+  },
+  {
+    "id": 619,
+    "name": "KRATOS DEFENSE & SECUR"
+  },
+  {
+    "id": 620,
+    "name": "KRUK SA"
+  },
+  {
+    "id": 621,
+    "name": "KYNDRYL HOLDINGS INC"
+  },
+  {
+    "id": 622,
+    "name": "Kellogg Co"
+  },
+  {
+    "id": 623,
+    "name": "Kenvue Inc"
+  },
+  {
+    "id": 624,
+    "name": "Kimberly-Clark Corp"
+  },
+  {
+    "id": 625,
+    "name": "Kinder Morgan Inc"
+  },
+  {
+    "id": 626,
+    "name": "Kinross Gold Corp"
+  },
+  {
+    "id": 627,
+    "name": "Kion Group AG"
+  },
+  {
+    "id": 628,
+    "name": "Klaviyo Inc."
+  },
+  {
+    "id": 629,
+    "name": "Klepierre"
+  },
+  {
+    "id": 630,
+    "name": "Kloeckner & Co SE"
+  },
+  {
+    "id": 631,
+    "name": "Knorr Bremse AG"
+  },
+  {
+    "id": 632,
+    "name": "Kraft Heinz Company"
+  },
+  {
+    "id": 633,
+    "name": "Kroger Co"
+  },
+  {
+    "id": 634,
+    "name": "Krones AG"
+  },
+  {
+    "id": 635,
+    "name": "Kuaishou Technology"
+  },
+  {
+    "id": 636,
+    "name": "Kuehne & Nagel Intl"
+  },
+  {
+    "id": 637,
+    "name": "L'OREAL"
+  },
+  {
+    "id": 638,
+    "name": "L3harris Technologies Inc"
+  },
+  {
+    "id": 639,
+    "name": "LAMAR ADVERTISING COMP"
+  },
+  {
+    "id": 640,
+    "name": "LAMB WESTON HOLDINGS"
+  },
+  {
+    "id": 641,
+    "name": "LAS VEGAS SANDS CORP."
+  },
+  {
+    "id": 642,
+    "name": "LATTICE SEMICONDUCTOR"
+  },
+  {
+    "id": 643,
+    "name": "LEG Immobilien"
+  },
+  {
+    "id": 644,
+    "name": "LENNAR CORPORATION CLA"
+  },
+  {
+    "id": 645,
+    "name": "LINCOLN ELECTRIC HOLDI"
+  },
+  {
+    "id": 646,
+    "name": "LINDE PLC ORDINARY SHARE"
+  },
+  {
+    "id": 647,
+    "name": "LITTELFUSE INC. - COM"
+  },
+  {
+    "id": 648,
+    "name": "LIVE NATION ENTERTAINM"
+  },
+  {
+    "id": 649,
+    "name": "LKQ Corp"
+  },
+  {
+    "id": 650,
+    "name": "LOEWS CORPORATION COMM"
+  },
+  {
+    "id": 651,
+    "name": "LOGITECH"
+  },
+  {
+    "id": 652,
+    "name": "LON.STK.EXCH"
+  },
+  {
+    "id": 653,
+    "name": "LPKF Laser & Electronics AG"
+  },
+  {
+    "id": 654,
+    "name": "LPP SA"
+  },
+  {
+    "id": 655,
+    "name": "LUMENTUM HOLDINGS INC."
+  },
+  {
+    "id": 656,
+    "name": "LVMH"
+  },
+  {
+    "id": 657,
+    "name": "LYFT Inc"
+  },
+  {
+    "id": 658,
+    "name": "La Francaise des Jeux SA"
+  },
+  {
+    "id": 659,
+    "name": "Labcorp Holdings Inc"
+  },
+  {
+    "id": 660,
+    "name": "Lam Research"
+  },
+  {
+    "id": 661,
+    "name": "Lanxess"
+  },
+  {
+    "id": 662,
+    "name": "Leggett & Platt Inc"
+  },
+  {
+    "id": 663,
+    "name": "Legrand"
+  },
+  {
+    "id": 664,
+    "name": "Lenovo Group"
+  },
+  {
+    "id": 665,
+    "name": "Lenzing"
+  },
+  {
+    "id": 666,
+    "name": "Leonardo SpA"
+  },
+  {
+    "id": 667,
+    "name": "Levi Strauss & Co"
+  },
+  {
+    "id": 668,
+    "name": "Light & Wonder Inc"
+  },
+  {
+    "id": 669,
+    "name": "Linde"
+  },
+  {
+    "id": 670,
+    "name": "Lindt&Sprungli AG"
+  },
+  {
+    "id": 671,
+    "name": "Lithia Motors Inc"
+  },
+  {
+    "id": 672,
+    "name": "Lloyds Banking Group plc"
+  },
+  {
+    "id": 673,
+    "name": "Lonza"
+  },
+  {
+    "id": 674,
+    "name": "Lotus Bakeries"
+  },
+  {
+    "id": 675,
+    "name": "Lowes Cos Inc"
+  },
+  {
+    "id": 676,
+    "name": "Lucid Group Inc"
+  },
+  {
+    "id": 677,
+    "name": "Lufthansa"
+  },
+  {
+    "id": 678,
+    "name": "Lululemon Athletica Inc"
+  },
+  {
+    "id": 679,
+    "name": "Lundbeck"
+  },
+  {
+    "id": 680,
+    "name": "MACYS INC COMMON STOC"
+  },
+  {
+    "id": 681,
+    "name": "MAGNA INTERNATIONAL INC"
+  },
+  {
+    "id": 682,
+    "name": "MANHATTAN ASSOCIATES"
+  },
+  {
+    "id": 683,
+    "name": "MASCO CORPORATION COMM"
+  },
+  {
+    "id": 684,
+    "name": "MATSON INC. COMMON ST"
+  },
+  {
+    "id": 685,
+    "name": "MATTEL INC. - COMMON"
+  },
+  {
+    "id": 686,
+    "name": "MCCORMICK & COMPANY I"
+  },
+  {
+    "id": 687,
+    "name": "MCDONALD'S"
+  },
+  {
+    "id": 688,
+    "name": "MDAX TR Index"
+  },
+  {
+    "id": 689,
+    "name": "MEITUAN DIANPING-CLASS B"
+  },
+  {
+    "id": 690,
+    "name": "MERLIN Properties SOCIMI SA"
+  },
+  {
+    "id": 691,
+    "name": "METLIFE INC. COMMON S"
+  },
+  {
+    "id": 692,
+    "name": "MGM RESORTS INTERNATIO"
+  },
+  {
+    "id": 693,
+    "name": "MICHELIN"
+  },
+  {
+    "id": 694,
+    "name": "MICROSOFT"
+  },
+  {
+    "id": 695,
+    "name": "MID-AMERICA APARTMENT"
+  },
+  {
+    "id": 696,
+    "name": "MOBILEYE GLOBAL INC-A"
+  },
+  {
+    "id": 697,
+    "name": "MODINE MANUFACTURING C"
+  },
+  {
+    "id": 698,
+    "name": "MOL Magyar Olaj"
+  },
+  {
+    "id": 699,
+    "name": "MOLSON COORS BREWING C"
+  },
+  {
+    "id": 700,
+    "name": "MORNINGSTAR INC. - CO"
+  },
+  {
+    "id": 701,
+    "name": "MOSAIC"
+  },
+  {
+    "id": 702,
+    "name": "MOTOROLA"
+  },
+  {
+    "id": 703,
+    "name": "MP Materials Corp"
+  },
+  {
+    "id": 704,
+    "name": "MSCI Inc"
+  },
+  {
+    "id": 705,
+    "name": "MTU Aero Engines AG"
+  },
+  {
+    "id": 706,
+    "name": "Mapfre"
+  },
+  {
+    "id": 707,
+    "name": "Maplebear Inc"
+  },
+  {
+    "id": 708,
+    "name": "Marathon Digital Holdings Inc"
+  },
+  {
+    "id": 709,
+    "name": "Marathon Oil"
+  },
+  {
+    "id": 710,
+    "name": "MarketAxess Holdings"
+  },
+  {
+    "id": 711,
+    "name": "Marriott International Inc"
+  },
+  {
+    "id": 712,
+    "name": "Marsh & McLennan"
+  },
+  {
+    "id": 713,
+    "name": "Martin Marietta Materials Inc"
+  },
+  {
+    "id": 714,
+    "name": "Marvell Technology Inc"
+  },
+  {
+    "id": 715,
+    "name": "Mastercard"
+  },
+  {
+    "id": 716,
+    "name": "Match Group Inc"
+  },
+  {
+    "id": 717,
+    "name": "McKesson Corp"
+  },
+  {
+    "id": 718,
+    "name": "Mediobanca SpA"
+  },
+  {
+    "id": 719,
+    "name": "Medtronic Inc"
+  },
+  {
+    "id": 720,
+    "name": "Melia Hotels"
+  },
+  {
+    "id": 721,
+    "name": "Melrose Industries PLC"
+  },
+  {
+    "id": 722,
+    "name": "MercadoLibre"
+  },
+  {
+    "id": 723,
+    "name": "Mercedes-Benz"
+  },
+  {
+    "id": 724,
+    "name": "Merck"
+  },
+  {
+    "id": 725,
+    "name": "Mettler-Toledo"
+  },
+  {
+    "id": 726,
+    "name": "Microchip Technology Inc"
+  },
+  {
+    "id": 727,
+    "name": "Micron Technology"
+  },
+  {
+    "id": 728,
+    "name": "Microstrategy"
+  },
+  {
+    "id": 729,
+    "name": "Moderna"
+  },
+  {
+    "id": 730,
+    "name": "Moeller Maersk A/S"
+  },
+  {
+    "id": 731,
+    "name": "Molina Healthcare Inc"
+  },
+  {
+    "id": 732,
+    "name": "Moncler SpA"
+  },
+  {
+    "id": 733,
+    "name": "Mondelez International Inc"
+  },
+  {
+    "id": 734,
+    "name": "MongoDB"
+  },
+  {
+    "id": 735,
+    "name": "Monster Beverage Corp"
+  },
+  {
+    "id": 736,
+    "name": "Moody's Corp"
+  },
+  {
+    "id": 737,
+    "name": "Morgan Stanley"
+  },
+  {
+    "id": 738,
+    "name": "Mowi ASA"
+  },
+  {
+    "id": 739,
+    "name": "Muenchener Rueck"
+  },
+  {
+    "id": 740,
+    "name": "NASDAQ 100"
+  },
+  {
+    "id": 741,
+    "name": "NATERA INC. - COMMON"
+  },
+  {
+    "id": 742,
+    "name": "NATURAL GAS"
+  },
+  {
+    "id": 743,
+    "name": "NATURGY ENERGY GROUP SA"
+  },
+  {
+    "id": 744,
+    "name": "NATWEST GRP"
+  },
+  {
+    "id": 745,
+    "name": "NEL ASA"
+  },
+  {
+    "id": 746,
+    "name": "NESTLE"
+  },
+  {
+    "id": 747,
+    "name": "NETAPP INC. - COMMON"
+  },
+  {
+    "id": 748,
+    "name": "NETFLIX"
+  },
+  {
+    "id": 749,
+    "name": "NEW YORK TIMES COMPANY"
+  },
+  {
+    "id": 750,
+    "name": "NEWS CORPORATION - CLA"
+  },
+  {
+    "id": 751,
+    "name": "NEXI"
+  },
+  {
+    "id": 752,
+    "name": "NISOURCE INC COMMON ST"
+  },
+  {
+    "id": 753,
+    "name": "NKT Holding"
+  },
+  {
+    "id": 754,
+    "name": "NN Group"
+  },
+  {
+    "id": 755,
+    "name": "NOKIA"
+  },
+  {
+    "id": 756,
+    "name": "NORTHERN TRUST CORPORA"
+  },
+  {
+    "id": 757,
+    "name": "NU HOLDINGS LTD. CLASS A ORDINARY SHARES"
+  },
+  {
+    "id": 758,
+    "name": "NVIDIA"
+  },
+  {
+    "id": 759,
+    "name": "NXP"
+  },
+  {
+    "id": 760,
+    "name": "Nagarro SE"
+  },
+  {
+    "id": 761,
+    "name": "Nasdaq Inc"
+  },
+  {
+    "id": 762,
+    "name": "National Grid PLC"
+  },
+  {
+    "id": 763,
+    "name": "Natwest Group PLC"
+  },
+  {
+    "id": 764,
+    "name": "Nemetschek SE"
+  },
+  {
+    "id": 765,
+    "name": "Neste Corporation"
+  },
+  {
+    "id": 766,
+    "name": "Netease.com"
+  },
+  {
+    "id": 767,
+    "name": "Newmont Goldcorp Corp"
+  },
+  {
+    "id": 768,
+    "name": "NextEra Energy Inc"
+  },
+  {
+    "id": 769,
+    "name": "Nibe Industrier AB"
+  },
+  {
+    "id": 770,
+    "name": "Nike"
+  },
+  {
+    "id": 771,
+    "name": "Nintendo"
+  },
+  {
+    "id": 772,
+    "name": "Nio Inc"
+  },
+  {
+    "id": 773,
+    "name": "Nordex"
+  },
+  {
+    "id": 774,
+    "name": "Norfolk Southern Corp"
+  },
+  {
+    "id": 775,
+    "name": "Norma Group SE"
+  },
+  {
+    "id": 776,
+    "name": "Norsk Hydro"
+  },
+  {
+    "id": 777,
+    "name": "NortonLifeLock Inc"
+  },
+  {
+    "id": 778,
+    "name": "Norwegian Cruise Line Holdings Ltd"
+  },
+  {
+    "id": 779,
+    "name": "Novartis"
+  },
+  {
+    "id": 780,
+    "name": "Novavax Inc"
+  },
+  {
+    "id": 781,
+    "name": "Novo-Nordisk B"
+  },
+  {
+    "id": 782,
+    "name": "Novozymes B"
+  },
+  {
+    "id": 783,
+    "name": "Nucor Corp"
+  },
+  {
+    "id": 784,
+    "name": "Nutanix Inc"
+  },
+  {
+    "id": 785,
+    "name": "Nutrien Ltd"
+  },
+  {
+    "id": 786,
+    "name": "O'Reilly Automotive Inc"
+  },
+  {
+    "id": 787,
+    "name": "OC Oerlikon Corporation AG, Pfaffikon"
+  },
+  {
+    "id": 788,
+    "name": "OCI"
+  },
+  {
+    "id": 789,
+    "name": "OIL BRENT CRUDE FUTURE"
+  },
+  {
+    "id": 790,
+    "name": "OLD DOMINION FREIGHT L"
+  },
+  {
+    "id": 791,
+    "name": "OLD REPUBLIC INTERNATI"
+  },
+  {
+    "id": 792,
+    "name": "OLLIE'S BARGAIN OUTLET"
+  },
+  {
+    "id": 793,
+    "name": "OMV AG"
+  },
+  {
+    "id": 794,
+    "name": "ON Semiconductor Corp"
+  },
+  {
+    "id": 795,
+    "name": "ONEX CORPORATION"
+  },
+  {
+    "id": 796,
+    "name": "ORACLE"
+  },
+  {
+    "id": 797,
+    "name": "ORANGE"
+  },
+  {
+    "id": 798,
+    "name": "ORANGE POLSKA SA"
+  },
+  {
+    "id": 799,
+    "name": "ORKLA"
+  },
+  {
+    "id": 800,
+    "name": "ORMAT TECHNOLOGIES IN"
+  },
+  {
+    "id": 801,
+    "name": "OTIS WORLDWIDE CORPORATION COMMON STOCK WHEN ISSUE"
+  },
+  {
+    "id": 802,
+    "name": "OTP Bank"
+  },
+  {
+    "id": 803,
+    "name": "OWENS CORNING INC COMM"
+  },
+  {
+    "id": 804,
+    "name": "Oatly Group AB"
+  },
+  {
+    "id": 805,
+    "name": "Occidental Petroleum Corp"
+  },
+  {
+    "id": 806,
+    "name": "Oesterreichische Post AG"
+  },
+  {
+    "id": 807,
+    "name": "Okta Inc"
+  },
+  {
+    "id": 808,
+    "name": "On Holding AG"
+  },
+  {
+    "id": 809,
+    "name": "Orlen SA"
+  },
+  {
+    "id": 810,
+    "name": "Orsted A/S"
+  },
+  {
+    "id": 811,
+    "name": "PACCAR INC. - COMMON S"
+  },
+  {
+    "id": 812,
+    "name": "PALLADIUM"
+  },
+  {
+    "id": 813,
+    "name": "PARKER-HANNIFIN CORPOR"
+  },
+  {
+    "id": 814,
+    "name": "PARTNERS GROUP HOLDING AG"
+  },
+  {
+    "id": 815,
+    "name": "PAYPAL"
+  },
+  {
+    "id": 816,
+    "name": "PBF ENERGY INC. CLASS"
+  },
+  {
+    "id": 817,
+    "name": "PENTAIR PLC. ORDINARY"
+  },
+  {
+    "id": 818,
+    "name": "PERNOD RICARD"
+  },
+  {
+    "id": 819,
+    "name": "PETROBRAS"
+  },
+  {
+    "id": 820,
+    "name": "PFIZER"
+  },
+  {
+    "id": 821,
+    "name": "PHILIP MORRIS"
+  },
+  {
+    "id": 822,
+    "name": "PHILIPS"
+  },
+  {
+    "id": 823,
+    "name": "PKO BANK POLSKI SA"
+  },
+  {
+    "id": 824,
+    "name": "PLATINUM"
+  },
+  {
+    "id": 825,
+    "name": "PNE AG"
+  },
+  {
+    "id": 826,
+    "name": "POLESTAR AUTOMOTIVE HOLDING"
+  },
+  {
+    "id": 827,
+    "name": "PORSCHE"
+  },
+  {
+    "id": 828,
+    "name": "PRICELINE.COM"
+  },
+  {
+    "id": 829,
+    "name": "PROGRESSIVE CORPORATIO"
+  },
+  {
+    "id": 830,
+    "name": "PROLOGIS INC. COMMON"
+  },
+  {
+    "id": 831,
+    "name": "PRUDENTIAL FINANCIAL"
+  },
+  {
+    "id": 832,
+    "name": "PTC Inc"
+  },
+  {
+    "id": 833,
+    "name": "PUMA SE"
+  },
+  {
+    "id": 834,
+    "name": "PURE STORAGE INC. CLA"
+  },
+  {
+    "id": 835,
+    "name": "PVA TePla AG"
+  },
+  {
+    "id": 836,
+    "name": "PZU SA"
+  },
+  {
+    "id": 837,
+    "name": "Palantir Technologies"
+  },
+  {
+    "id": 838,
+    "name": "Palo Alto Networks"
+  },
+  {
+    "id": 839,
+    "name": "Pan American Silver Corp"
+  },
+  {
+    "id": 840,
+    "name": "Pandora Aktieselskabet"
+  },
+  {
+    "id": 841,
+    "name": "Paychex Inc"
+  },
+  {
+    "id": 842,
+    "name": "Paycom Software Inc"
+  },
+  {
+    "id": 843,
+    "name": "Peloton Interactive"
+  },
+  {
+    "id": 844,
+    "name": "PepsiCo"
+  },
+  {
+    "id": 845,
+    "name": "Pharming"
+  },
+  {
+    "id": 846,
+    "name": "Phillips 66"
+  },
+  {
+    "id": 847,
+    "name": "Pinduoduo Inc"
+  },
+  {
+    "id": 848,
+    "name": "Ping An Insurance Group"
+  },
+  {
+    "id": 849,
+    "name": "Pinterest"
+  },
+  {
+    "id": 850,
+    "name": "Pirelli & C.SPA"
+  },
+  {
+    "id": 851,
+    "name": "Plug Power"
+  },
+  {
+    "id": 852,
+    "name": "Porsche AG"
+  },
+  {
+    "id": 853,
+    "name": "PowerCell Sweden AB"
+  },
+  {
+    "id": 854,
+    "name": "ProSiebenSat.1"
+  },
+  {
+    "id": 855,
+    "name": "Procter & Gamble"
+  },
+  {
+    "id": 856,
+    "name": "Prosus"
+  },
+  {
+    "id": 857,
+    "name": "Proto Labs Inc"
+  },
+  {
+    "id": 858,
+    "name": "Prudential PLC"
+  },
+  {
+    "id": 859,
+    "name": "Prysmian"
+  },
+  {
+    "id": 860,
+    "name": "Publicis"
+  },
+  {
+    "id": 861,
+    "name": "Pultegroup Inc"
+  },
+  {
+    "id": 862,
+    "name": "QUALCOMM"
+  },
+  {
+    "id": 863,
+    "name": "QUEST DIAGNOSTICS INCO"
+  },
+  {
+    "id": 864,
+    "name": "Qiagen"
+  },
+  {
+    "id": 865,
+    "name": "Qorvo Inc"
+  },
+  {
+    "id": 866,
+    "name": "Quanta Services Inc"
+  },
+  {
+    "id": 867,
+    "name": "QuantumScape Corp"
+  },
+  {
+    "id": 868,
+    "name": "RAMBUS INC. - COMMON"
+  },
+  {
+    "id": 869,
+    "name": "RANDSTAD"
+  },
+  {
+    "id": 870,
+    "name": "RAPID7 INC. - COMMON"
+  },
+  {
+    "id": 871,
+    "name": "REALTY INCOME CORPORAT"
+  },
+  {
+    "id": 872,
+    "name": "REDDIT INC-CL A"
+  },
+  {
+    "id": 873,
+    "name": "REED ELSEVIER"
+  },
+  {
+    "id": 874,
+    "name": "RENAULT"
+  },
+  {
+    "id": 875,
+    "name": "REPSOL"
+  },
+  {
+    "id": 876,
+    "name": "RESIDEO TECHNOLOGIES"
+  },
+  {
+    "id": 877,
+    "name": "RESMED INC. COMMON STO"
+  },
+  {
+    "id": 878,
+    "name": "RIO TINTO"
+  },
+  {
+    "id": 879,
+    "name": "ROCHE"
+  },
+  {
+    "id": 880,
+    "name": "ROLLINS INC. COMMON S"
+  },
+  {
+    "id": 881,
+    "name": "ROYAL CARIBBEAN CRUISE"
+  },
+  {
+    "id": 882,
+    "name": "ROYAL DUTCH SHELL"
+  },
+  {
+    "id": 883,
+    "name": "ROYAL UNIBREW"
+  },
+  {
+    "id": 884,
+    "name": "RTL Group SA"
+  },
+  {
+    "id": 885,
+    "name": "RWE"
+  },
+  {
+    "id": 886,
+    "name": "RYANAIR"
+  },
+  {
+    "id": 887,
+    "name": "Raiffeisen Bank International AG"
+  },
+  {
+    "id": 888,
+    "name": "Ralph Lauren"
+  },
+  {
+    "id": 889,
+    "name": "Rational AG"
+  },
+  {
+    "id": 890,
+    "name": "Raytheon Technologies Corp"
+  },
+  {
+    "id": 891,
+    "name": "Reckitt Benckiser Group Plc"
+  },
+  {
+    "id": 892,
+    "name": "Regeneron Pharm"
+  },
+  {
+    "id": 893,
+    "name": "Remy Cointreau"
+  },
+  {
+    "id": 894,
+    "name": "Renk Group AG"
+  },
+  {
+    "id": 895,
+    "name": "Republic Services Inc"
+  },
+  {
+    "id": 896,
+    "name": "Rheinmetall Ag"
+  },
+  {
+    "id": 897,
+    "name": "Richemont"
+  },
+  {
+    "id": 898,
+    "name": "Richter Gedeon NYRT"
+  },
+  {
+    "id": 899,
+    "name": "Riot Blockchain Inc"
+  },
+  {
+    "id": 900,
+    "name": "Rivian"
+  },
+  {
+    "id": 901,
+    "name": "Robinhood Markets Inc"
+  },
+  {
+    "id": 902,
+    "name": "Roblox Corporation"
+  },
+  {
+    "id": 903,
+    "name": "Rockwell Automation Inc"
+  },
+  {
+    "id": 904,
+    "name": "Roku Inc"
+  },
+  {
+    "id": 905,
+    "name": "Rolls-Royce Holdings PLC"
+  },
+  {
+    "id": 906,
+    "name": "Ross Stores Inc"
+  },
+  {
+    "id": 907,
+    "name": "S&P 500"
+  },
+  {
+    "id": 908,
+    "name": "S&P GLOBAL INC"
+  },
+  {
+    "id": 909,
+    "name": "SAIA INC. - COMMON ST"
+  },
+  {
+    "id": 910,
+    "name": "SAINT-GOBAIN"
+  },
+  {
+    "id": 911,
+    "name": "SAMSUNG"
+  },
+  {
+    "id": 912,
+    "name": "SANDSTORM GOLD LTD"
+  },
+  {
+    "id": 913,
+    "name": "SANOFI"
+  },
+  {
+    "id": 914,
+    "name": "SAP"
+  },
+  {
+    "id": 915,
+    "name": "SCHLUMBERGER"
+  },
+  {
+    "id": 916,
+    "name": "SCHNEIDER ELECTRIC"
+  },
+  {
+    "id": 917,
+    "name": "SCHOELLER-BLECKMANN AG"
+  },
+  {
+    "id": 918,
+    "name": "SCHOTT Pharma AG & Co. KGaA"
+  },
+  {
+    "id": 919,
+    "name": "SECURITAS B"
+  },
+  {
+    "id": 920,
+    "name": "SEMPRA ENERGY COMMON S"
+  },
+  {
+    "id": 921,
+    "name": "SENTINELONE INC. CLASS A COMMON STOCK"
+  },
+  {
+    "id": 922,
+    "name": "SGL Carbon SE"
+  },
+  {
+    "id": 923,
+    "name": "SHERWIN-WILLIAMS COMPA"
+  },
+  {
+    "id": 924,
+    "name": "SIEMENS"
+  },
+  {
+    "id": 925,
+    "name": "SIG COMBIBLOC GROUP AG"
+  },
+  {
+    "id": 926,
+    "name": "SIKA AG"
+  },
+  {
+    "id": 927,
+    "name": "SILVER"
+  },
+  {
+    "id": 928,
+    "name": "SIMON PROPERTY GROUP"
+  },
+  {
+    "id": 929,
+    "name": "SKYWEST INC. - COMMON"
+  },
+  {
+    "id": 930,
+    "name": "SMA Solar Technology AG"
+  },
+  {
+    "id": 931,
+    "name": "SMI"
+  },
+  {
+    "id": 932,
+    "name": "SOCIETE GENERALE"
+  },
+  {
+    "id": 933,
+    "name": "SOFI TECHNOLOGIES INC"
+  },
+  {
+    "id": 934,
+    "name": "SONOVA N"
+  },
+  {
+    "id": 935,
+    "name": "SONY"
+  },
+  {
+    "id": 936,
+    "name": "SPROUTS FARMERS MARKET"
+  },
+  {
+    "id": 937,
+    "name": "STADLER RAIL AG"
+  },
+  {
+    "id": 938,
+    "name": "STAR BULK CARRIERS CORP"
+  },
+  {
+    "id": 939,
+    "name": "STARBUCKS"
+  },
+  {
+    "id": 940,
+    "name": "STATE STREET CORPORATI"
+  },
+  {
+    "id": 941,
+    "name": "STEEL DYNAMICS INC. -"
+  },
+  {
+    "id": 942,
+    "name": "STERIS PLC"
+  },
+  {
+    "id": 943,
+    "name": "STMicroelectronics"
+  },
+  {
+    "id": 944,
+    "name": "STONECO LTD-A"
+  },
+  {
+    "id": 945,
+    "name": "STOXX Europe 600 Financial Services Price"
+  },
+  {
+    "id": 946,
+    "name": "STOXX Europe 600 Telecommunications Price"
+  },
+  {
+    "id": 947,
+    "name": "STOXX Health"
+  },
+  {
+    "id": 948,
+    "name": "STRABAG SE"
+  },
+  {
+    "id": 949,
+    "name": "SUBSEA 7"
+  },
+  {
+    "id": 950,
+    "name": "SUESS MicroTec SE"
+  },
+  {
+    "id": 951,
+    "name": "SUNCOR ENERGY INC"
+  },
+  {
+    "id": 952,
+    "name": "SWISSCOM"
+  },
+  {
+    "id": 953,
+    "name": "SYSCO CORPORATION COMM"
+  },
+  {
+    "id": 954,
+    "name": "Safran"
+  },
+  {
+    "id": 955,
+    "name": "Salesforce"
+  },
+  {
+    "id": 956,
+    "name": "Salvatore Ferragamo SpA"
+  },
+  {
+    "id": 957,
+    "name": "Salzgitter AG"
+  },
+  {
+    "id": 958,
+    "name": "Sandoz Group AG"
+  },
+  {
+    "id": 959,
+    "name": "Sartorius AG"
+  },
+  {
+    "id": 960,
+    "name": "Sartorius Stedim Biotech"
+  },
+  {
+    "id": 961,
+    "name": "Schaeffler AG"
+  },
+  {
+    "id": 962,
+    "name": "Schindler Holding AG"
+  },
+  {
+    "id": 963,
+    "name": "Scout24 SE"
+  },
+  {
+    "id": 964,
+    "name": "Sea Ltd"
+  },
+  {
+    "id": 965,
+    "name": "Seagate Technology Holdings PLC"
+  },
+  {
+    "id": 966,
+    "name": "ServiceNow Inc"
+  },
+  {
+    "id": 967,
+    "name": "Shake Shack Inc"
+  },
+  {
+    "id": 968,
+    "name": "Shop Apotheke Europe NV"
+  },
+  {
+    "id": 969,
+    "name": "Shopify"
+  },
+  {
+    "id": 970,
+    "name": "Siemens Energy AG"
+  },
+  {
+    "id": 971,
+    "name": "Siemens Healthineers AG"
+  },
+  {
+    "id": 972,
+    "name": "Signify"
+  },
+  {
+    "id": 973,
+    "name": "Siltronic AG"
+  },
+  {
+    "id": 974,
+    "name": "Sinopharm Group"
+  },
+  {
+    "id": 975,
+    "name": "Sixt SE"
+  },
+  {
+    "id": 976,
+    "name": "Skyworks Solutions Inc"
+  },
+  {
+    "id": 977,
+    "name": "Smith & Wesson Brands Inc"
+  },
+  {
+    "id": 978,
+    "name": "Snam Rete Gas Spa"
+  },
+  {
+    "id": 979,
+    "name": "Snap"
+  },
+  {
+    "id": 980,
+    "name": "Snowflake"
+  },
+  {
+    "id": 981,
+    "name": "Sodexo"
+  },
+  {
+    "id": 982,
+    "name": "Softbank Corp"
+  },
+  {
+    "id": 983,
+    "name": "Softbank Group Corp"
+  },
+  {
+    "id": 984,
+    "name": "SolarEdge Technologies"
+  },
+  {
+    "id": 985,
+    "name": "Solaria Energia y Medio Ambiente SA"
+  },
+  {
+    "id": 986,
+    "name": "Solventum Corp"
+  },
+  {
+    "id": 987,
+    "name": "Sonos Inc"
+  },
+  {
+    "id": 988,
+    "name": "Soundhound AI Inc"
+  },
+  {
+    "id": 989,
+    "name": "Southwest Airlines Co"
+  },
+  {
+    "id": 990,
+    "name": "Spotify"
+  },
+  {
+    "id": 991,
+    "name": "Stabilus SE"
+  },
+  {
+    "id": 992,
+    "name": "Standard Chartered PLC"
+  },
+  {
+    "id": 993,
+    "name": "Stanley Black & Decker"
+  },
+  {
+    "id": 994,
+    "name": "Stellantis"
+  },
+  {
+    "id": 995,
+    "name": "Stratasys Ltd"
+  },
+  {
+    "id": 996,
+    "name": "Stroeer SE & Co KGaA"
+  },
+  {
+    "id": 997,
+    "name": "Stryker Corporation"
+  },
+  {
+    "id": 998,
+    "name": "Suedzucker AG"
+  },
+  {
+    "id": 999,
+    "name": "Sunrun Inc"
+  },
+  {
+    "id": 1000,
+    "name": "Super Micro Computer"
+  },
+  {
+    "id": 1001,
+    "name": "Swatch Group B"
+  },
+  {
+    "id": 1002,
+    "name": "Swiss Life"
+  },
+  {
+    "id": 1003,
+    "name": "Swiss Prime Site AG"
+  },
+  {
+    "id": 1004,
+    "name": "Swiss Re AG"
+  },
+  {
+    "id": 1005,
+    "name": "Swissquote Group Holding Ltd."
+  },
+  {
+    "id": 1006,
+    "name": "Sydbank"
+  },
+  {
+    "id": 1007,
+    "name": "Symrise"
+  },
+  {
+    "id": 1008,
+    "name": "Synopsys Inc"
+  },
+  {
+    "id": 1009,
+    "name": "T Rowe Price Group Inc"
+  },
+  {
+    "id": 1010,
+    "name": "T-Mobile US Inc"
+  },
+  {
+    "id": 1011,
+    "name": "TAG Immobilien AG"
+  },
+  {
+    "id": 1012,
+    "name": "TEGNA INC"
+  },
+  {
+    "id": 1013,
+    "name": "TELEFONICA"
+  },
+  {
+    "id": 1014,
+    "name": "TENARIS"
+  },
+  {
+    "id": 1015,
+    "name": "TESLA MOTORS"
+  },
+  {
+    "id": 1016,
+    "name": "TGS-NOPEC GEOPHYSICAL"
+  },
+  {
+    "id": 1017,
+    "name": "THE CHEESECAKE FACTORY"
+  },
+  {
+    "id": 1018,
+    "name": "THOR INDUSTRIES INC."
+  },
+  {
+    "id": 1019,
+    "name": "THULE GROUP"
+  },
+  {
+    "id": 1020,
+    "name": "TJX Companies Inc"
+  },
+  {
+    "id": 1021,
+    "name": "TOLL BROTHERS INC. COM"
+  },
+  {
+    "id": 1022,
+    "name": "TOMTOM"
+  },
+  {
+    "id": 1023,
+    "name": "TOTAL"
+  },
+  {
+    "id": 1024,
+    "name": "TPG INC"
+  },
+  {
+    "id": 1025,
+    "name": "TRANE TECHNOLOGIES PLC"
+  },
+  {
+    "id": 1026,
+    "name": "TRYG A/S"
+  },
+  {
+    "id": 1027,
+    "name": "TUI"
+  },
+  {
+    "id": 1028,
+    "name": "TUI AG"
+  },
+  {
+    "id": 1029,
+    "name": "TYLER TECHNOLOGIES IN"
+  },
+  {
+    "id": 1030,
+    "name": "Taiwan Semiconductor Manufacturing"
+  },
+  {
+    "id": 1031,
+    "name": "Take-Two Interactive Software"
+  },
+  {
+    "id": 1032,
+    "name": "Takeaway.com"
+  },
+  {
+    "id": 1033,
+    "name": "Talanx AG"
+  },
+  {
+    "id": 1034,
+    "name": "Target Corp"
+  },
+  {
+    "id": 1035,
+    "name": "TeamViewer AG"
+  },
+  {
+    "id": 1036,
+    "name": "TecDAX"
+  },
+  {
+    "id": 1037,
+    "name": "Tecan Group AG"
+  },
+  {
+    "id": 1038,
+    "name": "Teck Resources Ltd"
+  },
+  {
+    "id": 1039,
+    "name": "Teladoc Health Inc"
+  },
+  {
+    "id": 1040,
+    "name": "Telecom Italia"
+  },
+  {
+    "id": 1041,
+    "name": "Teledyne Technologies Inc"
+  },
+  {
+    "id": 1042,
+    "name": "Teleflex Inc"
+  },
+  {
+    "id": 1043,
+    "name": "Telenor"
+  },
+  {
+    "id": 1044,
+    "name": "Telia Company AB"
+  },
+  {
+    "id": 1045,
+    "name": "Tempus AI Inc"
+  },
+  {
+    "id": 1046,
+    "name": "Tencent Holdings Ltd"
+  },
+  {
+    "id": 1047,
+    "name": "Teradyne Inc"
+  },
+  {
+    "id": 1048,
+    "name": "Tesco PLC"
+  },
+  {
+    "id": 1049,
+    "name": "Teva ADR"
+  },
+  {
+    "id": 1050,
+    "name": "Texas Instruments Inc"
+  },
+  {
+    "id": 1051,
+    "name": "Texas Roadhouse"
+  },
+  {
+    "id": 1052,
+    "name": "Thales"
+  },
+  {
+    "id": 1053,
+    "name": "The Travelers Companies, Inc."
+  },
+  {
+    "id": 1054,
+    "name": "Thermo Fisher Scientific Inc"
+  },
+  {
+    "id": 1055,
+    "name": "ThyssenKrupp"
+  },
+  {
+    "id": 1056,
+    "name": "Tilray Inc"
+  },
+  {
+    "id": 1057,
+    "name": "Toast Inc"
+  },
+  {
+    "id": 1058,
+    "name": "TopBuild Corp"
+  },
+  {
+    "id": 1059,
+    "name": "Topgolf Callaway Brands Corp"
+  },
+  {
+    "id": 1060,
+    "name": "Toyota Motor ADR"
+  },
+  {
+    "id": 1061,
+    "name": "Toyota Motor Corp"
+  },
+  {
+    "id": 1062,
+    "name": "Trade Desk Inc"
+  },
+  {
+    "id": 1063,
+    "name": "TransDigm Group Inc"
+  },
+  {
+    "id": 1064,
+    "name": "Traton SE"
+  },
+  {
+    "id": 1065,
+    "name": "Trimble Inc"
+  },
+  {
+    "id": 1066,
+    "name": "TripAdvisor Inc"
+  },
+  {
+    "id": 1067,
+    "name": "Trump Media & Technology Group Corp."
+  },
+  {
+    "id": 1068,
+    "name": "Twilio Inc"
+  },
+  {
+    "id": 1069,
+    "name": "Tyson Foods Inc"
+  },
+  {
+    "id": 1070,
+    "name": "UBS"
+  },
+  {
+    "id": 1071,
+    "name": "UCB"
+  },
+  {
+    "id": 1072,
+    "name": "UIPATH INC. CLASS A COMMON STOCK"
+  },
+  {
+    "id": 1073,
+    "name": "UMICORE"
+  },
+  {
+    "id": 1074,
+    "name": "UNIBAIL-RODAMCO"
+  },
+  {
+    "id": 1075,
+    "name": "UNICAJA BANCO SA"
+  },
+  {
+    "id": 1076,
+    "name": "UNILEVER CERTIFICATE"
+  },
+  {
+    "id": 1077,
+    "name": "UNIPOL ."
+  },
+  {
+    "id": 1078,
+    "name": "UNITED THERAPEUTICS CO"
+  },
+  {
+    "id": 1079,
+    "name": "UPS Inc"
+  },
+  {
+    "id": 1080,
+    "name": "US Bancorp Corp"
+  },
+  {
+    "id": 1081,
+    "name": "US FOODS HOLDING CORP."
+  },
+  {
+    "id": 1082,
+    "name": "US T-Bond"
+  },
+  {
+    "id": 1083,
+    "name": "US Treasury Bond 10Y"
+  },
+  {
+    "id": 1084,
+    "name": "USD/CAD"
+  },
+  {
+    "id": 1085,
+    "name": "USD/CHF"
+  },
+  {
+    "id": 1086,
+    "name": "USD/JPY"
+  },
+  {
+    "id": 1087,
+    "name": "USD/NOK"
+  },
+  {
+    "id": 1088,
+    "name": "Uber Technologies"
+  },
+  {
+    "id": 1089,
+    "name": "Ubisoft"
+  },
+  {
+    "id": 1090,
+    "name": "Ulta Beauty Inc"
+  },
+  {
+    "id": 1091,
+    "name": "Under Armour Inc"
+  },
+  {
+    "id": 1092,
+    "name": "UniCredit"
+  },
+  {
+    "id": 1093,
+    "name": "Union Pacific Corporation"
+  },
+  {
+    "id": 1094,
+    "name": "United Airlines Holdings Inc"
+  },
+  {
+    "id": 1095,
+    "name": "United Internet"
+  },
+  {
+    "id": 1096,
+    "name": "United Rentals Inc"
+  },
+  {
+    "id": 1097,
+    "name": "Unitedhealth Group Inc"
+  },
+  {
+    "id": 1098,
+    "name": "Unity Software Inc"
+  },
+  {
+    "id": 1099,
+    "name": "Universal Music Group"
+  },
+  {
+    "id": 1100,
+    "name": "VALLOUREC"
+  },
+  {
+    "id": 1101,
+    "name": "VAT Group AG"
+  },
+  {
+    "id": 1102,
+    "name": "VENTURE GLOBAL  INC. CLASS A COMMON STOCK"
+  },
+  {
+    "id": 1103,
+    "name": "VEOLIA ENVIRONNEMENT"
+  },
+  {
+    "id": 1104,
+    "name": "VERISK ANALYTICS INC."
+  },
+  {
+    "id": 1105,
+    "name": "VERTIV HOLDINGS LLC CLASS A COMMON STOCK"
+  },
+  {
+    "id": 1106,
+    "name": "VESTAS WIND SYSTEMS"
+  },
+  {
+    "id": 1107,
+    "name": "VF Corp"
+  },
+  {
+    "id": 1108,
+    "name": "VICTORIAS SECRET & CO"
+  },
+  {
+    "id": 1109,
+    "name": "VINCI"
+  },
+  {
+    "id": 1110,
+    "name": "VISTRA ENERGY CORP. CO"
+  },
+  {
+    "id": 1111,
+    "name": "VIVENDI"
+  },
+  {
+    "id": 1112,
+    "name": "VIX"
+  },
+  {
+    "id": 1113,
+    "name": "VODAFONE"
+  },
+  {
+    "id": 1114,
+    "name": "VOLKSWAGEN"
+  },
+  {
+    "id": 1115,
+    "name": "VOPAK"
+  },
+  {
+    "id": 1116,
+    "name": "Vale S.A. ADR"
+  },
+  {
+    "id": 1117,
+    "name": "Valeo"
+  },
+  {
+    "id": 1118,
+    "name": "Valero Energy Corp"
+  },
+  {
+    "id": 1119,
+    "name": "Valneva SE"
+  },
+  {
+    "id": 1120,
+    "name": "Various Underlyings"
+  },
+  {
+    "id": 1121,
+    "name": "Veeva Systems Inc"
+  },
+  {
+    "id": 1122,
+    "name": "Verbio Vereinigte Bioenergie AG"
+  },
+  {
+    "id": 1123,
+    "name": "Verbund AG"
+  },
+  {
+    "id": 1124,
+    "name": "VeriSign Inc"
+  },
+  {
+    "id": 1125,
+    "name": "Verizon Communications"
+  },
+  {
+    "id": 1126,
+    "name": "Vertex"
+  },
+  {
+    "id": 1127,
+    "name": "Viatris Inc"
+  },
+  {
+    "id": 1128,
+    "name": "Vienna Insurance Group"
+  },
+  {
+    "id": 1129,
+    "name": "Visa"
+  },
+  {
+    "id": 1130,
+    "name": "Volvo AB"
+  },
+  {
+    "id": 1131,
+    "name": "Volvo B"
+  },
+  {
+    "id": 1132,
+    "name": "Vonovia"
+  },
+  {
+    "id": 1133,
+    "name": "Vontobel Holding AG"
+  },
+  {
+    "id": 1134,
+    "name": "Vstoxx Future"
+  },
+  {
+    "id": 1135,
+    "name": "VusionGroup"
+  },
+  {
+    "id": 1136,
+    "name": "W. R. Berkley Corp"
+  },
+  {
+    "id": 1137,
+    "name": "WALT DISNEY"
+  },
+  {
+    "id": 1138,
+    "name": "WATERS CORPORATION COM"
+  },
+  {
+    "id": 1139,
+    "name": "WENDY'S COMPANY (THE)"
+  },
+  {
+    "id": 1140,
+    "name": "WEST FRASER TIMBER CO LTD"
+  },
+  {
+    "id": 1141,
+    "name": "WEYERHAEUSER COMPANY C"
+  },
+  {
+    "id": 1142,
+    "name": "WHIRLPOOL CORPORATION"
+  },
+  {
+    "id": 1143,
+    "name": "WILLIAM DEMANT HOLDING"
+  },
+  {
+    "id": 1144,
+    "name": "WILLIAMS-SONOMA INC."
+  },
+  {
+    "id": 1145,
+    "name": "WILLIS TOWERS WATSON P"
+  },
+  {
+    "id": 1146,
+    "name": "WINGSTOP INC. - COMMON"
+  },
+  {
+    "id": 1147,
+    "name": "WIX.COM LTD. - ORDINAR"
+  },
+  {
+    "id": 1148,
+    "name": "WOLTERS KLUWER"
+  },
+  {
+    "id": 1149,
+    "name": "WTI OIL"
+  },
+  {
+    "id": 1150,
+    "name": "Wacker Chemie AG"
+  },
+  {
+    "id": 1151,
+    "name": "Wacker Neuson"
+  },
+  {
+    "id": 1152,
+    "name": "Walmart Inc"
+  },
+  {
+    "id": 1153,
+    "name": "Waste Management Inc"
+  },
+  {
+    "id": 1154,
+    "name": "Wayfair Inc"
+  },
+  {
+    "id": 1155,
+    "name": "Weibo Corp"
+  },
+  {
+    "id": 1156,
+    "name": "Wells Fargo & Co"
+  },
+  {
+    "id": 1157,
+    "name": "Western Digital Corp"
+  },
+  {
+    "id": 1158,
+    "name": "Wheaton Precious Metals Corp"
+  },
+  {
+    "id": 1159,
+    "name": "Wienerberger"
+  },
+  {
+    "id": 1160,
+    "name": "Wizz Air"
+  },
+  {
+    "id": 1161,
+    "name": "Workday Inc"
+  },
+  {
+    "id": 1162,
+    "name": "Wynn Resorts"
+  },
+  {
+    "id": 1163,
+    "name": "XCEL ENERGY INC"
+  },
+  {
+    "id": 1164,
+    "name": "XEROX HOLDINGS CO"
+  },
+  {
+    "id": 1165,
+    "name": "XPO LOGISTICS INC."
+  },
+  {
+    "id": 1166,
+    "name": "XYLEM INC. COMMON STOC"
+  },
+  {
+    "id": 1167,
+    "name": "Xiaomi Corp"
+  },
+  {
+    "id": 1168,
+    "name": "YUM CHINA HOLDINGS IN"
+  },
+  {
+    "id": 1169,
+    "name": "YUM! BRANDS"
+  },
+  {
+    "id": 1170,
+    "name": "Yara International ASA"
+  },
+  {
+    "id": 1171,
+    "name": "Yeti Holdings Inc"
+  },
+  {
+    "id": 1172,
+    "name": "ZIM INTEGRATED SHIPPING SERVICES LTD. ORDINARY SHA"
+  },
+  {
+    "id": 1173,
+    "name": "ZIMMER BIOMET HOLDINGS"
+  },
+  {
+    "id": 1174,
+    "name": "Zalando"
+  },
+  {
+    "id": 1175,
+    "name": "Zebra Technologies Corp"
+  },
+  {
+    "id": 1176,
+    "name": "Zillow Group Inc C"
+  },
+  {
+    "id": 1177,
+    "name": "Zoetis Inc"
+  },
+  {
+    "id": 1178,
+    "name": "Zoom Video Communications"
+  },
+  {
+    "id": 1179,
+    "name": "Zscaler Inc"
+  },
+  {
+    "id": 1180,
+    "name": "Zur Rose Group AG"
+  },
+  {
+    "id": 1181,
+    "name": "Zurich Insurance Group AG"
+  },
+  {
+    "id": 1182,
+    "name": "ams AG"
+  },
+  {
+    "id": 1183,
+    "name": "flatexDEGIRO AG"
+  },
+  {
+    "id": 1184,
+    "name": "iQIYI Inc ADR"
+  },
+  {
+    "id": 1185,
+    "name": "iShares Core MSCI World UCITS ETF USD (Acc)"
+  },
+  {
+    "id": 1186,
+    "name": "iShares MSCI India UCITS ETF USD Acc (EUR)"
+  },
+  {
+    "id": 1187,
+    "name": "thyssenkrupp nucera AG & Co. KGaA"
+  },
+  {
+    "id": 1188,
+    "name": "voestalpine AG"
+  }
+]
