@@ -26,8 +26,8 @@ app = FastAPI(
     title="DEGIRO Trading API",
     description="Production API for DEGIRO trading: search products, place orders, manage positions",
     version="2.0.0",
-    docs_url="/docs",
-    redoc_url="/redoc"
+    docs_url=None,  # Disable public docs
+    redoc_url=None  # Disable public redoc
 )
 
 # CORS middleware

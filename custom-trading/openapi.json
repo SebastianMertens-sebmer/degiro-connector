@@ -1,0 +1,552 @@
+{
+  "openapi": "3.0.2",
+  "info": {
+    "title": "DEGIRO Trading API",
+    "description": "Production API for DEGIRO trading: search products, place orders, manage positions",
+    "version": "2.0.0"
+  },
+  "servers": [
+    {
+      "url": "http://localhost:7731",
+      "description": "Local development server"
+    },
+    {
+      "url": "http://your.vps.ip:7731",
+      "description": "Production VPS server"
+    }
+  ],
+  "security": [
+    {
+      "BearerAuth": []
+    }
+  ],
+  "paths": {
+    "/api/health": {
+      "get": {
+        "tags": ["System"],
+        "summary": "Health Check",
+        "description": "Check API and DEGIRO connection status",
+        "security": [],
+        "responses": {
+          "200": {
+            "description": "Health status response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HealthResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/products/search": {
+      "post": {
+        "tags": ["Products"],
+        "summary": "Search Products",
+        "description": "Universal search for stocks and leveraged products by ISIN, name, or ticker",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ProductSearchRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Search results",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProductSearchResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/UnauthorizedError"
+          },
+          "400": {
+            "$ref": "#/components/responses/ValidationError"
+          },
+          "500": {
+            "$ref": "#/components/responses/ServerError"
+          }
+        }
+      }
+    },
+    "/api/orders/check": {
+      "post": {
+        "tags": ["Orders"],
+        "summary": "Validate Order",
+        "description": "Validate order parameters before execution",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/OrderCheckRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Order validation result",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OrderCheckResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/UnauthorizedError"
+          },
+          "400": {
+            "$ref": "#/components/responses/ValidationError"
+          },
+          "500": {
+            "$ref": "#/components/responses/ServerError"
+          }
+        }
+      }
+    },
+    "/api/orders/confirm": {
+      "post": {
+        "tags": ["Orders"],
+        "summary": "Execute Order",
+        "description": "Execute a previously validated order",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/OrderConfirmRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Order execution result",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OrderConfirmResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/UnauthorizedError"
+          },
+          "400": {
+            "$ref": "#/components/responses/ValidationError"
+          },
+          "500": {
+            "$ref": "#/components/responses/ServerError"
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "BearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "description": "Bearer token authentication using TRADING_API_KEY"
+      }
+    },
+    "schemas": {
+      "HealthResponse": {
+        "type": "object",
+        "properties": {
+          "status": {
+            "type": "string",
+            "example": "healthy"
+          },
+          "degiro_connection": {
+            "type": "string",
+            "enum": ["connected", "connection_failed"],
+            "example": "connected"
+          },
+          "api_version": {
+            "type": "string",
+            "example": "2.0.0"
+          },
+          "timestamp": {
+            "type": "string",
+            "format": "date-time",
+            "example": "2025-01-15T10:30:00.123456"
+          }
+        },
+        "required": ["status", "degiro_connection", "api_version", "timestamp"]
+      },
+      "ProductSearchRequest": {
+        "type": "object",
+        "properties": {
+          "q": {
+            "type": "string",
+            "description": "Search query (ISIN, company name, ticker symbol)",
+            "example": "AAPL"
+          },
+          "leverage_type": {
+            "type": "string",
+            "enum": ["long", "short", "both"],
+            "default": "both",
+            "description": "Filter leveraged products by type",
+            "example": "long"
+          }
+        },
+        "required": ["q"]
+      },
+      "ProductSearchResponse": {
+        "type": "object",
+        "properties": {
+          "query": {
+            "type": "string",
+            "example": "AAPL"
+          },
+          "results": {
+            "type": "object",
+            "properties": {
+              "stocks": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/StockProduct"
+                }
+              },
+              "leveraged_products": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/LeveragedProduct"
+                }
+              }
+            }
+          },
+          "total_count": {
+            "type": "integer",
+            "example": 15
+          },
+          "search_strategies_used": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "example": ["isin_exact", "symbol_match", "name_contains"]
+          }
+        },
+        "required": ["query", "results", "total_count", "search_strategies_used"]
+      },
+      "StockProduct": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "example": "96008"
+          },
+          "name": {
+            "type": "string",
+            "example": "APPLE INC. - COMMON STOCK"
+          },
+          "isin": {
+            "type": "string",
+            "example": "US0378331005"
+          },
+          "symbol": {
+            "type": "string",
+            "example": "AAPL"
+          },
+          "exchange": {
+            "type": "string",
+            "example": "NASDAQ"
+          },
+          "currency": {
+            "type": "string",
+            "example": "USD"
+          }
+        },
+        "required": ["id", "name"]
+      },
+      "LeveragedProduct": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "example": "13496074"
+          },
+          "name": {
+            "type": "string",
+            "example": "TURBO24 LONG APPLE 165.00"
+          },
+          "isin": {
+            "type": "string",
+            "example": "DE000VQ8Z8K5"
+          },
+          "leverage_type": {
+            "type": "string",
+            "enum": ["long", "short"],
+            "example": "long"
+          },
+          "underlying_id": {
+            "type": "string",
+            "example": "96008"
+          },
+          "strike_price": {
+            "type": "number",
+            "example": 165.00
+          }
+        },
+        "required": ["id", "name", "leverage_type"]
+      },
+      "OrderCheckRequest": {
+        "type": "object",
+        "properties": {
+          "product_id": {
+            "type": "string",
+            "description": "Product ID from search results",
+            "example": "13496074"
+          },
+          "order_type": {
+            "type": "string",
+            "enum": ["LIMIT", "MARKET", "STOP_LOSS", "STOP_LIMIT"],
+            "example": "LIMIT"
+          },
+          "side": {
+            "type": "string",
+            "enum": ["BUY", "SELL"],
+            "example": "BUY"
+          },
+          "quantity": {
+            "type": "integer",
+            "minimum": 1,
+            "example": 10
+          },
+          "price": {
+            "type": "number",
+            "description": "Limit price (required for LIMIT orders)",
+            "example": 1.25
+          },
+          "time_type": {
+            "type": "string",
+            "enum": ["DAY", "GTC"],
+            "default": "DAY",
+            "example": "DAY"
+          }
+        },
+        "required": ["product_id", "order_type", "side", "quantity"]
+      },
+      "OrderCheckResponse": {
+        "type": "object",
+        "properties": {
+          "validation_id": {
+            "type": "string",
+            "example": "temp_order_789"
+          },
+          "status": {
+            "type": "string",
+            "enum": ["valid", "invalid"],
+            "example": "valid"
+          },
+          "product": {
+            "type": "object",
+            "properties": {
+              "name": {
+                "type": "string",
+                "example": "TURBO24 LONG APPLE 165.00"
+              },
+              "current_price": {
+                "type": "number",
+                "example": 1.23
+              }
+            }
+          },
+          "order_details": {
+            "type": "object",
+            "properties": {
+              "estimated_total": {
+                "type": "number",
+                "example": 12.50
+              },
+              "fees": {
+                "type": "number",
+                "example": 2.00
+              },
+              "currency": {
+                "type": "string",
+                "example": "EUR"
+              }
+            }
+          },
+          "warnings": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "example": []
+          }
+        },
+        "required": ["validation_id", "status"]
+      },
+      "OrderConfirmRequest": {
+        "type": "object",
+        "properties": {
+          "validation_id": {
+            "type": "string",
+            "description": "Validation ID from order check response",
+            "example": "temp_order_789"
+          }
+        },
+        "required": ["validation_id"]
+      },
+      "OrderConfirmResponse": {
+        "type": "object",
+        "properties": {
+          "order_id": {
+            "type": "string",
+            "example": "real_order_456"
+          },
+          "status": {
+            "type": "string",
+            "enum": ["confirmed", "failed"],
+            "example": "confirmed"
+          },
+          "execution_details": {
+            "type": "object",
+            "properties": {
+              "executed_quantity": {
+                "type": "integer",
+                "example": 10
+              },
+              "average_price": {
+                "type": "number",
+                "example": 1.24
+              },
+              "total_amount": {
+                "type": "number",
+                "example": 12.40
+              },
+              "fees": {
+                "type": "number",
+                "example": 2.00
+              },
+              "timestamp": {
+                "type": "string",
+                "format": "date-time",
+                "example": "2025-01-15T10:35:00.123456"
+              }
+            }
+          }
+        },
+        "required": ["order_id", "status"]
+      },
+      "ErrorResponse": {
+        "type": "object",
+        "properties": {
+          "detail": {
+            "type": "string",
+            "example": "Invalid API key"
+          },
+          "error_code": {
+            "type": "string",
+            "example": "AUTHENTICATION_ERROR"
+          }
+        },
+        "required": ["detail"]
+      },
+      "ValidationErrorResponse": {
+        "type": "object",
+        "properties": {
+          "detail": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "type": {
+                  "type": "string",
+                  "example": "missing"
+                },
+                "loc": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  },
+                  "example": ["body", "q"]
+                },
+                "msg": {
+                  "type": "string",
+                  "example": "Field required"
+                },
+                "input": {
+                  "type": "object",
+                  "example": {}
+                }
+              }
+            }
+          }
+        },
+        "required": ["detail"]
+      }
+    },
+    "responses": {
+      "UnauthorizedError": {
+        "description": "Authentication information is missing or invalid",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/ErrorResponse"
+            },
+            "example": {
+              "detail": "Invalid API key"
+            }
+          }
+        }
+      },
+      "ValidationError": {
+        "description": "Request validation failed",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/ValidationErrorResponse"
+            }
+          }
+        }
+      },
+      "ServerError": {
+        "description": "Internal server error",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/ErrorResponse"
+            },
+            "example": {
+              "detail": "DEGIRO connection failed",
+              "error_code": "DEGIRO_CONNECTION_ERROR"
+            }
+          }
+        }
+      }
+    }
+  },
+  "tags": [
+    {
+      "name": "System",
+      "description": "System health and status endpoints"
+    },
+    {
+      "name": "Products",
+      "description": "Product search and information endpoints"
+    },
+    {
+      "name": "Orders",
+      "description": "Order validation and execution endpoints"
+    }
+  ]
+}
