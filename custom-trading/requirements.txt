@@ -9,10 +9,10 @@ python-multipart==0.0.20
 pydantic==2.11.8
 
 # HTTP client for testing
-requests==2.32.3
+requests>=2.32.5
 
-# DEGIRO connector (install from local or pip)
-# degiro-connector>=1.0.0
+# DEGIRO connector (latest upstream version)
+git+https://github.com/Chavithra/degiro-connector.git
 
 # Optional: Production dependencies
 gunicorn==23.0.0

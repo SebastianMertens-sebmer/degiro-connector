@@ -16,10 +16,12 @@ from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel, Field
 
 from degiro_connector.trading.api import API as TradingAPI
-from degiro_connector.trading.models.trading_pb2 import Credentials, ProductSearch, Order
+from degiro_connector.trading.models.credentials import Credentials
+from degiro_connector.trading.models.product_search import StocksRequest, LeveragedsRequest
+from degiro_connector.trading.models.order import Order
 
 # Load environment variables
-load_dotenv()
+load_dotenv('config/.env')
 
 # FastAPI app
 app = FastAPI(
@@ -43,7 +45,9 @@ app.add_middleware(
 security = HTTPBearer()
 
 # Configuration
-API_KEY = os.getenv("TRADING_API_KEY", "your-secure-api-key-here")
+API_KEY = os.getenv("TRADING_API_KEY")
+if not API_KEY:
+    raise Exception("TRADING_API_KEY environment variable is required")
 DEGIRO_CONFIG_PATH = "config/config.json"
 
 # Global DEGIRO connection
@@ -84,6 +88,13 @@ class ProductSearchRequest(BaseModel):
     min_leverage: float = Field(default=2.0, description="Minimum leverage")
     max_leverage: float = Field(default=10.0, description="Maximum leverage")
     limit: int = Field(default=10, description="Max leveraged products to return")
+    
+    # Enhanced leveraged product parameters
+    product_type: Optional[int] = Field(default=None, description="Product type (14=leveraged)")
+    sub_product_type: Optional[int] = Field(default=None, description="Sub product type (14=leveraged)")
+    short_long: Optional[int] = Field(default=None, description="Direction filter (-1=all, 1=LONG, 0=SHORT)")
+    issuer_id: Optional[int] = Field(default=None, description="Issuer filter (-1=all)")
+    underlying_id: Optional[int] = Field(default=None, description="Underlying stock product ID")
 
 class ProductSearchResponse(BaseModel):
     query: Dict[str, Any]
@@ -147,27 +158,36 @@ def get_trading_api():
     
     if trading_api is None:
         try:
-            credentials = Credentials()
-            
             # Try environment variables first (secure)
-            credentials.username = os.getenv('DEGIRO_USERNAME')
-            credentials.password = os.getenv('DEGIRO_PASSWORD')
-            credentials.totp_secret_key = os.getenv('DEGIRO_TOTP_SECRET')
+            username = os.getenv('DEGIRO_USERNAME')
+            password = os.getenv('DEGIRO_PASSWORD')
+            totp_secret_key = os.getenv('DEGIRO_TOTP_SECRET')
             int_account = os.getenv('DEGIRO_INT_ACCOUNT')
             
+            # Create credentials with pydantic syntax
+            credentials_data = {
+                'username': username,
+                'password': password,
+                'totp_secret_key': totp_secret_key
+            }
+            
             if int_account:
-                credentials.int_account = int(int_account)
+                credentials_data['int_account'] = int(int_account)
+                
+            credentials = Credentials(**credentials_data)
             
             # Fallback to config file if env vars not set
-            if not all([credentials.username, credentials.password, credentials.totp_secret_key]):
+            if not all([username, password, totp_secret_key]):
                 try:
                     with open(DEGIRO_CONFIG_PATH, 'r') as f:
                         config = json.load(f)
                     
-                    credentials.username = config['username']
-                    credentials.password = config['password']
-                    credentials.totp_secret_key = config['totp_secret_key']
-                    credentials.int_account = config['int_account']
+                    credentials = Credentials(
+                        username=config['username'],
+                        password=config['password'],
+                        totp_secret_key=config['totp_secret_key'],
+                        int_account=config['int_account']
+                    )
                 except FileNotFoundError:
                     raise Exception("DEGIRO credentials not found in environment variables or config file")
             
@@ -182,17 +202,47 @@ def get_trading_api():
     
     return trading_api
 
+# === DYNAMIC LEVERAGED SEARCH ===
+
 # === HELPER FUNCTIONS ===
+
+def extract_leverage_from_name(product_name: str) -> Optional[float]:
+    """Extract leverage value from product name"""
+    import re
+    if not product_name:
+        return None
+    
+    # Look for patterns like "LV 2.44", "Leverage 5.0", etc.
+    patterns = [
+        r'LV\s+(\d+\.?\d*)',
+        r'leverage\s+(\d+\.?\d*)',
+        r'x(\d+\.?\d*)',
+        r'(\d+\.?\d*)x'
+    ]
+    
+    for pattern in patterns:
+        match = re.search(pattern, product_name, re.IGNORECASE)
+        if match:
+            try:
+                return float(match.group(1))
+            except ValueError:
+                continue
+    
+    return None
 
 def search_stock_universal(api: TradingAPI, query: str) -> Optional[Dict]:
     """Universal stock search with multiple strategies"""
     try:
-        stock_request = ProductSearch.RequestStocks()
-        stock_request.search_text = query
-        stock_request.offset = 0
-        stock_request.limit = 20
+        stock_request = StocksRequest(
+            search_text=query,
+            offset=0,
+            limit=20,
+            require_total=True,
+            sort_columns="name",
+            sort_types="asc"
+        )
         
-        search_results = api.product_search(request=stock_request, raw=True)
+        search_results = api.product_search(stock_request, raw=True)
         
         if isinstance(search_results, dict) and 'products' in search_results:
             products = search_results['products']
@@ -226,21 +276,91 @@ def search_stock_universal(api: TradingAPI, query: str) -> Optional[Dict]:
         print(f"Universal stock search failed: {e}")
         return None
 
+def search_leveraged_products_dynamic(api: TradingAPI, stock_product: Optional[Dict], request: ProductSearchRequest) -> List[Dict]:
+    """Dynamic leveraged products search - uses stock product ID as underlying ID"""
+    try:
+        # Use provided underlying_id or get from stock search
+        underlying_id = request.underlying_id
+        if not underlying_id and stock_product:
+            try:
+                underlying_id = int(stock_product.get('id'))
+            except (ValueError, TypeError):
+                print(f"Invalid stock product ID: {stock_product.get('id')}")
+                return []
+        
+        if not underlying_id:
+            print(f"No underlying ID found for search term: {request.q}")
+            return []
+        
+        # Create enhanced leveraged request
+        leveraged_request = LeveragedsRequest(
+            popular_only=False,
+            input_aggregate_types="",
+            input_aggregate_values="",
+            search_text="",  # Use empty search when we have underlying_id
+            offset=0,
+            limit=request.limit * 5,  # Get more to filter by leverage
+            require_total=True,
+            sort_columns="name",
+            sort_types="asc",
+            underlying_product_id=underlying_id
+        )
+        
+        # Add shortlong filter if specified
+        if request.short_long is not None:
+            if request.short_long == 1:  # LONG
+                leveraged_request.shortlong = "LONG"
+            elif request.short_long == 0:  # SHORT
+                leveraged_request.shortlong = "SHORT"
+        
+        search_results = api.product_search(leveraged_request, raw=True)
+        
+        if isinstance(search_results, dict) and 'products' in search_results:
+            products = search_results['products']
+            
+            suitable_products = []
+            target_direction = "L" if request.action.upper() == "LONG" else "S"
+            
+            for product in products:
+                # Extract leverage from name (if available)
+                leverage = extract_leverage_from_name(product.get('name', ''))
+                
+                # Filter by leverage range
+                if leverage and request.min_leverage <= leverage <= request.max_leverage:
+                    # Filter by direction in product name
+                    name = product.get('name', '').upper()
+                    if target_direction == "L" and ("CALL" in name or "LONG" in name or "BULL" in name):
+                        suitable_products.append(product)
+                    elif target_direction == "S" and ("PUT" in name or "SHORT" in name or "BEAR" in name):
+                        suitable_products.append(product)
+                
+                if len(suitable_products) >= request.limit:
+                    break
+            
+            return suitable_products
+        
+        return []
+        
+    except Exception as e:
+        print(f"Enhanced leveraged search failed: {e}")
+        return []
+
 def search_leveraged_products(api: TradingAPI, search_term: str, action: str, min_leverage: float, max_leverage: float, limit: int) -> List[Dict]:
     """Search for leveraged products"""
     try:
-        leveraged_request = ProductSearch.RequestLeverageds()
-        leveraged_request.popular_only = False
-        leveraged_request.input_aggregate_types = ''
-        leveraged_request.input_aggregate_values = ''
-        leveraged_request.search_text = search_term
-        leveraged_request.offset = 0
-        leveraged_request.limit = 100
-        leveraged_request.require_total = True
-        leveraged_request.sort_columns = 'leverage'
-        leveraged_request.sort_types = 'asc'
+        leveraged_request = LeveragedsRequest(
+            popular_only=False,
+            input_aggregate_types="",
+            input_aggregate_values="",
+            search_text=search_term,
+            offset=0,
+            limit=100,
+            require_total=True,
+            sort_columns="leverage",
+            sort_types="asc"
+        )
         
-        search_results = api.product_search(request=leveraged_request, raw=True)
+        search_results = api.product_search(leveraged_request, raw=True)
         
         if isinstance(search_results, dict) and 'products' in search_results:
             products = search_results['products']
@@ -387,9 +507,10 @@ async def search_products(
     
     api = get_trading_api()
     
-    # Search for underlying stock
-    stock_product = search_stock_universal(api, request.q.strip())
-    search_term = request.q.strip()
+    # Search for underlying stock (unless specific underlying_id provided)
+    stock_product = None
+    if not request.underlying_id:
+        stock_product = search_stock_universal(api, request.q.strip())
     
     # Prepare direct stock info
     direct_stock = None
@@ -404,14 +525,11 @@ async def search_products(
             tradable=stock_product.get('tradable', True)
         )
     
-    # Search for leveraged products
-    leveraged_products_data = search_leveraged_products(
+    # Dynamic leveraged products search - uses stock ID as underlying ID
+    leveraged_products_data = search_leveraged_products_dynamic(
         api, 
-        search_term, 
-        request.action, 
-        request.min_leverage, 
-        request.max_leverage, 
-        request.limit
+        stock_product,
+        request
     )
     
     # Convert to response format
