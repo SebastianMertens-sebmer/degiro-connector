@@ -4,11 +4,15 @@ Production-ready FastAPI server for automated DEGIRO trading with leveraged prod
 
 ## 🚀 Features
 
-- **Universal Product Search**: Search by ISIN, company name, or ticker symbol
-- **Leveraged Products**: Automatic filtering by underlying assets  
+- **Dynamic Universal Search**: Search any stock by ISIN, company name, or ticker symbol
+- **Enhanced Leveraged Products**: Automatic discovery using stock product IDs as underlying assets
+- **DEGIRO Web Interface Compatibility**: Support for productType, subProductType, shortLong, underlying parameters
+- **Advanced Filtering**: Leverage range, direction (LONG/SHORT), issuer, and limit controls
+- **Real-time Pricing**: Live bid/ask/last prices for both stocks and leveraged products
 - **Order Management**: Two-step validation (check → confirm) for safety
 - **Security**: Bearer token authentication with secure credential management
 - **Production Ready**: VPS deployment with auto-restart capabilities
+- **No Configuration Required**: Dynamic discovery eliminates need for mapping files
 
 ## 📁 Structure
 ```
@@ -81,43 +85,75 @@ Authorization: Bearer YOUR_API_KEY
 Content-Type: application/json
 
 {
-  "q": "AAPL",
-  "leverage_type": "long"
+  "q": "Tesla",
+  "action": "LONG",
+  "min_leverage": 1.0,
+  "max_leverage": 10.0,
+  "limit": 5,
+  "product_type": 14,
+  "underlying_id": 1153605
 }
 ```
 
 **Parameters:**
-- `q` (string, required): Search query (ISIN, name, ticker)
-- `leverage_type` (string, optional): "long", "short", or "both" (default: "both")
+- `q` (string, required): Search query (ISIN, company name, ticker)
+- `action` (string, optional): "LONG" or "SHORT" (default: "LONG")
+- `min_leverage` (number, optional): Minimum leverage (default: 2.0)
+- `max_leverage` (number, optional): Maximum leverage (default: 10.0)
+- `limit` (integer, optional): Max leveraged products to return (default: 10)
+- `product_type` (integer, optional): Product type (14=leveraged)
+- `sub_product_type` (integer, optional): Sub product type (14=leveraged)
+- `short_long` (integer, optional): Direction filter (-1=all, 1=LONG, 0=SHORT)
+- `issuer_id` (integer, optional): Issuer filter (-1=all)
+- `underlying_id` (integer, optional): Underlying stock product ID
 
 **Response:**
 ```json
 {
-  "query": "AAPL",
-  "results": {
-    "stocks": [
-      {
-        "id": "96008",
-        "name": "APPLE INC. - COMMON STOCK",
-        "isin": "US0378331005",
-        "symbol": "AAPL",
-        "exchange": "NASDAQ",
-        "currency": "USD"
-      }
-    ],
-    "leveraged_products": [
-      {
-        "id": "13496074",
-        "name": "TURBO24 LONG APPLE 165.00",
-        "isin": "DE000VQ8Z8K5",
-        "leverage_type": "long",
-        "underlying_id": "96008",
-        "strike_price": 165.00
-      }
-    ]
+  "query": {
+    "q": "Tesla",
+    "action": "LONG",
+    "min_leverage": 1.0,
+    "max_leverage": 10.0,
+    "limit": 5
   },
-  "total_count": 15,
-  "search_strategies_used": ["isin_exact", "symbol_match", "name_contains"]
+  "direct_stock": {
+    "product_id": "1153605",
+    "name": "Tesla",
+    "isin": "US88160R1014",
+    "currency": "USD",
+    "exchange_id": "663",
+    "current_price": {
+      "bid": 29.16,
+      "ask": 29.45,
+      "last": 29.3
+    },
+    "tradable": true
+  },
+  "leveraged_products": [
+    {
+      "product_id": "103196405",
+      "name": "BNP TESLA Call STR 162 R 0.100 18/06/2026 LV 2.44",
+      "isin": "DE000PJ5GNC6",
+      "leverage": 2.443,
+      "direction": "LONG",
+      "currency": "EUR",
+      "exchange_id": "191",
+      "current_price": {
+        "bid": 32.25,
+        "ask": 32.57,
+        "last": 32.41
+      },
+      "tradable": true,
+      "expiration_date": "18-6-2026",
+      "issuer": "BNP"
+    }
+  ],
+  "total_found": {
+    "direct_stock": 1,
+    "leveraged_products": 3
+  },
+  "timestamp": "2025-09-18T23:04:11.708015"
 }
 ```
 
@@ -128,11 +164,11 @@ Authorization: Bearer YOUR_API_KEY
 Content-Type: application/json
 
 {
-  "product_id": "13496074",
+  "product_id": "103196405",
+  "action": "BUY",
   "order_type": "LIMIT",
-  "side": "BUY",
   "quantity": 10,
-  "price": 1.25,
+  "price": 32.50,
   "time_type": "DAY"
 }
 ```
