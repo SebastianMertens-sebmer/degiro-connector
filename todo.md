@@ -1,0 +1,1 @@
+scripts remove personal data move it to an .env 

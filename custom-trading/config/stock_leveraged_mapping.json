@@ -1,0 +1,73 @@
+{
+  "version": "1.0",
+  "description": "Mapping between stocks and their underlying IDs for leveraged product searches",
+  "last_updated": "2025-09-18",
+  "stocks": {
+    "GOOGL": {
+      "name": "Alphabet Inc Class A",
+      "isin": "US02079K3059",
+      "symbol": "GOOGL",
+      "degiro_product_id": "8066561",
+      "underlying_id": "8066561",
+      "currency": "USD",
+      "exchange_id": "663",
+      "leveraged_products_available": true,
+      "leveraged_count": 20,
+      "last_verified": "2025-09-18T22:44:00Z"
+    },
+    "GOOG": {
+      "name": "Alphabet Inc Class C",
+      "isin": "US02079K1079", 
+      "symbol": "GOOG",
+      "degiro_product_id": "8066558",
+      "underlying_id": "8066558",
+      "currency": "USD",
+      "exchange_id": "663",
+      "leveraged_products_available": true,
+      "leveraged_count": 20,
+      "last_verified": "2025-09-18T22:44:00Z"
+    },
+    "AAPL": {
+      "name": "Apple Inc",
+      "isin": "US0378331005",
+      "symbol": "AAPL",
+      "degiro_product_id": "331868",
+      "underlying_id": null,
+      "currency": "USD",
+      "exchange_id": "663",
+      "leveraged_products_available": false,
+      "leveraged_count": 0,
+      "last_verified": "2025-09-18T22:44:00Z",
+      "notes": "Need to test leveraged products"
+    },
+    "RHM": {
+      "name": "Rheinmetall AG",
+      "isin": "DE0007030009",
+      "symbol": "RHM",
+      "degiro_product_id": "883182",
+      "underlying_id": null,
+      "currency": "EUR",
+      "exchange_id": "194",
+      "leveraged_products_available": false,
+      "leveraged_count": 0,
+      "last_verified": "2025-09-18T22:44:00Z",
+      "notes": "Need to test leveraged products"
+    }
+  },
+  "leveraged_product_types": {
+    "14": {
+      "name": "Leveraged Products",
+      "sub_types": {
+        "14": "Standard Leveraged Products"
+      }
+    }
+  },
+  "direction_mapping": {
+    "-1": "All directions",
+    "0": "SHORT",
+    "1": "LONG"
+  },
+  "issuer_mapping": {
+    "-1": "All issuers"
+  }
+}

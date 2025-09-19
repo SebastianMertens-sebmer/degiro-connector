@@ -1,18 +1,18 @@
 # Custom DEGIRO Trading API
 
-Production-ready FastAPI server for automated DEGIRO trading with leveraged products support.
+Production-ready FastAPI server for automated DEGIRO trading with 3-endpoint workflow design.
 
 ## 🚀 Features
 
-- **Dynamic Universal Search**: Search any stock by ISIN, company name, or ticker symbol
-- **Enhanced Leveraged Products**: Automatic discovery using stock product IDs as underlying assets
-- **DEGIRO Web Interface Compatibility**: Support for productType, subProductType, shortLong, underlying parameters
+- **3-Endpoint Workflow**: Matches DEGIRO's interface - search stocks → select → find leveraged products → order
+- **Stock Disambiguation**: Returns ALL matching stocks for agent/user selection (no auto-selection)
+- **Leveraged Product Discovery**: Dynamic search using specific stock IDs as underlying assets
 - **Advanced Filtering**: Leverage range, direction (LONG/SHORT), issuer, and limit controls
 - **Real-time Pricing**: Live bid/ask/last prices for both stocks and leveraged products
 - **Order Management**: Two-step validation (check → confirm) for safety
 - **Security**: Bearer token authentication with secure credential management
 - **Production Ready**: VPS deployment with auto-restart capabilities
-- **No Configuration Required**: Dynamic discovery eliminates need for mapping files
+- **Backward Compatibility**: Legacy unified search endpoint maintained for existing integrations
 
 ## 📁 Structure
 ```
@@ -78,7 +78,123 @@ GET /api/health
 }
 ```
 
-### Product Search
+## 🎯 NEW 3-ENDPOINT WORKFLOW (Recommended)
+
+### Step 1: Stock Search
+```http
+POST /api/stocks/search
+Authorization: Bearer YOUR_API_KEY
+Content-Type: application/json
+
+{
+  "q": "Meta",
+  "limit": 10
+}
+```
+
+**Parameters:**
+- `q` (string, required): Search query (ISIN, company name, ticker, symbol)
+- `limit` (integer, optional): Maximum stocks to return (default: 20)
+
+**Response:**
+```json
+{
+  "query": "Meta",
+  "stocks": [
+    {
+      "product_id": "1533610",
+      "name": "Meta Platforms Inc",
+      "isin": "US30303M1027",
+      "symbol": "META",
+      "currency": "USD",
+      "exchange_id": "663",
+      "current_price": {
+        "bid": 29.83,
+        "ask": 30.13,
+        "last": 29.98
+      },
+      "tradable": true
+    }
+  ],
+  "total_found": 3,
+  "timestamp": "2025-09-19T17:55:40.675561"
+}
+```
+
+### Step 2: Leveraged Products Search
+```http
+POST /api/leveraged/search
+Authorization: Bearer YOUR_API_KEY
+Content-Type: application/json
+
+{
+  "underlying_id": "1533610",
+  "action": "LONG",
+  "min_leverage": 5.0,
+  "max_leverage": 10.0,
+  "limit": 5
+}
+```
+
+**Parameters:**
+- `underlying_id` (string, required): Stock product ID from Step 1
+- `action` (string, optional): "LONG" or "SHORT" (default: "LONG")
+- `min_leverage` (number, optional): Minimum leverage (default: 2.0)
+- `max_leverage` (number, optional): Maximum leverage (default: 10.0)
+- `limit` (integer, optional): Max leveraged products to return (default: 10)
+- `issuer_id` (integer, optional): Issuer filter (-1=all)
+
+**Response:**
+```json
+{
+  "query": {
+    "underlying_id": "1533610",
+    "action": "LONG",
+    "min_leverage": 5.0,
+    "max_leverage": 10.0,
+    "limit": 5
+  },
+  "underlying_stock": {
+    "product_id": "1533610",
+    "name": "Meta Platforms Inc",
+    "isin": "US30303M1027",
+    "symbol": "META",
+    "currency": "USD",
+    "exchange_id": "663",
+    "current_price": {
+      "bid": 29.64,
+      "ask": 29.79,
+      "last": 29.64
+    },
+    "tradable": true
+  },
+  "leveraged_products": [
+    {
+      "product_id": "101113656",
+      "name": "BNP META PLATFORMS Call STR 1000 R 0.100 18/06/2026 LV 5.73",
+      "isin": "DE000PL63GN8",
+      "leverage": 5.732,
+      "direction": "LONG",
+      "currency": "EUR",
+      "exchange_id": "191",
+      "current_price": {
+        "bid": 48.36,
+        "ask": 48.85,
+        "last": 48.61
+      },
+      "tradable": true,
+      "expiration_date": "18-6-2026",
+      "issuer": "BNP"
+    }
+  ],
+  "total_found": 5,
+  "timestamp": "2025-09-19T18:03:40.794046"
+}
+```
+
+## ⚠️ LEGACY ENDPOINT (Deprecated)
+
+### Unified Product Search (Deprecated)
 ```http
 POST /api/products/search
 Authorization: Bearer YOUR_API_KEY
@@ -87,141 +203,84 @@ Content-Type: application/json
 {
   "q": "Tesla",
   "action": "LONG",
-  "min_leverage": 1.0,
+  "min_leverage": 2.0,
   "max_leverage": 10.0,
-  "limit": 5,
-  "product_type": 14,
-  "underlying_id": 1153605
+  "limit": 5
 }
 ```
 
-**Parameters:**
-- `q` (string, required): Search query (ISIN, company name, ticker)
-- `action` (string, optional): "LONG" or "SHORT" (default: "LONG")
-- `min_leverage` (number, optional): Minimum leverage (default: 2.0)
-- `max_leverage` (number, optional): Maximum leverage (default: 10.0)
-- `limit` (integer, optional): Max leveraged products to return (default: 10)
-- `product_type` (integer, optional): Product type (14=leveraged)
-- `sub_product_type` (integer, optional): Sub product type (14=leveraged)
-- `short_long` (integer, optional): Direction filter (-1=all, 1=LONG, 0=SHORT)
-- `issuer_id` (integer, optional): Issuer filter (-1=all)
-- `underlying_id` (integer, optional): Underlying stock product ID
+⚠️ **This endpoint is deprecated.** Please migrate to the new 3-endpoint workflow above.
 
-**Response:**
-```json
-{
-  "query": {
-    "q": "Tesla",
-    "action": "LONG",
-    "min_leverage": 1.0,
-    "max_leverage": 10.0,
-    "limit": 5
-  },
-  "direct_stock": {
-    "product_id": "1153605",
-    "name": "Tesla",
-    "isin": "US88160R1014",
-    "currency": "USD",
-    "exchange_id": "663",
-    "current_price": {
-      "bid": 29.16,
-      "ask": 29.45,
-      "last": 29.3
-    },
-    "tradable": true
-  },
-  "leveraged_products": [
-    {
-      "product_id": "103196405",
-      "name": "BNP TESLA Call STR 162 R 0.100 18/06/2026 LV 2.44",
-      "isin": "DE000PJ5GNC6",
-      "leverage": 2.443,
-      "direction": "LONG",
-      "currency": "EUR",
-      "exchange_id": "191",
-      "current_price": {
-        "bid": 32.25,
-        "ask": 32.57,
-        "last": 32.41
-      },
-      "tradable": true,
-      "expiration_date": "18-6-2026",
-      "issuer": "BNP"
-    }
-  ],
-  "total_found": {
-    "direct_stock": 1,
-    "leveraged_products": 3
-  },
-  "timestamp": "2025-09-18T23:04:11.708015"
-}
-```
-
-### Order Validation
+### Step 3: Order Validation
 ```http
 POST /api/orders/check
 Authorization: Bearer YOUR_API_KEY
 Content-Type: application/json
 
 {
-  "product_id": "103196405",
+  "product_id": "101113656",
   "action": "BUY",
   "order_type": "LIMIT",
-  "quantity": 10,
-  "price": 32.50,
+  "quantity": 5,
+  "price": 48.50,
   "time_type": "DAY"
 }
 ```
 
 **Parameters:**
-- `product_id` (string, required): Product ID from search results
-- `order_type` (string, required): "LIMIT", "MARKET", "STOP_LOSS", "STOP_LIMIT"
-- `side` (string, required): "BUY" or "SELL"
-- `quantity` (integer, required): Number of shares/units
+- `product_id` (string, required): Product ID from leveraged search results
+- `action` (string, required): "BUY" or "SELL"
+- `order_type` (string, optional): "LIMIT", "MARKET", "STOP_LOSS", "STOP_LIMIT" (default: "LIMIT")
+- `quantity` (number, required): Number of shares/units
 - `price` (number, optional): Limit price (required for LIMIT orders)
+- `stop_price` (number, optional): Stop price (required for STOP_LOSS/STOP_LIMIT)
 - `time_type` (string, optional): "DAY", "GTC" (default: "DAY")
 
 **Response:**
 ```json
 {
-  "validation_id": "temp_order_789",
-  "status": "valid",
-  "product": {
-    "name": "TURBO24 LONG APPLE 165.00",
-    "current_price": 1.23
-  },
-  "order_details": {
-    "estimated_total": 12.50,
-    "fees": 2.00,
-    "currency": "EUR"
-  },
-  "warnings": []
+  "valid": true,
+  "confirmation_id": "temp_order_789",
+  "estimated_fee": 2.50,
+  "total_cost": 245.00,
+  "free_space_new": 9750.00,
+  "message": "Order validation successful",
+  "warnings": [],
+  "errors": []
 }
 ```
 
-### Order Execution
+### Step 4: Order Execution
 ```http
-POST /api/orders/confirm
+POST /api/orders/place
 Authorization: Bearer YOUR_API_KEY
 Content-Type: application/json
 
 {
-  "validation_id": "temp_order_789"
+  "product_id": "101113656",
+  "action": "BUY",
+  "order_type": "LIMIT",
+  "quantity": 5,
+  "price": 48.50,
+  "time_type": "DAY"
 }
 ```
 
 **Response:**
 ```json
 {
+  "success": true,
   "order_id": "real_order_456",
-  "status": "confirmed",
-  "execution_details": {
-    "executed_quantity": 10,
-    "average_price": 1.24,
-    "total_amount": 12.40,
-    "fees": 2.00,
-    "timestamp": "2025-01-15T10:35:00.123456"
-  }
+  "confirmation_id": "temp_order_789",
+  "message": "Order placed successfully",
+  "product_id": "101113656",
+  "action": "BUY",
+  "order_type": "LIMIT",
+  "quantity": 5,
+  "price": 48.50,
+  "estimated_fee": 2.50,
+  "total_cost": 245.00,
+  "created_at": "2025-09-19T18:05:00.123456"
 }
 ```
 
@@ -335,7 +394,7 @@ Common error responses:
 python ../examples/trading/login_2fa.py
 
 # Test API endpoints
-python _tests/test_production_api.py
+python tests/test_api_endpoints.py
 
 # Health check
 curl http://localhost:7731/api/health

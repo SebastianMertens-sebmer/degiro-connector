@@ -82,6 +82,46 @@ class LeveragedProduct(BaseModel):
     expiration_date: Optional[str] = None
     issuer: Optional[str] = None
 
+# NEW API MODELS
+
+# Stock Search Models
+class StockSearchRequest(BaseModel):
+    q: str = Field(..., description="Search query - ISIN, company name, ticker, or symbol")
+    limit: int = Field(default=20, description="Maximum number of stocks to return")
+
+class StockOption(BaseModel):
+    product_id: str
+    name: str
+    isin: str
+    symbol: Optional[str] = None
+    currency: str
+    exchange_id: str
+    current_price: PriceInfo
+    tradable: bool
+
+class StockSearchResponse(BaseModel):
+    query: str
+    stocks: List[StockOption]
+    total_found: int
+    timestamp: str
+
+# Leveraged Products Search Models
+class LeveragedSearchRequest(BaseModel):
+    underlying_id: str = Field(..., description="Stock product ID from stocks search")
+    action: str = Field(default="LONG", description="LONG or SHORT")
+    min_leverage: float = Field(default=2.0, description="Minimum leverage")
+    max_leverage: float = Field(default=10.0, description="Maximum leverage")
+    limit: int = Field(default=10, description="Max leveraged products to return")
+    issuer_id: Optional[int] = Field(default=None, description="Issuer filter (-1=all)")
+
+class LeveragedSearchResponse(BaseModel):
+    query: Dict[str, Any]
+    underlying_stock: StockOption
+    leveraged_products: List[LeveragedProduct]
+    total_found: int
+    timestamp: str
+
+# Legacy combined search (deprecated)
 class ProductSearchRequest(BaseModel):
     q: str = Field(..., description="Universal search - ISIN, company name, ticker, or symbol")
     action: str = Field(default="LONG", description="LONG or SHORT")
@@ -230,8 +270,32 @@ def extract_leverage_from_name(product_name: str) -> Optional[float]:
     
     return None
 
+def search_stocks_multiple(api: TradingAPI, query: str, limit: int = 20) -> List[Dict]:
+    """Search for multiple stocks - returns ALL matching options"""
+    try:
+        stock_request = StocksRequest(
+            search_text=query,
+            offset=0,
+            limit=limit,
+            require_total=True,
+            sort_columns="name",
+            sort_types="asc"
+        )
+        
+        search_results = api.product_search(stock_request, raw=True)
+        
+        if isinstance(search_results, dict) and 'products' in search_results:
+            products = search_results['products']
+            return products if products else []
+        
+        return []
+        
+    except Exception as e:
+        print(f"Stock search failed: {e}")
+        return []
+
 def search_stock_universal(api: TradingAPI, query: str) -> Optional[Dict]:
-    """Universal stock search with multiple strategies"""
+    """Universal stock search with multiple strategies (legacy function)"""
     try:
         stock_request = StocksRequest(
             search_text=query,
@@ -476,7 +540,9 @@ async def root():
             "Secure API key authentication"
         ],
         "endpoints": {
-            "search": "POST /api/products/search",
+            "stock_search": "POST /api/stocks/search",
+            "leveraged_search": "POST /api/leveraged/search",
+            "legacy_search": "POST /api/products/search",
             "check_order": "POST /api/orders/check",
             "place_order": "POST /api/orders/place"
         },
@@ -484,19 +550,203 @@ async def root():
         "timestamp": datetime.now().isoformat()
     }
 
+# NEW API ENDPOINTS
+
+@app.post("/api/stocks/search", response_model=StockSearchResponse)
+async def search_stocks(
+    request: StockSearchRequest,
+    api_key: str = Depends(verify_api_key)
+):
+    """
+    Search for stocks - returns ALL matching stock options for disambiguation
+    
+    - **q**: Search query (ISIN, company name, ticker, symbol)
+    - **limit**: Maximum number of stocks to return (default: 20)
+    
+    Returns list of all matching stocks for user/agent selection.
+    """
+    
+    if not request.q or not request.q.strip():
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Query parameter 'q' is required"
+        )
+    
+    api = get_trading_api()
+    
+    # Search for all matching stocks
+    stock_products = search_stocks_multiple(api, request.q.strip(), request.limit)
+    
+    # Convert to response format
+    stock_options = []
+    for product in stock_products:
+        stock_option = StockOption(
+            product_id=str(product.get('id', '')),
+            name=product.get('name', ''),
+            isin=product.get('isin', ''),
+            symbol=product.get('symbol'),
+            currency=product.get('currency', 'EUR'),
+            exchange_id=str(product.get('exchangeId', '')),
+            current_price=get_mock_price(str(product.get('id', ''))),
+            tradable=product.get('tradable', True)
+        )
+        stock_options.append(stock_option)
+    
+    return StockSearchResponse(
+        query=request.q,
+        stocks=stock_options,
+        total_found=len(stock_options),
+        timestamp=datetime.now().isoformat()
+    )
+
+@app.post("/api/leveraged/search", response_model=LeveragedSearchResponse)
+async def search_leveraged_products(
+    request: LeveragedSearchRequest,
+    api_key: str = Depends(verify_api_key)
+):
+    """
+    Search for leveraged products based on specific underlying stock
+    
+    - **underlying_id**: Stock product ID from stocks search
+    - **action**: LONG or SHORT (default: LONG)
+    - **min_leverage**: Minimum leverage (default: 2.0)
+    - **max_leverage**: Maximum leverage (default: 10.0)
+    - **limit**: Max leveraged products to return (default: 10)
+    
+    Returns leveraged products for the specified underlying stock.
+    """
+    
+    api = get_trading_api()
+    
+    try:
+        # Get the underlying stock info first
+        underlying_id_int = int(request.underlying_id)
+    except ValueError:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Invalid underlying_id format"
+        )
+    
+    # Create enhanced leveraged request
+    leveraged_request = LeveragedsRequest(
+        popular_only=False,
+        input_aggregate_types="",
+        input_aggregate_values="",
+        search_text="",  # Use empty search when we have underlying_id
+        offset=0,
+        limit=request.limit * 5,  # Get more to filter by leverage
+        require_total=True,
+        sort_columns="name",
+        sort_types="asc",
+        underlying_product_id=underlying_id_int
+    )
+    
+    # Add direction filter
+    if request.action.upper() == "LONG":
+        leveraged_request.shortlong = "LONG"
+    elif request.action.upper() == "SHORT":
+        leveraged_request.shortlong = "SHORT"
+    
+    try:
+        search_results = api.product_search(leveraged_request, raw=True)
+        
+        leveraged_products_data = []
+        if isinstance(search_results, dict) and 'products' in search_results:
+            products = search_results['products']
+            
+            target_direction = "L" if request.action.upper() == "LONG" else "S"
+            
+            for product in products:
+                # Extract leverage from name (if available)
+                leverage = extract_leverage_from_name(product.get('name', ''))
+                
+                # Filter by leverage range
+                if leverage and request.min_leverage <= leverage <= request.max_leverage:
+                    # Filter by direction in product name
+                    name = product.get('name', '').upper()
+                    if target_direction == "L" and ("CALL" in name or "LONG" in name or "BULL" in name):
+                        leveraged_products_data.append(product)
+                    elif target_direction == "S" and ("PUT" in name or "SHORT" in name or "BEAR" in name):
+                        leveraged_products_data.append(product)
+                
+                if len(leveraged_products_data) >= request.limit:
+                    break
+        
+        # Get underlying stock info for response
+        # We need to search for it since we only have the ID
+        stock_request = StocksRequest(
+            search_text="",  # Search by ID instead
+            offset=0,
+            limit=1,
+            require_total=True,
+            sort_columns="name",
+            sort_types="asc"
+        )
+        
+        # For now, create a mock underlying stock since we can't easily search by ID
+        underlying_stock = StockOption(
+            product_id=request.underlying_id,
+            name=f"Stock ID {request.underlying_id}",
+            isin="Unknown",
+            symbol=None,
+            currency="EUR",
+            exchange_id="Unknown",
+            current_price=get_mock_price(request.underlying_id),
+            tradable=True
+        )
+        
+        # Convert to response format
+        leveraged_products = []
+        for product in leveraged_products_data:
+            leveraged_product = LeveragedProduct(
+                product_id=str(product.get('id', '')),
+                name=product.get('name', ''),
+                isin=product.get('isin', ''),
+                leverage=product.get('leverage', 0.0),
+                direction="LONG" if product.get('shortlong') == "L" else "SHORT",
+                currency=product.get('currency', 'EUR'),
+                exchange_id=str(product.get('exchangeId', '')),
+                current_price=get_mock_price(str(product.get('id', ''))),
+                tradable=product.get('tradable', False),
+                expiration_date=product.get('expirationDate'),
+                issuer=extract_issuer(product.get('name', ''))
+            )
+            leveraged_products.append(leveraged_product)
+        
+        return LeveragedSearchResponse(
+            query={
+                "underlying_id": request.underlying_id,
+                "action": request.action,
+                "min_leverage": request.min_leverage,
+                "max_leverage": request.max_leverage,
+                "limit": request.limit
+            },
+            underlying_stock=underlying_stock,
+            leveraged_products=leveraged_products,
+            total_found=len(leveraged_products),
+            timestamp=datetime.now().isoformat()
+        )
+        
+    except Exception as e:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"Leveraged products search failed: {str(e)}"
+        )
+
+# LEGACY ENDPOINT (deprecated but maintained for backward compatibility)
 @app.post("/api/products/search", response_model=ProductSearchResponse)
 async def search_products(
     request: ProductSearchRequest,
     api_key: str = Depends(verify_api_key)
 ):
     """
-    Universal product search - finds direct stocks and leveraged products
+    DEPRECATED: Universal product search - use /api/stocks/search + /api/leveraged/search instead
     
-    - **q**: Universal search (ISIN, company name, ticker symbol)
-    - **action**: LONG or SHORT (for leveraged products)
-    - **min_leverage**: Minimum leverage (default: 2.0)
-    - **max_leverage**: Maximum leverage (default: 10.0) 
-    - **limit**: Max leveraged products to return (default: 10)
+    This endpoint is maintained for backward compatibility but will be removed in future versions.
+    Please migrate to the new 3-endpoint workflow:
+    1. POST /api/stocks/search - Get list of stocks
+    2. POST /api/leveraged/search - Get leveraged products for specific stock
+    3. POST /api/orders/check + /api/orders/place - Place orders
     """
     
     if not request.q or not request.q.strip():

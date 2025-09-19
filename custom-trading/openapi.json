@@ -1,1 +1,1061 @@
-{"openapi":"3.1.0","info":{"title":"DEGIRO Trading API","description":"Production API for DEGIRO trading: search products, place orders, manage positions","version":"2.0.0"},"paths":{"/":{"get":{"summary":"Root","description":"API health check and information","operationId":"root__get","responses":{"200":{"description":"Successful Response","content":{"application/json":{"schema":{}}}}}}},"/api/products/search":{"post":{"summary":"Search Products","description":"Universal product search - finds direct stocks and leveraged products\n\n- **q**: Universal search (ISIN, company name, ticker symbol)\n- **action**: LONG or SHORT (for leveraged products)\n- **min_leverage**: Minimum leverage (default: 2.0)\n- **max_leverage**: Maximum leverage (default: 10.0) \n- **limit**: Max leveraged products to return (default: 10)","operationId":"search_products_api_products_search_post","requestBody":{"content":{"application/json":{"schema":{"$ref":"#/components/schemas/ProductSearchRequest"}}},"required":true},"responses":{"200":{"description":"Successful Response","content":{"application/json":{"schema":{"$ref":"#/components/schemas/ProductSearchResponse"}}}},"422":{"description":"Validation Error","content":{"application/json":{"schema":{"$ref":"#/components/schemas/HTTPValidationError"}}}}},"security":[{"HTTPBearer":[]}]}},"/api/orders/check":{"post":{"summary":"Check Order","description":"Validate order before placement - returns estimated costs and confirmation ID\n\n- **product_id**: Product ID to trade\n- **action**: BUY or SELL\n- **order_type**: LIMIT, MARKET, STOP_LOSS, STOP_LIMIT\n- **quantity**: Number of shares/units\n- **price**: Limit price (required for LIMIT/STOP_LIMIT)\n- **stop_price**: Stop price (required for STOP_LOSS/STOP_LIMIT)\n- **time_type**: DAY or GTC","operationId":"check_order_api_orders_check_post","requestBody":{"content":{"application/json":{"schema":{"$ref":"#/components/schemas/OrderRequest"}}},"required":true},"responses":{"200":{"description":"Successful Response","content":{"application/json":{"schema":{"$ref":"#/components/schemas/OrderCheckResponse"}}}},"422":{"description":"Validation Error","content":{"application/json":{"schema":{"$ref":"#/components/schemas/HTTPValidationError"}}}}},"security":[{"HTTPBearer":[]}]}},"/api/orders/place":{"post":{"summary":"Place Order","description":"Place order after validation - requires valid confirmation ID from check_order\n\nThis endpoint performs a two-step process:\n1. Validates the order with DEGIRO\n2. Confirms and places the order","operationId":"place_order_api_orders_place_post","requestBody":{"content":{"application/json":{"schema":{"$ref":"#/components/schemas/OrderRequest"}}},"required":true},"responses":{"200":{"description":"Successful Response","content":{"application/json":{"schema":{"$ref":"#/components/schemas/OrderResponse"}}}},"422":{"description":"Validation Error","content":{"application/json":{"schema":{"$ref":"#/components/schemas/HTTPValidationError"}}}}},"security":[{"HTTPBearer":[]}]}},"/api/health":{"get":{"summary":"Health Check","description":"Extended health check with DEGIRO connection status","operationId":"health_check_api_health_get","responses":{"200":{"description":"Successful Response","content":{"application/json":{"schema":{}}}}}}}},"components":{"schemas":{"DirectStock":{"properties":{"product_id":{"type":"string","title":"Product Id"},"name":{"type":"string","title":"Name"},"isin":{"type":"string","title":"Isin"},"currency":{"type":"string","title":"Currency"},"exchange_id":{"type":"string","title":"Exchange Id"},"current_price":{"$ref":"#/components/schemas/PriceInfo"},"tradable":{"type":"boolean","title":"Tradable"}},"type":"object","required":["product_id","name","isin","currency","exchange_id","current_price","tradable"],"title":"DirectStock"},"HTTPValidationError":{"properties":{"detail":{"items":{"$ref":"#/components/schemas/ValidationError"},"type":"array","title":"Detail"}},"type":"object","title":"HTTPValidationError"},"LeveragedProduct":{"properties":{"product_id":{"type":"string","title":"Product Id"},"name":{"type":"string","title":"Name"},"isin":{"type":"string","title":"Isin"},"leverage":{"type":"number","title":"Leverage"},"direction":{"type":"string","title":"Direction"},"currency":{"type":"string","title":"Currency"},"exchange_id":{"type":"string","title":"Exchange Id"},"current_price":{"$ref":"#/components/schemas/PriceInfo"},"tradable":{"type":"boolean","title":"Tradable"},"expiration_date":{"anyOf":[{"type":"string"},{"type":"null"}],"title":"Expiration Date"},"issuer":{"anyOf":[{"type":"string"},{"type":"null"}],"title":"Issuer"}},"type":"object","required":["product_id","name","isin","leverage","direction","currency","exchange_id","current_price","tradable"],"title":"LeveragedProduct"},"OrderCheckResponse":{"properties":{"valid":{"type":"boolean","title":"Valid"},"confirmation_id":{"anyOf":[{"type":"string"},{"type":"null"}],"title":"Confirmation Id"},"estimated_fee":{"anyOf":[{"type":"number"},{"type":"null"}],"title":"Estimated Fee"},"total_cost":{"anyOf":[{"type":"number"},{"type":"null"}],"title":"Total Cost"},"free_space_new":{"anyOf":[{"type":"number"},{"type":"null"}],"title":"Free Space New"},"message":{"type":"string","title":"Message"},"warnings":{"items":{"type":"string"},"type":"array","title":"Warnings","default":[]},"errors":{"items":{"type":"string"},"type":"array","title":"Errors","default":[]}},"type":"object","required":["valid","message"],"title":"OrderCheckResponse"},"OrderRequest":{"properties":{"product_id":{"type":"string","title":"Product Id","description":"Product ID to trade"},"action":{"type":"string","title":"Action","description":"BUY or SELL"},"order_type":{"type":"string","title":"Order Type","description":"LIMIT, MARKET, STOP_LOSS, STOP_LIMIT","default":"LIMIT"},"quantity":{"type":"number","exclusiveMinimum":0.0,"title":"Quantity","description":"Number of shares/units"},"price":{"anyOf":[{"type":"number","exclusiveMinimum":0.0},{"type":"null"}],"title":"Price","description":"Limit price (required for LIMIT/STOP_LIMIT)"},"stop_price":{"anyOf":[{"type":"number","exclusiveMinimum":0.0},{"type":"null"}],"title":"Stop Price","description":"Stop price (required for STOP_LOSS/STOP_LIMIT)"},"time_type":{"type":"string","title":"Time Type","description":"DAY or GTC","default":"DAY"}},"type":"object","required":["product_id","action","quantity"],"title":"OrderRequest"},"OrderResponse":{"properties":{"success":{"type":"boolean","title":"Success"},"order_id":{"anyOf":[{"type":"string"},{"type":"null"}],"title":"Order Id"},"confirmation_id":{"anyOf":[{"type":"string"},{"type":"null"}],"title":"Confirmation Id"},"message":{"type":"string","title":"Message"},"product_id":{"type":"string","title":"Product Id"},"action":{"type":"string","title":"Action"},"order_type":{"type":"string","title":"Order Type"},"quantity":{"type":"number","title":"Quantity"},"price":{"anyOf":[{"type":"number"},{"type":"null"}],"title":"Price"},"stop_price":{"anyOf":[{"type":"number"},{"type":"null"}],"title":"Stop Price"},"estimated_fee":{"anyOf":[{"type":"number"},{"type":"null"}],"title":"Estimated Fee"},"total_cost":{"anyOf":[{"type":"number"},{"type":"null"}],"title":"Total Cost"},"created_at":{"type":"string","title":"Created At"}},"type":"object","required":["success","message","product_id","action","order_type","quantity","created_at"],"title":"OrderResponse"},"PriceInfo":{"properties":{"bid":{"anyOf":[{"type":"number"},{"type":"null"}],"title":"Bid"},"ask":{"anyOf":[{"type":"number"},{"type":"null"}],"title":"Ask"},"last":{"anyOf":[{"type":"number"},{"type":"null"}],"title":"Last"}},"type":"object","title":"PriceInfo"},"ProductSearchRequest":{"properties":{"q":{"type":"string","title":"Q","description":"Universal search - ISIN, company name, ticker, or symbol"},"action":{"type":"string","title":"Action","description":"LONG or SHORT","default":"LONG"},"min_leverage":{"type":"number","title":"Min Leverage","description":"Minimum leverage","default":2.0},"max_leverage":{"type":"number","title":"Max Leverage","description":"Maximum leverage","default":10.0},"limit":{"type":"integer","title":"Limit","description":"Max leveraged products to return","default":10},"product_type":{"anyOf":[{"type":"integer"},{"type":"null"}],"title":"Product Type","description":"Product type (14=leveraged)"},"sub_product_type":{"anyOf":[{"type":"integer"},{"type":"null"}],"title":"Sub Product Type","description":"Sub product type (14=leveraged)"},"short_long":{"anyOf":[{"type":"integer"},{"type":"null"}],"title":"Short Long","description":"Direction filter (-1=all, 1=LONG, 0=SHORT)"},"issuer_id":{"anyOf":[{"type":"integer"},{"type":"null"}],"title":"Issuer Id","description":"Issuer filter (-1=all)"},"underlying_id":{"anyOf":[{"type":"integer"},{"type":"null"}],"title":"Underlying Id","description":"Underlying stock product ID"}},"type":"object","required":["q"],"title":"ProductSearchRequest"},"ProductSearchResponse":{"properties":{"query":{"additionalProperties":true,"type":"object","title":"Query"},"direct_stock":{"anyOf":[{"$ref":"#/components/schemas/DirectStock"},{"type":"null"}]},"leveraged_products":{"items":{"$ref":"#/components/schemas/LeveragedProduct"},"type":"array","title":"Leveraged Products"},"total_found":{"additionalProperties":{"type":"integer"},"type":"object","title":"Total Found"},"timestamp":{"type":"string","title":"Timestamp"}},"type":"object","required":["query","direct_stock","leveraged_products","total_found","timestamp"],"title":"ProductSearchResponse"},"ValidationError":{"properties":{"loc":{"items":{"anyOf":[{"type":"string"},{"type":"integer"}]},"type":"array","title":"Location"},"msg":{"type":"string","title":"Message"},"type":{"type":"string","title":"Error Type"}},"type":"object","required":["loc","msg","type"],"title":"ValidationError"}},"securitySchemes":{"HTTPBearer":{"type":"http","scheme":"bearer"}}}}
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "DEGIRO Trading API",
+    "description": "Production API for DEGIRO trading: search products, place orders, manage positions",
+    "version": "2.0.0"
+  },
+  "paths": {
+    "/": {
+      "get": {
+        "summary": "Root",
+        "description": "API health check and information",
+        "operationId": "root__get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/stocks/search": {
+      "post": {
+        "summary": "Search Stocks",
+        "description": "Search for stocks - returns ALL matching stock options for disambiguation\n\n- **q**: Search query (ISIN, company name, ticker, symbol)\n- **limit**: Maximum number of stocks to return (default: 20)\n\nReturns list of all matching stocks for user/agent selection.",
+        "operationId": "search_stocks_api_stocks_search_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/StockSearchRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/StockSearchResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ]
+      }
+    },
+    "/api/leveraged/search": {
+      "post": {
+        "summary": "Search Leveraged Products",
+        "description": "Search for leveraged products based on specific underlying stock\n\n- **underlying_id**: Stock product ID from stocks search\n- **action**: LONG or SHORT (default: LONG)\n- **min_leverage**: Minimum leverage (default: 2.0)\n- **max_leverage**: Maximum leverage (default: 10.0)\n- **limit**: Max leveraged products to return (default: 10)\n\nReturns leveraged products for the specified underlying stock.",
+        "operationId": "search_leveraged_products_api_leveraged_search_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/LeveragedSearchRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LeveragedSearchResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ]
+      }
+    },
+    "/api/products/search": {
+      "post": {
+        "summary": "Search Products",
+        "description": "DEPRECATED: Universal product search - use /api/stocks/search + /api/leveraged/search instead\n\nThis endpoint is maintained for backward compatibility but will be removed in future versions.\nPlease migrate to the new 3-endpoint workflow:\n1. POST /api/stocks/search - Get list of stocks\n2. POST /api/leveraged/search - Get leveraged products for specific stock\n3. POST /api/orders/check + /api/orders/place - Place orders",
+        "operationId": "search_products_api_products_search_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ProductSearchRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProductSearchResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ]
+      }
+    },
+    "/api/orders/check": {
+      "post": {
+        "summary": "Check Order",
+        "description": "Validate order before placement - returns estimated costs and confirmation ID\n\n- **product_id**: Product ID to trade\n- **action**: BUY or SELL\n- **order_type**: LIMIT, MARKET, STOP_LOSS, STOP_LIMIT\n- **quantity**: Number of shares/units\n- **price**: Limit price (required for LIMIT/STOP_LIMIT)\n- **stop_price**: Stop price (required for STOP_LOSS/STOP_LIMIT)\n- **time_type**: DAY or GTC",
+        "operationId": "check_order_api_orders_check_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/OrderRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OrderCheckResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ]
+      }
+    },
+    "/api/orders/place": {
+      "post": {
+        "summary": "Place Order",
+        "description": "Place order after validation - requires valid confirmation ID from check_order\n\nThis endpoint performs a two-step process:\n1. Validates the order with DEGIRO\n2. Confirms and places the order",
+        "operationId": "place_order_api_orders_place_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/OrderRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OrderResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ]
+      }
+    },
+    "/api/health": {
+      "get": {
+        "summary": "Health Check",
+        "description": "Extended health check with DEGIRO connection status",
+        "operationId": "health_check_api_health_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "DirectStock": {
+        "properties": {
+          "product_id": {
+            "type": "string",
+            "title": "Product Id"
+          },
+          "name": {
+            "type": "string",
+            "title": "Name"
+          },
+          "isin": {
+            "type": "string",
+            "title": "Isin"
+          },
+          "currency": {
+            "type": "string",
+            "title": "Currency"
+          },
+          "exchange_id": {
+            "type": "string",
+            "title": "Exchange Id"
+          },
+          "current_price": {
+            "$ref": "#/components/schemas/PriceInfo"
+          },
+          "tradable": {
+            "type": "boolean",
+            "title": "Tradable"
+          }
+        },
+        "type": "object",
+        "required": [
+          "product_id",
+          "name",
+          "isin",
+          "currency",
+          "exchange_id",
+          "current_price",
+          "tradable"
+        ],
+        "title": "DirectStock"
+      },
+      "HTTPValidationError": {
+        "properties": {
+          "detail": {
+            "items": {
+              "$ref": "#/components/schemas/ValidationError"
+            },
+            "type": "array",
+            "title": "Detail"
+          }
+        },
+        "type": "object",
+        "title": "HTTPValidationError"
+      },
+      "LeveragedProduct": {
+        "properties": {
+          "product_id": {
+            "type": "string",
+            "title": "Product Id"
+          },
+          "name": {
+            "type": "string",
+            "title": "Name"
+          },
+          "isin": {
+            "type": "string",
+            "title": "Isin"
+          },
+          "leverage": {
+            "type": "number",
+            "title": "Leverage"
+          },
+          "direction": {
+            "type": "string",
+            "title": "Direction"
+          },
+          "currency": {
+            "type": "string",
+            "title": "Currency"
+          },
+          "exchange_id": {
+            "type": "string",
+            "title": "Exchange Id"
+          },
+          "current_price": {
+            "$ref": "#/components/schemas/PriceInfo"
+          },
+          "tradable": {
+            "type": "boolean",
+            "title": "Tradable"
+          },
+          "expiration_date": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Expiration Date"
+          },
+          "issuer": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Issuer"
+          }
+        },
+        "type": "object",
+        "required": [
+          "product_id",
+          "name",
+          "isin",
+          "leverage",
+          "direction",
+          "currency",
+          "exchange_id",
+          "current_price",
+          "tradable"
+        ],
+        "title": "LeveragedProduct"
+      },
+      "LeveragedSearchRequest": {
+        "properties": {
+          "underlying_id": {
+            "type": "string",
+            "title": "Underlying Id",
+            "description": "Stock product ID from stocks search"
+          },
+          "action": {
+            "type": "string",
+            "title": "Action",
+            "description": "LONG or SHORT",
+            "default": "LONG"
+          },
+          "min_leverage": {
+            "type": "number",
+            "title": "Min Leverage",
+            "description": "Minimum leverage",
+            "default": 2.0
+          },
+          "max_leverage": {
+            "type": "number",
+            "title": "Max Leverage",
+            "description": "Maximum leverage",
+            "default": 10.0
+          },
+          "limit": {
+            "type": "integer",
+            "title": "Limit",
+            "description": "Max leveraged products to return",
+            "default": 10
+          },
+          "issuer_id": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Issuer Id",
+            "description": "Issuer filter (-1=all)"
+          }
+        },
+        "type": "object",
+        "required": [
+          "underlying_id"
+        ],
+        "title": "LeveragedSearchRequest"
+      },
+      "LeveragedSearchResponse": {
+        "properties": {
+          "query": {
+            "additionalProperties": true,
+            "type": "object",
+            "title": "Query"
+          },
+          "underlying_stock": {
+            "$ref": "#/components/schemas/StockOption"
+          },
+          "leveraged_products": {
+            "items": {
+              "$ref": "#/components/schemas/LeveragedProduct"
+            },
+            "type": "array",
+            "title": "Leveraged Products"
+          },
+          "total_found": {
+            "type": "integer",
+            "title": "Total Found"
+          },
+          "timestamp": {
+            "type": "string",
+            "title": "Timestamp"
+          }
+        },
+        "type": "object",
+        "required": [
+          "query",
+          "underlying_stock",
+          "leveraged_products",
+          "total_found",
+          "timestamp"
+        ],
+        "title": "LeveragedSearchResponse"
+      },
+      "OrderCheckResponse": {
+        "properties": {
+          "valid": {
+            "type": "boolean",
+            "title": "Valid"
+          },
+          "confirmation_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Confirmation Id"
+          },
+          "estimated_fee": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Estimated Fee"
+          },
+          "total_cost": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Total Cost"
+          },
+          "free_space_new": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Free Space New"
+          },
+          "message": {
+            "type": "string",
+            "title": "Message"
+          },
+          "warnings": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Warnings",
+            "default": []
+          },
+          "errors": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Errors",
+            "default": []
+          }
+        },
+        "type": "object",
+        "required": [
+          "valid",
+          "message"
+        ],
+        "title": "OrderCheckResponse"
+      },
+      "OrderRequest": {
+        "properties": {
+          "product_id": {
+            "type": "string",
+            "title": "Product Id",
+            "description": "Product ID to trade"
+          },
+          "action": {
+            "type": "string",
+            "title": "Action",
+            "description": "BUY or SELL"
+          },
+          "order_type": {
+            "type": "string",
+            "title": "Order Type",
+            "description": "LIMIT, MARKET, STOP_LOSS, STOP_LIMIT",
+            "default": "LIMIT"
+          },
+          "quantity": {
+            "type": "number",
+            "exclusiveMinimum": 0.0,
+            "title": "Quantity",
+            "description": "Number of shares/units"
+          },
+          "price": {
+            "anyOf": [
+              {
+                "type": "number",
+                "exclusiveMinimum": 0.0
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Price",
+            "description": "Limit price (required for LIMIT/STOP_LIMIT)"
+          },
+          "stop_price": {
+            "anyOf": [
+              {
+                "type": "number",
+                "exclusiveMinimum": 0.0
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Stop Price",
+            "description": "Stop price (required for STOP_LOSS/STOP_LIMIT)"
+          },
+          "time_type": {
+            "type": "string",
+            "title": "Time Type",
+            "description": "DAY or GTC",
+            "default": "DAY"
+          }
+        },
+        "type": "object",
+        "required": [
+          "product_id",
+          "action",
+          "quantity"
+        ],
+        "title": "OrderRequest"
+      },
+      "OrderResponse": {
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "title": "Success"
+          },
+          "order_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Order Id"
+          },
+          "confirmation_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Confirmation Id"
+          },
+          "message": {
+            "type": "string",
+            "title": "Message"
+          },
+          "product_id": {
+            "type": "string",
+            "title": "Product Id"
+          },
+          "action": {
+            "type": "string",
+            "title": "Action"
+          },
+          "order_type": {
+            "type": "string",
+            "title": "Order Type"
+          },
+          "quantity": {
+            "type": "number",
+            "title": "Quantity"
+          },
+          "price": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Price"
+          },
+          "stop_price": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Stop Price"
+          },
+          "estimated_fee": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Estimated Fee"
+          },
+          "total_cost": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Total Cost"
+          },
+          "created_at": {
+            "type": "string",
+            "title": "Created At"
+          }
+        },
+        "type": "object",
+        "required": [
+          "success",
+          "message",
+          "product_id",
+          "action",
+          "order_type",
+          "quantity",
+          "created_at"
+        ],
+        "title": "OrderResponse"
+      },
+      "PriceInfo": {
+        "properties": {
+          "bid": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Bid"
+          },
+          "ask": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Ask"
+          },
+          "last": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Last"
+          }
+        },
+        "type": "object",
+        "title": "PriceInfo"
+      },
+      "ProductSearchRequest": {
+        "properties": {
+          "q": {
+            "type": "string",
+            "title": "Q",
+            "description": "Universal search - ISIN, company name, ticker, or symbol"
+          },
+          "action": {
+            "type": "string",
+            "title": "Action",
+            "description": "LONG or SHORT",
+            "default": "LONG"
+          },
+          "min_leverage": {
+            "type": "number",
+            "title": "Min Leverage",
+            "description": "Minimum leverage",
+            "default": 2.0
+          },
+          "max_leverage": {
+            "type": "number",
+            "title": "Max Leverage",
+            "description": "Maximum leverage",
+            "default": 10.0
+          },
+          "limit": {
+            "type": "integer",
+            "title": "Limit",
+            "description": "Max leveraged products to return",
+            "default": 10
+          },
+          "product_type": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Product Type",
+            "description": "Product type (14=leveraged)"
+          },
+          "sub_product_type": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Sub Product Type",
+            "description": "Sub product type (14=leveraged)"
+          },
+          "short_long": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Short Long",
+            "description": "Direction filter (-1=all, 1=LONG, 0=SHORT)"
+          },
+          "issuer_id": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Issuer Id",
+            "description": "Issuer filter (-1=all)"
+          },
+          "underlying_id": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Underlying Id",
+            "description": "Underlying stock product ID"
+          }
+        },
+        "type": "object",
+        "required": [
+          "q"
+        ],
+        "title": "ProductSearchRequest"
+      },
+      "ProductSearchResponse": {
+        "properties": {
+          "query": {
+            "additionalProperties": true,
+            "type": "object",
+            "title": "Query"
+          },
+          "direct_stock": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/DirectStock"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "leveraged_products": {
+            "items": {
+              "$ref": "#/components/schemas/LeveragedProduct"
+            },
+            "type": "array",
+            "title": "Leveraged Products"
+          },
+          "total_found": {
+            "additionalProperties": {
+              "type": "integer"
+            },
+            "type": "object",
+            "title": "Total Found"
+          },
+          "timestamp": {
+            "type": "string",
+            "title": "Timestamp"
+          }
+        },
+        "type": "object",
+        "required": [
+          "query",
+          "direct_stock",
+          "leveraged_products",
+          "total_found",
+          "timestamp"
+        ],
+        "title": "ProductSearchResponse"
+      },
+      "StockOption": {
+        "properties": {
+          "product_id": {
+            "type": "string",
+            "title": "Product Id"
+          },
+          "name": {
+            "type": "string",
+            "title": "Name"
+          },
+          "isin": {
+            "type": "string",
+            "title": "Isin"
+          },
+          "symbol": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Symbol"
+          },
+          "currency": {
+            "type": "string",
+            "title": "Currency"
+          },
+          "exchange_id": {
+            "type": "string",
+            "title": "Exchange Id"
+          },
+          "current_price": {
+            "$ref": "#/components/schemas/PriceInfo"
+          },
+          "tradable": {
+            "type": "boolean",
+            "title": "Tradable"
+          }
+        },
+        "type": "object",
+        "required": [
+          "product_id",
+          "name",
+          "isin",
+          "currency",
+          "exchange_id",
+          "current_price",
+          "tradable"
+        ],
+        "title": "StockOption"
+      },
+      "StockSearchRequest": {
+        "properties": {
+          "q": {
+            "type": "string",
+            "title": "Q",
+            "description": "Search query - ISIN, company name, ticker, or symbol"
+          },
+          "limit": {
+            "type": "integer",
+            "title": "Limit",
+            "description": "Maximum number of stocks to return",
+            "default": 20
+          }
+        },
+        "type": "object",
+        "required": [
+          "q"
+        ],
+        "title": "StockSearchRequest"
+      },
+      "StockSearchResponse": {
+        "properties": {
+          "query": {
+            "type": "string",
+            "title": "Query"
+          },
+          "stocks": {
+            "items": {
+              "$ref": "#/components/schemas/StockOption"
+            },
+            "type": "array",
+            "title": "Stocks"
+          },
+          "total_found": {
+            "type": "integer",
+            "title": "Total Found"
+          },
+          "timestamp": {
+            "type": "string",
+            "title": "Timestamp"
+          }
+        },
+        "type": "object",
+        "required": [
+          "query",
+          "stocks",
+          "total_found",
+          "timestamp"
+        ],
+        "title": "StockSearchResponse"
+      },
+      "ValidationError": {
+        "properties": {
+          "loc": {
+            "items": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "integer"
+                }
+              ]
+            },
+            "type": "array",
+            "title": "Location"
+          },
+          "msg": {
+            "type": "string",
+            "title": "Message"
+          },
+          "type": {
+            "type": "string",
+            "title": "Error Type"
+          }
+        },
+        "type": "object",
+        "required": [
+          "loc",
+          "msg",
+          "type"
+        ],
+        "title": "ValidationError"
+      }
+    },
+    "securitySchemes": {
+      "HTTPBearer": {
+        "type": "http",
+        "scheme": "bearer"
+      }
+    }
+  }
+}
