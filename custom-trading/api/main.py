@@ -20,21 +20,8 @@ from degiro_connector.trading.models.credentials import Credentials
 from degiro_connector.trading.models.product_search import StocksRequest, LeveragedsRequest
 from degiro_connector.trading.models.order import Order
 
-from .config import get_config, get_config_path
-
-# Load environment variables from multiple possible locations
-from pathlib import Path
-env_paths = [
-    ".env",  # Current directory
-    "config/.env",  # Config subdirectory
-    Path(__file__).parent.parent / ".env",  # Project root
-    Path(__file__).parent.parent / "config" / ".env",  # Project config
-]
-
-for env_path in env_paths:
-    if Path(env_path).exists():
-        load_dotenv(env_path)
-        break
+# Load environment variables
+load_dotenv('config/.env')
 
 # FastAPI app
 app = FastAPI(
@@ -62,12 +49,7 @@ API_KEY = os.getenv("TRADING_API_KEY")
 if not API_KEY:
     raise Exception("TRADING_API_KEY environment variable is required")
 
-# Smart config loading
-try:
-    DEGIRO_CONFIG = get_config()
-except Exception as e:
-    print(f"⚠️  Warning: Could not load DEGIRO config: {e}")
-    DEGIRO_CONFIG = {}
+DEGIRO_CONFIG_PATH = "config/config.json"
 
 # Global DEGIRO connection
 trading_api = None
@@ -478,7 +460,8 @@ def get_real_prices_batch(product_ids: list[str]) -> dict[str, PriceInfo]:
     try:
         # First get user token from config file
         try:
-            config_dict = get_config()
+            with open(DEGIRO_CONFIG_PATH, 'r') as f:
+                config_dict = json.load(f)
             user_token = config_dict.get("user_token")
         except Exception as e:
             raise HTTPException(
@@ -655,7 +638,8 @@ def get_real_price(product_id: str) -> PriceInfo:
         
         # Get user token from config file
         try:
-            config_dict = get_config()
+            with open(DEGIRO_CONFIG_PATH, 'r') as f:
+                config_dict = json.load(f)
             user_token = config_dict.get("user_token")
         except Exception as e:
             raise HTTPException(
