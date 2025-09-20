@@ -26,7 +26,7 @@
     "/api/stocks/search": {
       "post": {
         "summary": "Search Stocks",
-        "description": "Search for stocks - returns ALL matching stock options for disambiguation\n\n- **q**: Search query (ISIN, company name, ticker, symbol)\n- **limit**: Maximum number of stocks to return (default: 20)\n\nReturns list of all matching stocks for user/agent selection.",
+        "description": "Search for stocks - returns ALL matching stock options for disambiguation\n\n- **q**: Search query (ISIN, company name, ticker, symbol)\n- **limit**: Maximum number of stocks to return (default: 50)\n\nReturns list of all matching stocks for user/agent selection.",
         "operationId": "search_stocks_api_stocks_search_post",
         "requestBody": {
           "content": {
@@ -70,7 +70,7 @@
     "/api/leveraged/search": {
       "post": {
         "summary": "Search Leveraged Products",
-        "description": "Search for leveraged products based on specific underlying stock\n\n- **underlying_id**: Stock product ID from stocks search\n- **action**: LONG or SHORT (default: LONG)\n- **min_leverage**: Minimum leverage (default: 2.0)\n- **max_leverage**: Maximum leverage (default: 10.0)\n- **limit**: Max leveraged products to return (default: 10)\n\nReturns leveraged products for the specified underlying stock.",
+        "description": "Search for leveraged products based on specific underlying stock\n\n- **underlying_id**: Stock product ID from stocks search\n- **action**: LONG or SHORT (default: LONG)\n- **min_leverage**: Minimum leverage (default: 2.0)\n- **max_leverage**: Maximum leverage (default: 10.0)\n- **limit**: Max leveraged products to return (default: 50)\n- **product_subtype**: Filter by product type (default: ALL)\n  - **ALL**: All leveraged products\n  - **CALL_PUT**: Optionsscheine (traditional call/put options)\n  - **MINI**: Knockouts (mini long/short with stop loss)\n  - **UNLIMITED**: Faktor certificates (unlimited long/short)\n\nReturns leveraged products for the specified underlying stock.",
         "operationId": "search_leveraged_products_api_leveraged_search_post",
         "requestBody": {
           "content": {
@@ -415,13 +415,13 @@
             "type": "number",
             "title": "Max Leverage",
             "description": "Maximum leverage",
-            "default": 10.0
+            "default": 50.0
           },
           "limit": {
             "type": "integer",
             "title": "Limit",
             "description": "Max leveraged products to return",
-            "default": 10
+            "default": 50
           },
           "issuer_id": {
             "anyOf": [
@@ -434,6 +434,12 @@
             ],
             "title": "Issuer Id",
             "description": "Issuer filter (-1=all)"
+          },
+          "product_subtype": {
+            "type": "string",
+            "title": "Product Subtype",
+            "description": "Product subtype filter: ALL, CALL_PUT (Optionsscheine), MINI (Knockouts), UNLIMITED (Faktor)",
+            "default": "ALL"
           }
         },
         "type": "object",
@@ -792,13 +798,13 @@
             "type": "number",
             "title": "Max Leverage",
             "description": "Maximum leverage",
-            "default": 10.0
+            "default": 50.0
           },
           "limit": {
             "type": "integer",
             "title": "Limit",
             "description": "Max leveraged products to return",
-            "default": 10
+            "default": 50
           },
           "product_type": {
             "anyOf": [
@@ -977,7 +983,7 @@
             "type": "integer",
             "title": "Limit",
             "description": "Maximum number of stocks to return",
-            "default": 20
+            "default": 50
           }
         },
         "type": "object",

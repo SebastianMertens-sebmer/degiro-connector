@@ -87,7 +87,7 @@ class LeveragedProduct(BaseModel):
 # Stock Search Models
 class StockSearchRequest(BaseModel):
     q: str = Field(..., description="Search query - ISIN, company name, ticker, or symbol")
-    limit: int = Field(default=20, description="Maximum number of stocks to return")
+    limit: int = Field(default=50, description="Maximum number of stocks to return")
 
 class StockOption(BaseModel):
     product_id: str
@@ -111,8 +111,9 @@ class LeveragedSearchRequest(BaseModel):
     action: str = Field(default="LONG", description="LONG or SHORT")
     min_leverage: float = Field(default=2.0, description="Minimum leverage")
     max_leverage: float = Field(default=10.0, description="Maximum leverage")
-    limit: int = Field(default=10, description="Max leveraged products to return")
+    limit: int = Field(default=50, description="Max leveraged products to return")
     issuer_id: Optional[int] = Field(default=None, description="Issuer filter (-1=all)")
+    product_subtype: str = Field(default="ALL", description="Product subtype filter: ALL, CALL_PUT (Optionsscheine), MINI (Knockouts), UNLIMITED (Faktor)")
 
 class LeveragedSearchResponse(BaseModel):
     query: Dict[str, Any]
@@ -127,7 +128,7 @@ class ProductSearchRequest(BaseModel):
     action: str = Field(default="LONG", description="LONG or SHORT")
     min_leverage: float = Field(default=2.0, description="Minimum leverage")
     max_leverage: float = Field(default=10.0, description="Maximum leverage")
-    limit: int = Field(default=10, description="Max leveraged products to return")
+    limit: int = Field(default=50, description="Max leveraged products to return")
     
     # Enhanced leveraged product parameters
     product_type: Optional[int] = Field(default=None, description="Product type (14=leveraged)")
@@ -453,40 +454,303 @@ def search_leveraged_products(api: TradingAPI, search_term: str, action: str, mi
         print(f"Leveraged search failed: {e}")
         return []
 
-def get_real_price(product_id: str) -> PriceInfo:
-    """Get real price data from DEGIRO"""
+def get_real_prices_batch(product_ids: list[str]) -> dict[str, PriceInfo]:
+    """Get real price data for multiple products from DEGIRO using quotecast API"""
     try:
+        # First get user token from config file
+        import json
+        try:
+            config_path = os.path.join(os.path.dirname(__file__), "../../config/config.json")
+            with open(config_path) as config_file:
+                config_dict = json.load(config_file)
+                user_token = config_dict.get("user_token")
+        except Exception as e:
+            raise HTTPException(
+                status_code=503,
+                detail=f"Unable to load user token from config: {str(e)}"
+            )
+        
+        if not user_token:
+            raise HTTPException(
+                status_code=503,
+                detail="No valid user token found in config for real-time pricing"
+            )
+
+        # Get trading API instance to fetch product metadata
         api = get_trading_api()
         
-        # Get product info with real prices
+        # Get product info for all products to determine vwdIds
+        product_info = api.get_products_info(
+            product_list=[int(pid) for pid in product_ids],
+            raw=True
+        )
+        
+        if not isinstance(product_info, dict) or 'data' not in product_info:
+            raise HTTPException(
+                status_code=503,
+                detail="Unable to fetch product metadata"
+            )
+        
+        # Build vwdId mapping for products that support real-time pricing
+        vwd_id_to_product_id = {}
+        valid_product_ids = []
+        
+        for product_id in product_ids:
+            product_data = product_info['data'].get(str(product_id))
+            if product_data:
+                vwd_id = product_data.get('vwdId')
+                if vwd_id:
+                    vwd_id_to_product_id[vwd_id] = product_id
+                    valid_product_ids.append(product_id)
+        
+        if not vwd_id_to_product_id:
+            return {}  # No products support real-time pricing
+        
+        # Import quotecast components
+        from degiro_connector.quotecast.models.ticker import TickerRequest
+        from degiro_connector.quotecast.tools.ticker_fetcher import TickerFetcher
+        from degiro_connector.quotecast.tools.ticker_to_df import TickerToDF
+        import pandas as pd
+        
+        # Build session and get session ID
+        session = TickerFetcher.build_session()
+        session_id = TickerFetcher.get_session_id(user_token=user_token)
+        
+        if not session_id:
+            raise HTTPException(
+                status_code=503,
+                detail="Unable to establish quotecast session"
+            )
+        
+        # Create ticker request for all products with vwdIds
+        request_map = {}
+        for vwd_id in vwd_id_to_product_id.keys():
+            request_map[vwd_id] = ["LastPrice", "BidPrice", "AskPrice"]
+        
+        ticker_request = TickerRequest(
+            request_type="subscription",
+            request_map=request_map
+        )
+        
+        # Subscribe and fetch ticker data
+        logger = TickerFetcher.build_logger()
+        
+        TickerFetcher.subscribe(
+            ticker_request=ticker_request,
+            session_id=session_id,
+            session=session,
+            logger=logger,
+        )
+        
+        ticker = TickerFetcher.fetch_ticker(
+            session_id=session_id,
+            session=session,
+            logger=logger,
+        )
+        
+        if not ticker:
+            return {}  # No real-time data available
+        
+        # Parse ticker data
+        ticker_to_df = TickerToDF()
+        df = ticker_to_df.parse(ticker=ticker)
+        
+        if df is None or len(df) == 0:
+            return {}  # Empty price data
+        
+        # Extract prices for each product
+        results = {}
+        pandas_df = df.to_pandas()
+        
+        for index, row in pandas_df.iterrows():
+            last_price = row.get('LastPrice', None)
+            bid_price = row.get('BidPrice', None)
+            ask_price = row.get('AskPrice', None)
+            
+            # Only include products with valid last price
+            if last_price is not None and not pd.isna(last_price):
+                # Find corresponding product_id (since df doesn't include vwd_id directly)
+                # We'll match by position or look for vwd_key if available
+                if len(pandas_df) == len(valid_product_ids):
+                    product_id = valid_product_ids[index]
+                else:
+                    # Fallback: try to match first valid product
+                    product_id = valid_product_ids[0] if valid_product_ids else None
+                
+                if product_id:
+                    last = float(last_price)
+                    bid = float(bid_price) if bid_price is not None and not pd.isna(bid_price) else last * 0.999
+                    ask = float(ask_price) if ask_price is not None and not pd.isna(ask_price) else last * 1.001
+                    
+                    results[product_id] = PriceInfo(
+                        bid=round(bid, 2),
+                        ask=round(ask, 2),
+                        last=round(last, 2)
+                    )
+        
+        return results
+        
+    except HTTPException:
+        raise  # Re-raise HTTPException as-is
+    except Exception as e:
+        print(f"Batch price fetch failed: {e}")
+        import traceback
+        traceback.print_exc()
+        return {}  # Return empty dict instead of raising error
+
+def get_real_price(product_id: str) -> PriceInfo:
+    """Get real price data from DEGIRO using quotecast API"""
+    try:
+        # First get user token from trading API session
+        api = get_trading_api()
+        
+        # Get product info to determine the correct vwdId for quotecast
         product_info = api.get_products_info(
             product_list=[int(product_id)],
             raw=True
         )
         
-        if isinstance(product_info, dict) and 'data' in product_info:
-            product_data = product_info['data'].get(str(product_id))
-            if product_data and 'closePrice' in product_data:
-                close_price = float(product_data['closePrice'])
-                
-                # Create realistic bid/ask spread (0.1-0.5% of price)
-                spread_percent = 0.002  # 0.2% spread
-                spread = close_price * spread_percent
-                
-                return PriceInfo(
-                    bid=round(close_price - spread/2, 2),
-                    ask=round(close_price + spread/2, 2),
-                    last=round(close_price, 2)
-                )
+        if not isinstance(product_info, dict) or 'data' not in product_info:
+            raise HTTPException(
+                status_code=503,
+                detail=f"Unable to fetch product metadata for {product_id}"
+            )
+            
+        product_data = product_info['data'].get(str(product_id))
+        if not product_data:
+            raise HTTPException(
+                status_code=404,
+                detail=f"Product {product_id} not found"
+            )
+        
+        # Check if product has a vwdId for real-time pricing
+        vwd_id = product_data.get('vwdId')
+        if not vwd_id:
+            raise HTTPException(
+                status_code=503,
+                detail=f"Product {product_id} does not support real-time pricing (no vwdId)"
+            )
+        
+        # Import quotecast components
+        from degiro_connector.quotecast.models.ticker import TickerRequest
+        from degiro_connector.quotecast.tools.ticker_fetcher import TickerFetcher
+        from degiro_connector.quotecast.tools.ticker_to_df import TickerToDF
+        import pandas as pd
+        
+        # Get user token from config file
+        import json
+        try:
+            config_path = os.path.join(os.path.dirname(__file__), "../../config/config.json")
+            with open(config_path) as config_file:
+                config_dict = json.load(config_file)
+                user_token = config_dict.get("user_token")
+        except Exception as e:
+            raise HTTPException(
+                status_code=503,
+                detail=f"Unable to load user token from config: {str(e)}"
+            )
+        
+        if not user_token:
+            raise HTTPException(
+                status_code=503,
+                detail="No valid user token found in config for real-time pricing"
+            )
+        
+        # Build session and get session ID
+        session = TickerFetcher.build_session()
+        session_id = TickerFetcher.get_session_id(user_token=user_token)
+        
+        if not session_id:
+            raise HTTPException(
+                status_code=503,
+                detail="Unable to establish quotecast session"
+            )
+        
+        # Create ticker request for this product
+        ticker_request = TickerRequest(
+            request_type="subscription",
+            request_map={
+                vwd_id: [
+                    "LastPrice",
+                    "BidPrice", 
+                    "AskPrice"
+                ]
+            }
+        )
+        
+        # Subscribe and fetch ticker data
+        logger = TickerFetcher.build_logger()
+        
+        TickerFetcher.subscribe(
+            ticker_request=ticker_request,
+            session_id=session_id,
+            session=session,
+            logger=logger,
+        )
+        
+        ticker = TickerFetcher.fetch_ticker(
+            session_id=session_id,
+            session=session,
+            logger=logger,
+        )
+        
+        if not ticker:
+            raise HTTPException(
+                status_code=503,
+                detail=f"No real-time data available for product {product_id}"
+            )
+        
+        # Parse ticker data
+        ticker_to_df = TickerToDF()
+        df = ticker_to_df.parse(ticker=ticker)
+        
+        if df is None or df.empty:
+            raise HTTPException(
+                status_code=503,
+                detail=f"Empty price data received for product {product_id}"
+            )
+        
+        # Extract price data from dataframe (we only requested one product)
+        if len(df) == 0:
+            raise HTTPException(
+                status_code=503,
+                detail=f"No price data returned for product {product_id}"
+            )
+        
+        # Get first row data
+        row_dict = df.to_pandas().iloc[0].to_dict()
+        last_price = row_dict.get('LastPrice', None)
+        bid_price = row_dict.get('BidPrice', None) 
+        ask_price = row_dict.get('AskPrice', None)
+        
+        # Validate that we have at least a last price
+        if last_price is None or pd.isna(last_price):
+            raise HTTPException(
+                status_code=503,
+                detail=f"No valid last price available for product {product_id}"
+            )
+        
+        # Convert to float and handle missing bid/ask
+        last = float(last_price)
+        bid = float(bid_price) if bid_price is not None and not pd.isna(bid_price) else last * 0.999
+        ask = float(ask_price) if ask_price is not None and not pd.isna(ask_price) else last * 1.001
+        
+        return PriceInfo(
+            bid=round(bid, 2),
+            ask=round(ask, 2),
+            last=round(last, 2)
+        )
+        
+    except HTTPException:
+        raise  # Re-raise HTTPException as-is
     except Exception as e:
         print(f"Real price fetch failed for {product_id}: {e}")
-    
-    # Fallback to basic price estimation
-    return PriceInfo(
-        bid=100.0,
-        ask=100.5,
-        last=100.25
-    )
+        import traceback
+        traceback.print_exc()
+        raise HTTPException(
+            status_code=503, 
+            detail=f"Unable to fetch real-time price for product {product_id}. Error: {str(e)}"
+        )
 
 def extract_issuer(product_name: str) -> str:
     """Extract issuer from product name"""
@@ -496,6 +760,33 @@ def extract_issuer(product_name: str) -> str:
         return "SG"
     else:
         return "Unknown"
+
+def filter_by_product_subtype(products: list, subtype: str) -> list:
+    """Filter leveraged products by subtype"""
+    if subtype == "ALL":
+        return products
+    
+    filtered_products = []
+    
+    for product in products:
+        name = product.get('name', '').lower()
+        
+        if subtype == "CALL_PUT":
+            # Optionsscheine: Traditional Call/Put options with STR (Strike) pattern
+            if ('call str' in name or 'put str' in name) and 'mini' not in name and 'unlimited' not in name:
+                filtered_products.append(product)
+        
+        elif subtype == "MINI":
+            # Knockouts: Mini Long/Short products with Stop Loss
+            if 'mini long' in name or 'mini short' in name:
+                filtered_products.append(product)
+        
+        elif subtype == "UNLIMITED":
+            # Faktor: Unlimited Long/Short products (factor certificates)
+            if 'unlimited long' in name or 'unlimited short' in name:
+                filtered_products.append(product)
+    
+    return filtered_products
 
 def create_degiro_order(request: OrderRequest) -> Order:
     """Create DEGIRO Order object from request"""
@@ -584,7 +875,7 @@ async def search_stocks(
     Search for stocks - returns ALL matching stock options for disambiguation
     
     - **q**: Search query (ISIN, company name, ticker, symbol)
-    - **limit**: Maximum number of stocks to return (default: 20)
+    - **limit**: Maximum number of stocks to return (default: 50)
     
     Returns list of all matching stocks for user/agent selection.
     """
@@ -600,20 +891,28 @@ async def search_stocks(
     # Search for all matching stocks
     stock_products = search_stocks_multiple(api, request.q.strip(), request.limit)
     
-    # Convert to response format
+    # Get real prices for all stock products in batch
+    stock_product_ids = [str(product.get('id', '')) for product in stock_products if product.get('id')]
+    stock_real_prices = get_real_prices_batch(stock_product_ids)
+    
+    # Convert to response format, excluding products without pricing data
     stock_options = []
     for product in stock_products:
-        stock_option = StockOption(
-            product_id=str(product.get('id', '')),
-            name=product.get('name', ''),
-            isin=product.get('isin', ''),
-            symbol=product.get('symbol'),
-            currency=product.get('currency', 'EUR'),
-            exchange_id=str(product.get('exchangeId', '')),
-            current_price=get_real_price(str(product.get('id', ''))),
-            tradable=product.get('tradable', True)
-        )
-        stock_options.append(stock_option)
+        product_id = str(product.get('id', ''))
+        
+        # Only include products that have real pricing data
+        if product_id in stock_real_prices:
+            stock_option = StockOption(
+                product_id=product_id,
+                name=product.get('name', ''),
+                isin=product.get('isin', ''),
+                symbol=product.get('symbol'),
+                currency=product.get('currency', 'EUR'),
+                exchange_id=str(product.get('exchangeId', '')),
+                current_price=stock_real_prices[product_id],
+                tradable=product.get('tradable', True)
+            )
+            stock_options.append(stock_option)
     
     return StockSearchResponse(
         query=request.q,
@@ -634,7 +933,12 @@ async def search_leveraged_products(
     - **action**: LONG or SHORT (default: LONG)
     - **min_leverage**: Minimum leverage (default: 2.0)
     - **max_leverage**: Maximum leverage (default: 10.0)
-    - **limit**: Max leveraged products to return (default: 10)
+    - **limit**: Max leveraged products to return (default: 50)
+    - **product_subtype**: Filter by product type:
+      - **ALL**: All leveraged products (default)
+      - **CALL_PUT**: Optionsscheine (traditional call/put options)
+      - **MINI**: Knockouts (mini long/short with stop loss)
+      - **UNLIMITED**: Faktor certificates (unlimited long/short)
     
     Returns leveraged products for the specified underlying stock.
     """
@@ -695,6 +999,10 @@ async def search_leveraged_products(
                 if len(leveraged_products_data) >= request.limit:
                     break
         
+        # Filter by product subtype if specified
+        if hasattr(request, 'product_subtype') and request.product_subtype != "ALL":
+            leveraged_products_data = filter_by_product_subtype(leveraged_products_data, request.product_subtype)
+        
         # Get underlying stock info for response
         # We need to search for it since we only have the ID
         stock_request = StocksRequest(
@@ -706,35 +1014,48 @@ async def search_leveraged_products(
             sort_types="asc"
         )
         
-        # For now, create a mock underlying stock since we can't easily search by ID
-        underlying_stock = StockOption(
-            product_id=request.underlying_id,
-            name=f"Stock ID {request.underlying_id}",
-            isin="Unknown",
-            symbol=None,
-            currency="EUR",
-            exchange_id="Unknown",
-            current_price=get_real_price(request.underlying_id),
-            tradable=True
-        )
+        # Get real price for the underlying stock
+        underlying_prices = get_real_prices_batch([request.underlying_id])
         
-        # Convert to response format
+        # Only create underlying stock if we have real pricing data
+        underlying_stock = None
+        if request.underlying_id in underlying_prices:
+            underlying_stock = StockOption(
+                product_id=request.underlying_id,
+                name=f"Stock ID {request.underlying_id}",
+                isin="Unknown",
+                symbol=None,
+                currency="EUR",
+                exchange_id="Unknown",
+                current_price=underlying_prices[request.underlying_id],
+                tradable=True
+            )
+        
+        # Get real prices for all products in batch
+        product_ids = [str(product.get('id', '')) for product in leveraged_products_data if product.get('id')]
+        real_prices = get_real_prices_batch(product_ids)
+        
+        # Convert to response format, excluding products without pricing data
         leveraged_products = []
         for product in leveraged_products_data:
-            leveraged_product = LeveragedProduct(
-                product_id=str(product.get('id', '')),
-                name=product.get('name', ''),
-                isin=product.get('isin', ''),
-                leverage=product.get('leverage', 0.0),
-                direction="LONG" if product.get('shortlong') == "L" else "SHORT",
-                currency=product.get('currency', 'EUR'),
-                exchange_id=str(product.get('exchangeId', '')),
-                current_price=get_real_price(str(product.get('id', ''))),
-                tradable=product.get('tradable', False),
-                expiration_date=product.get('expirationDate'),
-                issuer=extract_issuer(product.get('name', ''))
-            )
-            leveraged_products.append(leveraged_product)
+            product_id = str(product.get('id', ''))
+            
+            # Only include products that have real pricing data
+            if product_id in real_prices:
+                leveraged_product = LeveragedProduct(
+                    product_id=product_id,
+                    name=product.get('name', ''),
+                    isin=product.get('isin', ''),
+                    leverage=product.get('leverage', 0.0),
+                    direction="LONG" if product.get('shortlong') == "L" else "SHORT",
+                    currency=product.get('currency', 'EUR'),
+                    exchange_id=str(product.get('exchangeId', '')),
+                    current_price=real_prices[product_id],
+                    tradable=product.get('tradable', False),
+                    expiration_date=product.get('expirationDate'),
+                    issuer=extract_issuer(product.get('name', ''))
+                )
+                leveraged_products.append(leveraged_product)
         
         return LeveragedSearchResponse(
             query={
@@ -785,18 +1106,23 @@ async def search_products(
     if not request.underlying_id:
         stock_product = search_stock_universal(api, request.q.strip())
     
-    # Prepare direct stock info
+    # Prepare direct stock info with real pricing
     direct_stock = None
     if stock_product:
-        direct_stock = DirectStock(
-            product_id=str(stock_product.get('id', '')),
-            name=stock_product.get('name', ''),
-            isin=stock_product.get('isin', ''),
-            currency=stock_product.get('currency', 'EUR'),
-            exchange_id=str(stock_product.get('exchangeId', '')),
-            current_price=get_real_price(str(stock_product.get('id', ''))),
-            tradable=stock_product.get('tradable', True)
-        )
+        stock_id = str(stock_product.get('id', ''))
+        stock_prices = get_real_prices_batch([stock_id])
+        
+        # Only create DirectStock if we have real pricing data
+        if stock_id in stock_prices:
+            direct_stock = DirectStock(
+                product_id=stock_id,
+                name=stock_product.get('name', ''),
+                isin=stock_product.get('isin', ''),
+                currency=stock_product.get('currency', 'EUR'),
+                exchange_id=str(stock_product.get('exchangeId', '')),
+                current_price=stock_prices[stock_id],
+                tradable=stock_product.get('tradable', True)
+            )
     
     # Dynamic leveraged products search - uses stock ID as underlying ID
     leveraged_products_data = search_leveraged_products_dynamic(
@@ -805,23 +1131,35 @@ async def search_products(
         request
     )
     
-    # Convert to response format
+    # Filter by product subtype if specified
+    if hasattr(request, 'product_subtype') and request.product_subtype != "ALL":
+        leveraged_products_data = filter_by_product_subtype(leveraged_products_data, request.product_subtype)
+    
+    # Get real prices for all leveraged products in batch
+    leveraged_product_ids = [str(product.get('id', '')) for product in leveraged_products_data if product.get('id')]
+    leveraged_real_prices = get_real_prices_batch(leveraged_product_ids)
+    
+    # Convert to response format, excluding products without pricing data
     leveraged_products = []
     for product in leveraged_products_data:
-        leveraged_product = LeveragedProduct(
-            product_id=str(product.get('id', '')),
-            name=product.get('name', ''),
-            isin=product.get('isin', ''),
-            leverage=product.get('leverage', 0.0),
-            direction="LONG" if product.get('shortlong') == "L" else "SHORT",
-            currency=product.get('currency', 'EUR'),
-            exchange_id=str(product.get('exchangeId', '')),
-            current_price=get_real_price(str(product.get('id', ''))),
-            tradable=product.get('tradable', False),
-            expiration_date=product.get('expirationDate'),
-            issuer=extract_issuer(product.get('name', ''))
-        )
-        leveraged_products.append(leveraged_product)
+        product_id = str(product.get('id', ''))
+        
+        # Only include products that have real pricing data
+        if product_id in leveraged_real_prices:
+            leveraged_product = LeveragedProduct(
+                product_id=product_id,
+                name=product.get('name', ''),
+                isin=product.get('isin', ''),
+                leverage=product.get('leverage', 0.0),
+                direction="LONG" if product.get('shortlong') == "L" else "SHORT",
+                currency=product.get('currency', 'EUR'),
+                exchange_id=str(product.get('exchangeId', '')),
+                current_price=leveraged_real_prices[product_id],
+                tradable=product.get('tradable', False),
+                expiration_date=product.get('expirationDate'),
+                issuer=extract_issuer(product.get('name', ''))
+            )
+            leveraged_products.append(leveraged_product)
     
     return ProductSearchResponse(
         query={

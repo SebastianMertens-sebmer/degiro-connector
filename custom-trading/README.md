@@ -7,8 +7,9 @@ Production-ready FastAPI server for automated DEGIRO trading with 5-endpoint API
 - **5-Endpoint Trading API**: Complete workflow - search stocks → find leveraged products → validate → place orders
 - **Stock Disambiguation**: Returns ALL matching stocks for precise selection
 - **Leveraged Product Discovery**: Dynamic search using specific stock IDs as underlying assets
-- **Advanced Filtering**: Leverage range, direction (LONG/SHORT), issuer, and limit controls
-- **Real-time Pricing**: Live bid/ask/last prices for both stocks and leveraged products
+- **Advanced Filtering**: Leverage range, direction (LONG/SHORT), issuer, product subtype controls
+- **Product Type Filtering**: Distinguish between Optionsscheine, Knockouts, and Faktor certificates
+- **Real-time Pricing**: Live bid/ask/last prices using DEGIRO's quotecast API
 - **Order Management**: Two-step validation (check → confirm) for safety
 - **Security**: Bearer token authentication with secure credential management
 - **Production Ready**: VPS deployment with auto-restart capabilities
@@ -102,7 +103,7 @@ Content-Type: application/json
 
 **Parameters:**
 - `q` (string, required): Search query (ticker symbol like "AAPL", "TSLA", "META" work best)
-- `limit` (integer, optional): Maximum stocks to return (default: 20)
+- `limit` (integer, optional): Maximum stocks to return (default: 50)
 
 **💡 Search Tips:**
 - Use ticker symbols: "AAPL", "TSLA", "META", "NVDA"  
@@ -145,7 +146,8 @@ Content-Type: application/json
   "action": "LONG",
   "min_leverage": 5.0,
   "max_leverage": 10.0,
-  "limit": 5
+  "limit": 5,
+  "product_subtype": "MINI"
 }
 ```
 
@@ -154,8 +156,13 @@ Content-Type: application/json
 - `action` (string, optional): "LONG" or "SHORT" (default: "LONG")
 - `min_leverage` (number, optional): Minimum leverage (default: 2.0)
 - `max_leverage` (number, optional): Maximum leverage (default: 10.0)
-- `limit` (integer, optional): Max leveraged products to return (default: 10)
+- `limit` (integer, optional): Max leveraged products to return (default: 50)
 - `issuer_id` (integer, optional): Issuer filter (-1=all)
+- `product_subtype` (string, optional): Filter by product type (default: "ALL")
+  - `"ALL"`: All leveraged products
+  - `"CALL_PUT"`: **Optionsscheine** - Traditional call/put options with strike price
+  - `"MINI"`: **Knockouts** - Mini long/short products with stop loss
+  - `"UNLIMITED"`: **Faktor** - Unlimited long/short factor certificates
 
 **Response:**
 ```json
@@ -353,6 +360,43 @@ git push origin main
 ```
 
 Your custom trading API stays isolated while benefiting from upstream improvements!
+
+## 🆕 Recent API Changes (v2.1.0)
+
+### Enhanced Product Type Filtering
+
+Added `product_subtype` parameter to leverage search endpoints to distinguish between different German financial instruments:
+
+**New Parameter:**
+- `product_subtype`: Filter by product type (default: "ALL")
+  - `"ALL"`: All leveraged products  
+  - `"CALL_PUT"`: **Optionsscheine** - Traditional call/put options with strike price
+  - `"MINI"`: **Knockouts** - Mini long/short products with stop loss  
+  - `"UNLIMITED"`: **Faktor** - Unlimited long/short factor certificates
+
+**Example Usage:**
+```json
+{
+  "underlying_id": "331868",
+  "action": "LONG",
+  "product_subtype": "MINI",
+  "min_leverage": 2.0,
+  "max_leverage": 10.0
+}
+```
+
+### Real-Time Pricing Implementation
+
+- **✅ Eliminated fake pricing**: Removed hardcoded fallback prices (€100.25) 
+- **✅ DEGIRO quotecast integration**: Real-time bid/ask/last prices from DEGIRO
+- **✅ Batch pricing optimization**: Up to 50+ products fetched per API call
+- **✅ Automatic filtering**: Products without live pricing automatically excluded
+
+### Default Limit Increases
+
+- **Stock search**: Increased from 20 → 50 products
+- **Leveraged search**: Increased from 10 → 50 products  
+- **Better discovery**: More comprehensive search results by default
 
 ## 🛡️ Security Features
 
