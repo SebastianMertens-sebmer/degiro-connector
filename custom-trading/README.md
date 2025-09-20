@@ -1,18 +1,17 @@
 # Custom DEGIRO Trading API
 
-Production-ready FastAPI server for automated DEGIRO trading with 3-endpoint workflow design.
+Production-ready FastAPI server for automated DEGIRO trading with 5-endpoint API design.
 
 ## 🚀 Features
 
-- **3-Endpoint Workflow**: Matches DEGIRO's interface - search stocks → select → find leveraged products → order
-- **Stock Disambiguation**: Returns ALL matching stocks for agent/user selection (no auto-selection)
+- **5-Endpoint Trading API**: Complete workflow - search stocks → find leveraged products → validate → place orders
+- **Stock Disambiguation**: Returns ALL matching stocks for precise selection
 - **Leveraged Product Discovery**: Dynamic search using specific stock IDs as underlying assets
 - **Advanced Filtering**: Leverage range, direction (LONG/SHORT), issuer, and limit controls
 - **Real-time Pricing**: Live bid/ask/last prices for both stocks and leveraged products
 - **Order Management**: Two-step validation (check → confirm) for safety
 - **Security**: Bearer token authentication with secure credential management
 - **Production Ready**: VPS deployment with auto-restart capabilities
-- **Backward Compatibility**: Legacy unified search endpoint maintained for existing integrations
 
 ## 📁 Structure
 ```
@@ -62,7 +61,16 @@ curl -H "Authorization: Bearer YOUR_API_KEY" \
      http://your-server:7731/api/endpoint
 ```
 
-## 📡 API Endpoints
+## 📡 API Endpoints Summary
+
+| Endpoint | Method | Purpose |
+|----------|--------|---------|
+| `/api/health` | GET | Health check and status |
+| `/api/stocks/search` | POST | Search for stocks |
+| `/api/leveraged/search` | POST | Find leveraged products |
+| `/api/products/search` | POST | Universal search (alternative) |
+| `/api/orders/check` | POST | Validate order before placing |
+| `/api/orders/place` | POST | Execute validated order |
 
 ### Health Check
 ```http
@@ -78,7 +86,7 @@ GET /api/health
 }
 ```
 
-## 🎯 NEW 3-ENDPOINT WORKFLOW (Recommended)
+## 🎯 API WORKFLOW
 
 ### Step 1: Stock Search
 ```http
@@ -87,36 +95,41 @@ Authorization: Bearer YOUR_API_KEY
 Content-Type: application/json
 
 {
-  "q": "Meta",
+  "q": "AAPL",
   "limit": 10
 }
 ```
 
 **Parameters:**
-- `q` (string, required): Search query (ISIN, company name, ticker, symbol)
+- `q` (string, required): Search query (ticker symbol like "AAPL", "TSLA", "META" work best)
 - `limit` (integer, optional): Maximum stocks to return (default: 20)
+
+**💡 Search Tips:**
+- Use ticker symbols: "AAPL", "TSLA", "META", "NVDA"  
+- Try company names: "Apple", "Tesla", "Microsoft"
+- Use ISINs for exact matches: "US0378331005"
 
 **Response:**
 ```json
 {
-  "query": "Meta",
+  "query": "AAPL",
   "stocks": [
     {
       "product_id": "1533610",
-      "name": "Meta Platforms Inc",
-      "isin": "US30303M1027",
-      "symbol": "META",
+      "name": "Apple Inc",
+      "isin": "US0378331005",
+      "symbol": "AAPL",
       "currency": "USD",
       "exchange_id": "663",
       "current_price": {
-        "bid": 29.83,
-        "ask": 30.13,
-        "last": 29.98
+        "bid": 150.83,
+        "ask": 151.13,
+        "last": 150.98
       },
       "tradable": true
     }
   ],
-  "total_found": 3,
+  "total_found": 1,
   "timestamp": "2025-09-19T17:55:40.675561"
 }
 ```
@@ -156,22 +169,22 @@ Content-Type: application/json
   },
   "underlying_stock": {
     "product_id": "1533610",
-    "name": "Meta Platforms Inc",
-    "isin": "US30303M1027",
-    "symbol": "META",
+    "name": "Apple Inc",
+    "isin": "US0378331005",
+    "symbol": "AAPL",
     "currency": "USD",
     "exchange_id": "663",
     "current_price": {
-      "bid": 29.64,
-      "ask": 29.79,
-      "last": 29.64
+      "bid": 150.64,
+      "ask": 150.79,
+      "last": 150.64
     },
     "tradable": true
   },
   "leveraged_products": [
     {
       "product_id": "101113656",
-      "name": "BNP META PLATFORMS Call STR 1000 R 0.100 18/06/2026 LV 5.73",
+      "name": "BNP APPLE Call STR 1000 R 0.100 18/06/2026 LV 5.73",
       "isin": "DE000PL63GN8",
       "leverage": 5.732,
       "direction": "LONG",
@@ -192,24 +205,17 @@ Content-Type: application/json
 }
 ```
 
-## ⚠️ LEGACY ENDPOINT (Deprecated)
-
-### Unified Product Search (Deprecated)
+### Alternative: Universal Product Search
 ```http
 POST /api/products/search
 Authorization: Bearer YOUR_API_KEY
 Content-Type: application/json
 
 {
-  "q": "Tesla",
-  "action": "LONG",
-  "min_leverage": 2.0,
-  "max_leverage": 10.0,
-  "limit": 5
+  "q": "AAPL"
 }
 ```
-
-⚠️ **This endpoint is deprecated.** Please migrate to the new 3-endpoint workflow above.
+Returns both stock info and leveraged products in one call.
 
 ### Step 3: Order Validation
 ```http

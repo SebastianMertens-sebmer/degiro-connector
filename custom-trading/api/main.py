@@ -794,7 +794,7 @@ async def search_products(
             isin=stock_product.get('isin', ''),
             currency=stock_product.get('currency', 'EUR'),
             exchange_id=str(stock_product.get('exchangeId', '')),
-            current_price=get_mock_price(str(stock_product.get('id', ''))),
+            current_price=get_real_price(str(stock_product.get('id', ''))),
             tradable=stock_product.get('tradable', True)
         )
     

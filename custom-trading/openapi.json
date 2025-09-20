@@ -114,7 +114,7 @@
     "/api/products/search": {
       "post": {
         "summary": "Search Products",
-        "description": "DEPRECATED: Universal product search - use /api/stocks/search + /api/leveraged/search instead\n\nThis endpoint is maintained for backward compatibility but will be removed in future versions.\nPlease migrate to the new 3-endpoint workflow:\n1. POST /api/stocks/search - Get list of stocks\n2. POST /api/leveraged/search - Get leveraged products for specific stock\n3. POST /api/orders/check + /api/orders/place - Place orders",
+        "description": "Universal product search - returns both stocks and leveraged products\n\nAlternative to the 2-step workflow (/api/stocks/search + /api/leveraged/search).\nUse this for simple searches or the separate endpoints for more control.",
         "operationId": "search_products_api_products_search_post",
         "requestBody": {
           "content": {
