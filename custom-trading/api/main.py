@@ -351,33 +351,23 @@ def search_leveraged_products_dynamic(api: TradingAPI, stock_product: Optional[D
             try:
                 underlying_id = int(stock_product.get('id'))
             except (ValueError, TypeError):
-                print(f"Invalid stock product ID: {stock_product.get('id')}")
                 return []
         
         if not underlying_id:
-            print(f"No underlying ID found for search term: {request.q}")
             return []
         
-        # Create enhanced leveraged request
+        # RESTORED: Complete LeveragedsRequest from working commit 513b531
         leveraged_request = LeveragedsRequest(
             popular_only=False,
             input_aggregate_types="",
             input_aggregate_values="",
-            search_text="",  # Use empty search when we have underlying_id
+            search_text=request.q,
             offset=0,
-            limit=request.limit * 5,  # Get more to filter by leverage
+            limit=100,
             require_total=True,
-            sort_columns="name",
-            sort_types="asc",
-            underlying_product_id=underlying_id
+            sort_columns="leverage",
+            sort_types="asc"
         )
-        
-        # Add shortlong filter if specified
-        if request.short_long is not None:
-            if request.short_long == 1:  # LONG
-                leveraged_request.shortlong = "LONG"
-            elif request.short_long == 0:  # SHORT
-                leveraged_request.shortlong = "SHORT"
         
         search_results = api.product_search(leveraged_request, raw=True)
         
@@ -388,17 +378,16 @@ def search_leveraged_products_dynamic(api: TradingAPI, stock_product: Optional[D
             target_direction = "L" if request.action.upper() == "LONG" else "S"
             
             for product in products:
-                # Extract leverage from name (if available)
-                leverage = extract_leverage_from_name(product.get('name', ''))
+                # Use DEGIRO fields for reliable filtering
+                leverage = product.get('leverage', 0)
+                shortlong = product.get('shortlong')
+                tradable = product.get('tradable', False)
                 
-                # Filter by leverage range
-                if leverage and request.min_leverage <= leverage <= request.max_leverage:
-                    # Filter by direction in product name
-                    name = product.get('name', '').upper()
-                    if target_direction == "L" and ("CALL" in name or "LONG" in name or "BULL" in name):
-                        suitable_products.append(product)
-                    elif target_direction == "S" and ("PUT" in name or "SHORT" in name or "BEAR" in name):
-                        suitable_products.append(product)
+                # Filter by leverage range, direction, and tradability
+                if (request.min_leverage <= leverage <= request.max_leverage and 
+                    shortlong == target_direction and 
+                    tradable):
+                    suitable_products.append(product)
                 
                 if len(suitable_products) >= request.limit:
                     break
@@ -408,7 +397,6 @@ def search_leveraged_products_dynamic(api: TradingAPI, stock_product: Optional[D
         return []
         
     except Exception as e:
-        print(f"Enhanced leveraged search failed: {e}")
         return []
 
 def search_leveraged_products(api: TradingAPI, search_term: str, action: str, min_leverage: float, max_leverage: float, limit: int) -> List[Dict]:
@@ -1121,6 +1109,13 @@ async def search_products(
                 tradable=stock_product.get('tradable', True)
             )
     
+    # Set short_long parameter based on action
+    if request.short_long is None:
+        if request.action.upper() == "SHORT":
+            request.short_long = 0
+        elif request.action.upper() == "LONG":
+            request.short_long = 1
+
     # Dynamic leveraged products search - uses stock ID as underlying ID
     leveraged_products_data = search_leveraged_products_dynamic(
         api, 
