@@ -7,8 +7,6 @@ Analyze Apple leveraged products to understand different types:
 """
 
 import os
-import sys
-sys.path.append('/Users/sebastianmertens/Documents/GitHub/degiro-connector')
 
 from degiro_connector.trading.api import API as TradingAPI
 from degiro_connector.trading.models.credentials import Credentials
@@ -22,10 +20,10 @@ def analyze_apple_leveraged_products():
     try:
         # Create credentials and connect
         credentials = Credentials(
-            username="bastiheye",
-            password="!c3c6kdG5j6NFB7R", 
-            totp_secret_key="5ADDODASZT7CHKD273VFMJMJZNAUHVBH",
-            int_account=31043411
+            username=os.getenv("DEGIRO_USERNAME"),
+            password=os.getenv("DEGIRO_PASSWORD"), 
+            totp_secret_key=os.getenv("DEGIRO_TOTP_SECRET"),
+            int_account=int(os.getenv("DEGIRO_INT_ACCOUNT", 0))
         )
         
         api = TradingAPI(credentials=credentials)

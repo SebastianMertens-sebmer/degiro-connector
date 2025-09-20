@@ -4,8 +4,6 @@ Test DEGIRO connection directly to diagnose stock search issues
 """
 
 import os
-import sys
-sys.path.append('/Users/sebastianmertens/Documents/GitHub/degiro-connector')
 
 from degiro_connector.trading.api import API as TradingAPI
 from degiro_connector.trading.models.credentials import Credentials
@@ -110,10 +108,10 @@ def main():
         pass
     
     # Set environment variables manually
-    os.environ["DEGIRO_USERNAME"] = "bastiheye"
-    os.environ["DEGIRO_PASSWORD"] = "!c3c6kdG5j6NFB7R"
-    os.environ["DEGIRO_TOTP_SECRET"] = "5ADDODASZT7CHKD273VFMJMJZNAUHVBH"
-    os.environ["DEGIRO_INT_ACCOUNT"] = "31043411"
+    os.environ["DEGIRO_USERNAME"] = os.getenv("DEGIRO_USERNAME")
+    os.environ["DEGIRO_PASSWORD"] = os.getenv("DEGIRO_PASSWORD")
+    os.environ["DEGIRO_TOTP_SECRET"] = os.getenv("DEGIRO_TOTP_SECRET")
+    os.environ["DEGIRO_INT_ACCOUNT"] = int(os.getenv("DEGIRO_INT_ACCOUNT", 0))
     
     success = test_degiro_connection()
     

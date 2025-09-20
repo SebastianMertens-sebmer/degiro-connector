@@ -4,8 +4,7 @@ Test batch pricing limits - how many products can we fetch at once?
 """
 
 import os
-import sys
-sys.path.append('/Users/sebastianmertens/Documents/GitHub/degiro-connector')
+# Note: Run this test from the custom-trading directory
 
 def test_batch_limits():
     """Test how many products we can fetch in one batch"""

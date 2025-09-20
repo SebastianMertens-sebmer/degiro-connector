@@ -11,7 +11,6 @@ import requests
 from typing import Dict, List, Any
 
 # Add project root to path
-sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 class APITester:
     def __init__(self, base_url: str = "http://localhost:7731", api_key: str = None):

@@ -4,8 +4,7 @@ Test product subtype filtering functionality
 """
 
 import os
-import sys
-sys.path.append('/Users/sebastianmertens/Documents/GitHub/degiro-connector/custom-trading')
+# Note: Run this test from the custom-trading directory
 
 def test_subtype_filtering():
     """Test the filter_by_product_subtype function"""

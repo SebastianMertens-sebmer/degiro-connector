@@ -115,3 +115,22 @@ custom-trading/config/config.json
 custom-trading/logs/
 custom-trading/tmp/
 custom-trading/*.pid
+
+# Test files (exclude all tests from being committed)
+custom-trading/tests/test_*.py
+custom-trading/test_*.py
+tests/test_*.py
+test_*.py
+
+# Documentation files (exclude personal .md files but keep README.md)
+# Exclude all .md files
+*.md
+
+# But keep these important READMEs
+!README.md
+!custom-trading/README.md
+!*/README.md
+
+# Personal documentation files (keep these local)
+custom-trading/docs/CLAUDE.md
+custom-trading/docs/UPSTREAM_WORKFLOW.md

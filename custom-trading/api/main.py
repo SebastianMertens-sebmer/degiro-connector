@@ -20,8 +20,21 @@ from degiro_connector.trading.models.credentials import Credentials
 from degiro_connector.trading.models.product_search import StocksRequest, LeveragedsRequest
 from degiro_connector.trading.models.order import Order
 
-# Load environment variables
-load_dotenv('config/.env')
+from .config import get_config, get_config_path
+
+# Load environment variables from multiple possible locations
+from pathlib import Path
+env_paths = [
+    ".env",  # Current directory
+    "config/.env",  # Config subdirectory
+    Path(__file__).parent.parent / ".env",  # Project root
+    Path(__file__).parent.parent / "config" / ".env",  # Project config
+]
+
+for env_path in env_paths:
+    if Path(env_path).exists():
+        load_dotenv(env_path)
+        break
 
 # FastAPI app
 app = FastAPI(
@@ -48,7 +61,13 @@ security = HTTPBearer()
 API_KEY = os.getenv("TRADING_API_KEY")
 if not API_KEY:
     raise Exception("TRADING_API_KEY environment variable is required")
-DEGIRO_CONFIG_PATH = "config/config.json"
+
+# Smart config loading
+try:
+    DEGIRO_CONFIG = get_config()
+except Exception as e:
+    print(f"⚠️  Warning: Could not load DEGIRO config: {e}")
+    DEGIRO_CONFIG = {}
 
 # Global DEGIRO connection
 trading_api = None
@@ -458,12 +477,9 @@ def get_real_prices_batch(product_ids: list[str]) -> dict[str, PriceInfo]:
     """Get real price data for multiple products from DEGIRO using quotecast API"""
     try:
         # First get user token from config file
-        import json
         try:
-            config_path = os.path.join(os.path.dirname(__file__), "../../config/config.json")
-            with open(config_path) as config_file:
-                config_dict = json.load(config_file)
-                user_token = config_dict.get("user_token")
+            config_dict = get_config()
+            user_token = config_dict.get("user_token")
         except Exception as e:
             raise HTTPException(
                 status_code=503,
@@ -638,12 +654,9 @@ def get_real_price(product_id: str) -> PriceInfo:
         import pandas as pd
         
         # Get user token from config file
-        import json
         try:
-            config_path = os.path.join(os.path.dirname(__file__), "../../config/config.json")
-            with open(config_path) as config_file:
-                config_dict = json.load(config_file)
-                user_token = config_dict.get("user_token")
+            config_dict = get_config()
+            user_token = config_dict.get("user_token")
         except Exception as e:
             raise HTTPException(
                 status_code=503,

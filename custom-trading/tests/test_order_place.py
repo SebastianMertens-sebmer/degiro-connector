@@ -15,7 +15,6 @@ import json
 from datetime import datetime
 
 # Add project root to path
-sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 # SAFETY FLAG - Set to False to actually place orders
 DRY_RUN = True
