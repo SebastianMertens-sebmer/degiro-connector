@@ -76,7 +76,7 @@ ssh_keys/
 tmp/
 temp/
 *.tmp
-*.bak
+*.bak*scripts/
 
 # API keys and secrets
 api_keys.txt
@@ -134,3 +134,7 @@ test_*.py
 # Personal documentation files (keep these local)
 custom-trading/docs/CLAUDE.md
 custom-trading/docs/UPSTREAM_WORKFLOW.md
+
+# Custom Trading API - Exclude development directories
+custom-trading/tests/
+custom-trading/scripts/

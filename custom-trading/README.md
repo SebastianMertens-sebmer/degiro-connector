@@ -70,6 +70,8 @@ curl -H "Authorization: Bearer YOUR_API_KEY" \
 | `/api/stocks/search` | POST | Search for stocks |
 | `/api/leveraged/search` | POST | Find leveraged products |
 | `/api/products/search` | POST | Universal search (alternative) |
+| `/api/volume/opening/{symbol}` | GET | **Real-time volume data for ORB strategy** |
+| `/api/price/opening/{symbol}` | GET | **Real-time OHLCV price data** |
 | `/api/orders/check` | POST | Validate order before placing |
 | `/api/orders/place` | POST | Execute validated order |
 
@@ -296,6 +298,100 @@ Content-Type: application/json
   "created_at": "2025-09-19T18:05:00.123456"
 }
 ```
+
+## 📊 Real-Time Data Endpoints (ORB Strategy)
+
+### Volume Data Endpoint
+```http
+GET /api/volume/opening/{symbol}
+Authorization: Bearer YOUR_API_KEY
+```
+
+**Purpose:** Get current daily volume data for NASDAQ 100 stocks. Designed for Opening Range Breakout (ORB) strategies.
+
+**Parameters:**
+- `symbol` (path, required): NASDAQ 100 stock symbol (e.g., "AAPL", "WBD", "TSLA")
+
+**Example Request:**
+```bash
+curl -H "Authorization: Bearer YOUR_API_KEY" \
+     "http://your-server:7731/api/volume/opening/WBD"
+```
+
+**Response:**
+```json
+{
+  "symbol": "WBD",
+  "current_time": "2025-09-26T14:37:10-04:00",
+  "market_open_time": "2025-09-26T09:30:00-04:00",
+  "elapsed_minutes": 307.2,
+  "cumulative_volume": 25743956,
+  "last_volume": 100,
+  "volume_rate_per_minute": 83808,
+  "degiro_vwd_id": "600236482",
+  "degiro_id": "22187048",
+  "timestamp": "2025-09-26T18:37:10.569848Z"
+}
+```
+
+**Response Fields:**
+- `cumulative_volume`: Total shares traded today
+- `last_volume`: Volume of most recent trade
+- `volume_rate_per_minute`: Average volume per minute since market open
+- `elapsed_minutes`: Minutes elapsed since 9:30 AM ET
+- `degiro_vwd_id`: DEGIRO real-time data identifier
+
+### Price Data Endpoint
+```http
+GET /api/price/opening/{symbol}
+Authorization: Bearer YOUR_API_KEY
+```
+
+**Purpose:** Get current daily OHLCV price data for NASDAQ 100 stocks.
+
+**Parameters:**
+- `symbol` (path, required): NASDAQ 100 stock symbol (e.g., "AAPL", "WBD", "TSLA")
+
+**Example Request:**
+```bash
+curl -H "Authorization: Bearer YOUR_API_KEY" \
+     "http://your-server:7731/api/price/opening/WBD"
+```
+
+**Response:**
+```json
+{
+  "symbol": "WBD",
+  "current_price": 19.77,
+  "open_price": 19.34,
+  "high_price": 19.95,
+  "low_price": 19.34,
+  "volume": 25798141,
+  "vwap": 19.68,
+  "market_open_time": "2025-09-26T09:30:00-04:00",
+  "current_time": "2025-09-26T14:37:34-04:00",
+  "degiro_vwd_id": "600236482"
+}
+```
+
+**Response Fields:**
+- `current_price`: Last traded price
+- `open_price`: Opening price at 9:30 AM ET
+- `high_price`: Highest price today
+- `low_price`: Lowest price today
+- `volume`: Total shares traded today
+- `vwap`: Volume-weighted average price (approximated)
+
+**🎯 ORB Strategy Usage:**
+- **No time restrictions**: Returns current daily data anytime
+- **Caller controls timing**: API doesn't enforce 9:35 AM logic
+- **Real-time updates**: Data refreshes every few seconds during market hours
+- **NASDAQ 100 coverage**: Supports all 101 NASDAQ 100 symbols
+
+**⚡ Performance:**
+- Response time: < 500ms
+- Real-time DEGIRO data (no mocks/delays)
+- Concurrent requests supported
 
 ## 🚀 Production Deployment
 

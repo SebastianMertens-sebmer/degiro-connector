@@ -9,6 +9,7 @@ import os
 from typing import Optional, List, Dict, Any
 from datetime import datetime
 from dotenv import load_dotenv
+import pytz
 
 from fastapi import FastAPI, HTTPException, Depends, status
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
@@ -179,6 +180,31 @@ class OrderResponse(BaseModel):
     estimated_fee: Optional[float] = None
     total_cost: Optional[float] = None
     created_at: str
+
+# Volume and Price API Models (matching ORB strategy requirements)
+class VolumeResponse(BaseModel):
+    symbol: str
+    current_time: str
+    market_open_time: str
+    elapsed_minutes: float
+    cumulative_volume: int
+    last_volume: int
+    volume_rate_per_minute: float
+    degiro_vwd_id: str
+    degiro_id: str
+    timestamp: str
+
+class PriceResponse(BaseModel):
+    symbol: str
+    current_price: float
+    open_price: float
+    high_price: float
+    low_price: float
+    volume: int
+    vwap: float
+    market_open_time: str
+    current_time: str
+    degiro_vwd_id: str
 
 # === AUTHENTICATION ===
 
@@ -746,6 +772,291 @@ def extract_issuer(product_name: str) -> str:
     else:
         return "Unknown"
 
+def load_nasdaq_mapping() -> dict:
+    """Load NASDAQ 100 mapping for symbol lookups"""
+    try:
+        mapping_path = '/Users/sebastianmertens/Documents/GitHub/degiro-connector/custom-trading/docs/nasdaq100_degiro_mapping.json'
+        with open(mapping_path, 'r') as f:
+            data = json.load(f)
+        
+        # Create symbol to stock mapping
+        symbol_map = {}
+        for stock in data.get('all_stocks', []):
+            if stock.get('symbol') and stock.get('degiro_id'):
+                symbol_map[stock['symbol']] = stock
+        return symbol_map
+    except Exception as e:
+        print(f"Warning: Could not load NASDAQ mapping: {e}")
+        return {}
+
+def get_volume_data(symbol: str, degiro_id: str, vwd_id: str) -> VolumeResponse:
+    """Get real-time volume data for a symbol using DEGIRO quotecast API"""
+    try:
+        from degiro_connector.quotecast.models.ticker import TickerRequest
+        from degiro_connector.quotecast.tools.ticker_fetcher import TickerFetcher
+        from degiro_connector.quotecast.tools.ticker_to_df import TickerToDF
+        import pytz
+        
+        # Get user token from config
+        with open(DEGIRO_CONFIG_PATH, 'r') as f:
+            config_dict = json.load(f)
+        user_token = config_dict.get("user_token")
+        
+        if not user_token:
+            raise HTTPException(status_code=503, detail="No user token available")
+        
+        # Build session
+        session = TickerFetcher.build_session()
+        session_id = TickerFetcher.get_session_id(user_token=user_token)
+        
+        if not session_id:
+            raise HTTPException(status_code=503, detail="Unable to establish quotecast session")
+        
+        # Create ticker request for volume data
+        ticker_request = TickerRequest(
+            request_type="subscription",
+            request_map={
+                vwd_id: [
+                    "LastVolume",
+                    "CumulativeVolume",
+                    "LastTime",
+                    "LastDate"
+                ]
+            }
+        )
+        
+        # Subscribe and fetch
+        logger = TickerFetcher.build_logger()
+        TickerFetcher.subscribe(
+            ticker_request=ticker_request,
+            session_id=session_id,
+            session=session,
+            logger=logger,
+        )
+        
+        ticker = TickerFetcher.fetch_ticker(
+            session_id=session_id,
+            session=session,
+            logger=logger,
+        )
+        
+        if not ticker:
+            raise HTTPException(status_code=503, detail=f"No volume data available for {symbol}")
+        
+        # Parse the raw JSON response manually since ticker.data doesn't work properly
+        
+        try:
+            parsed_data = json.loads(ticker.json_text)
+            
+            # Parse DEGIRO's field mapping and values
+            field_map = {}
+            values = {}
+            
+            for item in parsed_data:
+                if item['m'] == 'a_req':
+                    # Field mapping: field_name -> field_id
+                    field_name, field_id = item['v']
+                    if field_name.startswith(vwd_id):
+                        field_map[field_id] = field_name.split('.')[-1]
+                elif item['m'] == 'un':
+                    # Numeric value: field_id -> value
+                    field_id, value = item['v']
+                    values[field_id] = value
+                elif item['m'] == 'us':
+                    # String value: field_id -> string_value
+                    field_id, value = item['v']
+                    values[field_id] = value
+            
+            # Extract volume data
+            cumulative_volume = 0
+            last_volume = 0
+            
+            for field_id, field_name in field_map.items():
+                if field_name == 'CumulativeVolume' and field_id in values:
+                    cumulative_volume = int(values[field_id])
+                elif field_name == 'LastVolume' and field_id in values:
+                    last_volume = int(values[field_id])
+            
+            if cumulative_volume == 0 and last_volume == 0:
+                raise HTTPException(status_code=503, detail=f"No volume data found for {symbol}")
+                
+        except (json.JSONDecodeError, KeyError, ValueError) as e:
+            raise HTTPException(status_code=503, detail=f"Failed to parse volume data for {symbol}: {str(e)}")
+        
+        # Calculate time-based metrics (simplified - always return current daily data)
+        et_now = datetime.now(pytz.timezone('US/Eastern'))
+        market_open = et_now.replace(hour=9, minute=30, second=0, microsecond=0)
+        
+        # Calculate elapsed minutes from market open
+        if et_now < market_open:
+            # Before market open - use previous day
+            market_open = market_open.replace(day=market_open.day - 1)
+        
+        elapsed_minutes = max(1, (et_now - market_open).total_seconds() / 60)
+        volume_rate = cumulative_volume / elapsed_minutes if elapsed_minutes > 0 else 0
+        
+        return VolumeResponse(
+            symbol=symbol,
+            current_time=et_now.isoformat(),
+            market_open_time=market_open.isoformat(),
+            elapsed_minutes=elapsed_minutes,
+            cumulative_volume=cumulative_volume,
+            last_volume=last_volume,
+            volume_rate_per_minute=volume_rate,
+            degiro_vwd_id=vwd_id,
+            degiro_id=degiro_id,
+            timestamp=datetime.now().isoformat()
+        )
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        raise HTTPException(status_code=503, detail=f"Volume data fetch failed: {str(e)}")
+
+def get_price_data(symbol: str, vwd_id: str) -> PriceResponse:
+    """Get real-time price data for a symbol using DEGIRO quotecast API"""
+    try:
+        from degiro_connector.quotecast.models.ticker import TickerRequest
+        from degiro_connector.quotecast.tools.ticker_fetcher import TickerFetcher
+        from degiro_connector.quotecast.tools.ticker_to_df import TickerToDF
+        import pytz
+        
+        # Get user token from config
+        with open(DEGIRO_CONFIG_PATH, 'r') as f:
+            config_dict = json.load(f)
+        user_token = config_dict.get("user_token")
+        
+        if not user_token:
+            raise HTTPException(status_code=503, detail="No user token available")
+        
+        # Build session
+        session = TickerFetcher.build_session()
+        session_id = TickerFetcher.get_session_id(user_token=user_token)
+        
+        if not session_id:
+            raise HTTPException(status_code=503, detail="Unable to establish quotecast session")
+        
+        # Create ticker request for price data
+        ticker_request = TickerRequest(
+            request_type="subscription",
+            request_map={
+                vwd_id: [
+                    "LastPrice",
+                    "BidPrice", 
+                    "AskPrice",
+                    "OpenPrice",
+                    "HighPrice",
+                    "LowPrice",
+                    "CumulativeVolume"
+                ]
+            }
+        )
+        
+        # Subscribe and fetch
+        logger = TickerFetcher.build_logger()
+        TickerFetcher.subscribe(
+            ticker_request=ticker_request,
+            session_id=session_id,
+            session=session,
+            logger=logger,
+        )
+        
+        ticker = TickerFetcher.fetch_ticker(
+            session_id=session_id,
+            session=session,
+            logger=logger,
+        )
+        
+        if not ticker:
+            raise HTTPException(status_code=503, detail=f"No price data available for {symbol}")
+        
+        # Parse the raw JSON response manually since ticker.data doesn't work properly
+        
+        try:
+            parsed_data = json.loads(ticker.json_text)
+            
+            # Parse DEGIRO's field mapping and values
+            field_map = {}
+            values = {}
+            
+            for item in parsed_data:
+                if item['m'] == 'a_req':
+                    # Field mapping: field_name -> field_id
+                    field_name, field_id = item['v']
+                    if field_name.startswith(vwd_id):
+                        field_map[field_id] = field_name.split('.')[-1]
+                elif item['m'] == 'un':
+                    # Numeric value: field_id -> value
+                    field_id, value = item['v']
+                    values[field_id] = value
+                elif item['m'] == 'us':
+                    # String value: field_id -> string_value
+                    field_id, value = item['v']
+                    values[field_id] = value
+            
+            # Extract price data
+            current_price = 0.0
+            open_price = 0.0
+            high_price = 0.0
+            low_price = 0.0
+            volume = 0
+            
+            for field_id, field_name in field_map.items():
+                if field_id in values:
+                    value = values[field_id]
+                    if field_name == 'LastPrice':
+                        current_price = float(value)
+                    elif field_name == 'OpenPrice':
+                        open_price = float(value)
+                    elif field_name == 'HighPrice':
+                        high_price = float(value)
+                    elif field_name == 'LowPrice':
+                        low_price = float(value)
+                    elif field_name == 'CumulativeVolume':
+                        volume = int(value)
+            
+            # Use current price as fallback for missing OHLC data
+            if open_price == 0.0:
+                open_price = current_price
+            if high_price == 0.0:
+                high_price = current_price
+            if low_price == 0.0:
+                low_price = current_price
+                
+            if current_price == 0.0:
+                raise HTTPException(status_code=503, detail=f"No price data found for {symbol}")
+                
+        except (json.JSONDecodeError, KeyError, ValueError) as e:
+            raise HTTPException(status_code=503, detail=f"Failed to parse price data for {symbol}: {str(e)}")
+        
+        # Simple VWAP calculation (approximate)
+        vwap = (high_price + low_price + current_price) / 3
+        
+        # Time calculations
+        et_now = datetime.now(pytz.timezone('US/Eastern'))
+        market_open = et_now.replace(hour=9, minute=30, second=0, microsecond=0)
+        
+        if et_now < market_open:
+            market_open = market_open.replace(day=market_open.day - 1)
+        
+        return PriceResponse(
+            symbol=symbol,
+            current_price=current_price,
+            open_price=open_price,
+            high_price=high_price,
+            low_price=low_price,
+            volume=volume,
+            vwap=vwap,
+            market_open_time=market_open.isoformat(),
+            current_time=et_now.isoformat(),
+            degiro_vwd_id=vwd_id
+        )
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        raise HTTPException(status_code=503, detail=f"Price data fetch failed: {str(e)}")
+
 def filter_by_product_subtype(products: list, subtype: str) -> list:
     """Filter leveraged products by subtype"""
     if subtype == "ALL":
@@ -842,6 +1153,8 @@ async def root():
             "stock_search": "POST /api/stocks/search",
             "leveraged_search": "POST /api/leveraged/search",
             "legacy_search": "POST /api/products/search",
+            "volume_data": "GET /api/volume/opening/{symbol}",
+            "price_data": "GET /api/price/opening/{symbol}",
             "check_order": "POST /api/orders/check",
             "place_order": "POST /api/orders/place"
         },
@@ -1319,6 +1632,85 @@ async def place_order(
             stop_price=request.stop_price,
             created_at=datetime.now().isoformat()
         )
+
+# VOLUME AND PRICE ENDPOINTS FOR ORB STRATEGY
+
+@app.get("/api/volume/opening/{symbol}", response_model=VolumeResponse)
+async def get_volume_opening(
+    symbol: str,
+    api_key: str = Depends(verify_api_key)
+):
+    """
+    Get current daily volume data for a NASDAQ stock
+    
+    Returns real-time volume metrics without time restrictions.
+    The caller handles timing logic (e.g., 9:35 AM ORB strategy).
+    
+    - **symbol**: NASDAQ stock symbol (e.g., AAPL, GOOGL, MSFT)
+    
+    Returns cumulative daily volume and volume rate calculations.
+    """
+    
+    # Load NASDAQ mapping
+    nasdaq_mapping = load_nasdaq_mapping()
+    
+    symbol_upper = symbol.upper()
+    if symbol_upper not in nasdaq_mapping:
+        raise HTTPException(
+            status_code=404,
+            detail=f"Symbol {symbol} not found in NASDAQ 100 mapping"
+        )
+    
+    stock_info = nasdaq_mapping[symbol_upper]
+    degiro_id = stock_info.get('degiro_id')
+    vwd_id = stock_info.get('degiro_vwd_id')
+    
+    if not degiro_id or not vwd_id:
+        raise HTTPException(
+            status_code=503,
+            detail=f"No DEGIRO mapping available for {symbol}"
+        )
+    
+    # Get real-time volume data
+    return get_volume_data(symbol_upper, degiro_id, vwd_id)
+
+@app.get("/api/price/opening/{symbol}", response_model=PriceResponse)
+async def get_price_opening(
+    symbol: str,
+    api_key: str = Depends(verify_api_key)
+):
+    """
+    Get current daily price data for a NASDAQ stock
+    
+    Returns real-time OHLCV data without time restrictions.
+    The caller handles timing logic (e.g., 9:35 AM ORB strategy).
+    
+    - **symbol**: NASDAQ stock symbol (e.g., AAPL, GOOGL, MSFT)
+    
+    Returns current price, OHLC, volume, and VWAP calculations.
+    """
+    
+    # Load NASDAQ mapping
+    nasdaq_mapping = load_nasdaq_mapping()
+    
+    symbol_upper = symbol.upper()
+    if symbol_upper not in nasdaq_mapping:
+        raise HTTPException(
+            status_code=404,
+            detail=f"Symbol {symbol} not found in NASDAQ 100 mapping"
+        )
+    
+    stock_info = nasdaq_mapping[symbol_upper]
+    vwd_id = stock_info.get('degiro_vwd_id')
+    
+    if not vwd_id:
+        raise HTTPException(
+            status_code=503,
+            detail=f"No DEGIRO vwdId available for {symbol}"
+        )
+    
+    # Get real-time price data
+    return get_price_data(symbol_upper, vwd_id)
 
 @app.get("/api/health")
 async def health_check():
