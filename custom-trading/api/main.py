@@ -775,7 +775,11 @@ def extract_issuer(product_name: str) -> str:
 def load_nasdaq_mapping() -> dict:
     """Load NASDAQ 100 mapping for symbol lookups"""
     try:
-        mapping_path = '/Users/sebastianmertens/Documents/GitHub/degiro-connector/custom-trading/docs/nasdaq100_degiro_mapping.json'
+        # Get the directory of this file and build relative path
+        current_dir = os.path.dirname(os.path.abspath(__file__))
+        mapping_path = os.path.join(current_dir, '..', 'docs', 'nasdaq100_degiro_mapping.json')
+        mapping_path = os.path.normpath(mapping_path)
+        
         with open(mapping_path, 'r') as f:
             data = json.load(f)
         
@@ -798,7 +802,9 @@ def get_volume_data(symbol: str, degiro_id: str, vwd_id: str) -> VolumeResponse:
         import pytz
         
         # Get user token from config
-        with open(DEGIRO_CONFIG_PATH, 'r') as f:
+        config_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', 'config', 'config.json')
+        config_path = os.path.normpath(config_path)
+        with open(config_path, 'r') as f:
             config_dict = json.load(f)
         user_token = config_dict.get("user_token")
         
@@ -922,7 +928,9 @@ def get_price_data(symbol: str, vwd_id: str) -> PriceResponse:
         import pytz
         
         # Get user token from config
-        with open(DEGIRO_CONFIG_PATH, 'r') as f:
+        config_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', 'config', 'config.json')
+        config_path = os.path.normpath(config_path)
+        with open(config_path, 'r') as f:
             config_dict = json.load(f)
         user_token = config_dict.get("user_token")
         
