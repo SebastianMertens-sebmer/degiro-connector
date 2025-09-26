@@ -70,8 +70,8 @@ curl -H "Authorization: Bearer YOUR_API_KEY" \
 | `/api/stocks/search` | POST | Search for stocks |
 | `/api/leveraged/search` | POST | Find leveraged products |
 | `/api/products/search` | POST | Universal search (alternative) |
-| `/api/volume/opening/{symbol}` | GET | **Real-time volume data for ORB strategy** |
-| `/api/price/opening/{symbol}` | GET | **Real-time OHLCV price data** |
+| `/api/volume/opening/{symbol}` | GET | **Real-time volume & price data for ORB strategy** |
+| `/api/volume/nasdaq` | GET | **Batch volume & price data for all 101 NASDAQ stocks** |
 | `/api/orders/check` | POST | Validate order before placing |
 | `/api/orders/place` | POST | Execute validated order |
 
@@ -307,7 +307,7 @@ GET /api/volume/opening/{symbol}
 Authorization: Bearer YOUR_API_KEY
 ```
 
-**Purpose:** Get current daily volume data for NASDAQ 100 stocks. Designed for Opening Range Breakout (ORB) strategies.
+**Purpose:** Get current daily volume data and real-time price for NASDAQ 100 stocks. Designed for Opening Range Breakout (ORB) strategies.
 
 **Parameters:**
 - `symbol` (path, required): NASDAQ 100 stock symbol (e.g., "AAPL", "WBD", "TSLA")
@@ -330,6 +330,11 @@ curl -H "Authorization: Bearer YOUR_API_KEY" \
   "volume_rate_per_minute": 83808,
   "degiro_vwd_id": "600236482",
   "degiro_id": "22187048",
+  "current_price": {
+    "bid": 19.76,
+    "ask": 19.78,
+    "last": 19.77
+  },
   "timestamp": "2025-09-26T18:37:10.569848Z"
 }
 ```
@@ -339,59 +344,101 @@ curl -H "Authorization: Bearer YOUR_API_KEY" \
 - `last_volume`: Volume of most recent trade
 - `volume_rate_per_minute`: Average volume per minute since market open
 - `elapsed_minutes`: Minutes elapsed since 9:30 AM ET
+- `current_price`: Real-time bid/ask/last price from DEGIRO
 - `degiro_vwd_id`: DEGIRO real-time data identifier
-
-### Price Data Endpoint
-```http
-GET /api/price/opening/{symbol}
-Authorization: Bearer YOUR_API_KEY
-```
-
-**Purpose:** Get current daily OHLCV price data for NASDAQ 100 stocks.
-
-**Parameters:**
-- `symbol` (path, required): NASDAQ 100 stock symbol (e.g., "AAPL", "WBD", "TSLA")
-
-**Example Request:**
-```bash
-curl -H "Authorization: Bearer YOUR_API_KEY" \
-     "http://your-server:7731/api/price/opening/WBD"
-```
-
-**Response:**
-```json
-{
-  "symbol": "WBD",
-  "current_price": 19.77,
-  "open_price": 19.34,
-  "high_price": 19.95,
-  "low_price": 19.34,
-  "volume": 25798141,
-  "vwap": 19.68,
-  "market_open_time": "2025-09-26T09:30:00-04:00",
-  "current_time": "2025-09-26T14:37:34-04:00",
-  "degiro_vwd_id": "600236482"
-}
-```
-
-**Response Fields:**
-- `current_price`: Last traded price
-- `open_price`: Opening price at 9:30 AM ET
-- `high_price`: Highest price today
-- `low_price`: Lowest price today
-- `volume`: Total shares traded today
-- `vwap`: Volume-weighted average price (approximated)
 
 **🎯 ORB Strategy Usage:**
 - **No time restrictions**: Returns current daily data anytime
 - **Caller controls timing**: API doesn't enforce 9:35 AM logic
 - **Real-time updates**: Data refreshes every few seconds during market hours
 - **NASDAQ 100 coverage**: Supports all 101 NASDAQ 100 symbols
+- **Price included**: Real-time bid/ask/last price from existing products/search functionality
 
 **⚡ Performance:**
 - Response time: < 500ms
 - Real-time DEGIRO data (no mocks/delays)
 - Concurrent requests supported
+
+### Batch NASDAQ Volume Data
+```http
+GET /api/volume/nasdaq
+Authorization: Bearer YOUR_API_KEY
+```
+
+**Purpose:** Get real-time volume and price data for all 101 NASDAQ 100 stocks in one call. Optimized for market scanners and bulk ORB strategy analysis.
+
+**Example Request:**
+```bash
+curl -H "Authorization: Bearer YOUR_API_KEY" \
+     "http://your-server:7731/api/volume/nasdaq"
+```
+
+**Response:**
+```json
+{
+  "market_open_time": "2025-09-26T09:30:00-04:00",
+  "current_time": "2025-09-26T14:37:10-04:00", 
+  "elapsed_minutes": 307.2,
+  "stocks": [
+    {
+      "symbol": "AAPL",
+      "current_time": "2025-09-26T14:37:10-04:00",
+      "market_open_time": "2025-09-26T09:30:00-04:00",
+      "elapsed_minutes": 307.2,
+      "cumulative_volume": 34281888,
+      "last_volume": 100,
+      "volume_rate_per_minute": 92697,
+      "degiro_vwd_id": "360015751",
+      "degiro_id": "331868",
+      "current_price": {
+        "bid": 227.50,
+        "ask": 227.52,
+        "last": 227.51
+      },
+      "timestamp": "2025-09-26T18:37:10.569848Z"
+    },
+    {
+      "symbol": "WBD",
+      "current_time": "2025-09-26T14:37:10-04:00",
+      "market_open_time": "2025-09-26T09:30:00-04:00", 
+      "elapsed_minutes": 307.2,
+      "cumulative_volume": 25743956,
+      "last_volume": 100,
+      "volume_rate_per_minute": 83808,
+      "degiro_vwd_id": "600236482",
+      "degiro_id": "22187048",
+      "current_price": {
+        "bid": 19.76,
+        "ask": 19.78,
+        "last": 19.77
+      },
+      "timestamp": "2025-09-26T18:37:10.569848Z"
+    }
+  ],
+  "total_stocks": 101,
+  "timestamp": "2025-09-26T18:37:10.123456Z"
+}
+```
+
+**Response Fields:**
+- `stocks`: Array of VolumeResponse objects for each NASDAQ stock
+- `total_stocks`: Number of stocks successfully processed
+- `market_open_time`: Market open time (9:30 AM ET)
+- `elapsed_minutes`: Minutes elapsed since market open
+- Each stock contains volume metrics and real-time price data
+
+**🎯 Batch Processing Features:**
+- **Concurrent fetching**: 10 parallel workers for volume data
+- **Batch price lookup**: All prices fetched in one API call
+- **Error handling**: Failed stocks excluded, successful ones returned
+- **Sorted results**: Stocks ordered alphabetically by symbol
+- **Complete coverage**: All 101 NASDAQ 100 stocks supported
+
+**⚡ Batch Performance:**
+- Response time: 2-5 seconds (101 stocks)
+- Real-time DEGIRO data for all stocks
+- Optimized with concurrent processing
+- Perfect for market scanners and bulk analysis
 
 ## 🚀 Production Deployment
 

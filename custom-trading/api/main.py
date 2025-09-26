@@ -192,6 +192,15 @@ class VolumeResponse(BaseModel):
     volume_rate_per_minute: float
     degiro_vwd_id: str
     degiro_id: str
+    current_price: PriceInfo
+    timestamp: str
+
+class NasdaqBatchResponse(BaseModel):
+    market_open_time: str
+    current_time: str
+    elapsed_minutes: float
+    stocks: List[VolumeResponse]
+    total_stocks: int
     timestamp: str
 
 class PriceResponse(BaseModel):
@@ -904,6 +913,13 @@ def get_volume_data(symbol: str, degiro_id: str, vwd_id: str) -> VolumeResponse:
         elapsed_minutes = max(1, (et_now - market_open).total_seconds() / 60)
         volume_rate = cumulative_volume / elapsed_minutes if elapsed_minutes > 0 else 0
         
+        # Get current price using existing price functionality
+        price_info = get_real_prices_batch([degiro_id]).get(degiro_id)
+        
+        if not price_info:
+            # Fallback price if price lookup fails
+            price_info = PriceInfo(bid=0.0, ask=0.0, last=0.0)
+        
         return VolumeResponse(
             symbol=symbol,
             current_time=et_now.isoformat(),
@@ -914,6 +930,7 @@ def get_volume_data(symbol: str, degiro_id: str, vwd_id: str) -> VolumeResponse:
             volume_rate_per_minute=volume_rate,
             degiro_vwd_id=vwd_id,
             degiro_id=degiro_id,
+            current_price=price_info,
             timestamp=datetime.now().isoformat()
         )
         
@@ -922,154 +939,6 @@ def get_volume_data(symbol: str, degiro_id: str, vwd_id: str) -> VolumeResponse:
     except Exception as e:
         raise HTTPException(status_code=503, detail=f"Volume data fetch failed: {str(e)}")
 
-def get_price_data(symbol: str, vwd_id: str) -> PriceResponse:
-    """Get real-time price data for a symbol using DEGIRO quotecast API"""
-    try:
-        from degiro_connector.quotecast.models.ticker import TickerRequest
-        from degiro_connector.quotecast.tools.ticker_fetcher import TickerFetcher
-        from degiro_connector.quotecast.tools.ticker_to_df import TickerToDF
-        import pytz
-        
-        # Use the existing trading API session to get user token
-        api = get_trading_api()  # This ensures we have an active session
-        
-        # Get user token from config using the same method as main API
-        config_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', 'config', 'config.json')
-        config_path = os.path.normpath(config_path)
-        with open(config_path, 'r') as f:
-            config_dict = json.load(f)
-        user_token = config_dict.get("user_token")
-        
-        if not user_token:
-            raise HTTPException(status_code=503, detail="No user token available")
-        
-        # Build session
-        session = TickerFetcher.build_session()
-        session_id = TickerFetcher.get_session_id(user_token=user_token)
-        
-        if not session_id:
-            raise HTTPException(status_code=503, detail="Unable to establish quotecast session")
-        
-        # Create ticker request for price data
-        ticker_request = TickerRequest(
-            request_type="subscription",
-            request_map={
-                vwd_id: [
-                    "LastPrice",
-                    "BidPrice", 
-                    "AskPrice",
-                    "OpenPrice",
-                    "HighPrice",
-                    "LowPrice",
-                    "CumulativeVolume"
-                ]
-            }
-        )
-        
-        # Subscribe and fetch
-        logger = TickerFetcher.build_logger()
-        TickerFetcher.subscribe(
-            ticker_request=ticker_request,
-            session_id=session_id,
-            session=session,
-            logger=logger,
-        )
-        
-        ticker = TickerFetcher.fetch_ticker(
-            session_id=session_id,
-            session=session,
-            logger=logger,
-        )
-        
-        if not ticker:
-            raise HTTPException(status_code=503, detail=f"No price data available for {symbol}")
-        
-        # Parse the raw JSON response manually since ticker.data doesn't work properly
-        
-        try:
-            parsed_data = json.loads(ticker.json_text)
-            
-            # Parse DEGIRO's field mapping and values
-            field_map = {}
-            values = {}
-            
-            for item in parsed_data:
-                if item['m'] == 'a_req':
-                    # Field mapping: field_name -> field_id
-                    field_name, field_id = item['v']
-                    if field_name.startswith(vwd_id):
-                        field_map[field_id] = field_name.split('.')[-1]
-                elif item['m'] == 'un':
-                    # Numeric value: field_id -> value
-                    field_id, value = item['v']
-                    values[field_id] = value
-                elif item['m'] == 'us':
-                    # String value: field_id -> string_value
-                    field_id, value = item['v']
-                    values[field_id] = value
-            
-            # Extract price data
-            current_price = 0.0
-            open_price = 0.0
-            high_price = 0.0
-            low_price = 0.0
-            volume = 0
-            
-            for field_id, field_name in field_map.items():
-                if field_id in values:
-                    value = values[field_id]
-                    if field_name == 'LastPrice':
-                        current_price = float(value)
-                    elif field_name == 'OpenPrice':
-                        open_price = float(value)
-                    elif field_name == 'HighPrice':
-                        high_price = float(value)
-                    elif field_name == 'LowPrice':
-                        low_price = float(value)
-                    elif field_name == 'CumulativeVolume':
-                        volume = int(value)
-            
-            # Use current price as fallback for missing OHLC data
-            if open_price == 0.0:
-                open_price = current_price
-            if high_price == 0.0:
-                high_price = current_price
-            if low_price == 0.0:
-                low_price = current_price
-                
-            if current_price == 0.0:
-                raise HTTPException(status_code=503, detail=f"No price data found for {symbol}")
-                
-        except (json.JSONDecodeError, KeyError, ValueError) as e:
-            raise HTTPException(status_code=503, detail=f"Failed to parse price data for {symbol}: {str(e)}")
-        
-        # Simple VWAP calculation (approximate)
-        vwap = (high_price + low_price + current_price) / 3
-        
-        # Time calculations
-        et_now = datetime.now(pytz.timezone('US/Eastern'))
-        market_open = et_now.replace(hour=9, minute=30, second=0, microsecond=0)
-        
-        if et_now < market_open:
-            market_open = market_open.replace(day=market_open.day - 1)
-        
-        return PriceResponse(
-            symbol=symbol,
-            current_price=current_price,
-            open_price=open_price,
-            high_price=high_price,
-            low_price=low_price,
-            volume=volume,
-            vwap=vwap,
-            market_open_time=market_open.isoformat(),
-            current_time=et_now.isoformat(),
-            degiro_vwd_id=vwd_id
-        )
-        
-    except HTTPException:
-        raise
-    except Exception as e:
-        raise HTTPException(status_code=503, detail=f"Price data fetch failed: {str(e)}")
 
 def filter_by_product_subtype(products: list, subtype: str) -> list:
     """Filter leveraged products by subtype"""
@@ -1688,43 +1557,91 @@ async def get_volume_opening(
     # Get real-time volume data
     return get_volume_data(symbol_upper, degiro_id, vwd_id)
 
-@app.get("/api/price/opening/{symbol}", response_model=PriceResponse)
-async def get_price_opening(
-    symbol: str,
+@app.get("/api/volume/nasdaq", response_model=NasdaqBatchResponse)
+async def get_nasdaq_batch_volume(
     api_key: str = Depends(verify_api_key)
 ):
     """
-    Get current daily price data for a NASDAQ stock
+    Get real-time volume and price data for all 101 NASDAQ 100 stocks
     
-    Returns real-time OHLCV data without time restrictions.
-    The caller handles timing logic (e.g., 9:35 AM ORB strategy).
+    Returns volume metrics and current prices for the entire NASDAQ 100 in one call.
+    Optimized for batch processing with concurrent data fetching.
     
-    - **symbol**: NASDAQ stock symbol (e.g., AAPL, GOOGL, MSFT)
-    
-    Returns current price, OHLC, volume, and VWAP calculations.
+    Perfect for market scanners and bulk ORB strategy analysis.
     """
+    
+    # Use existing trading API session
+    api = get_trading_api()
     
     # Load NASDAQ mapping
     nasdaq_mapping = load_nasdaq_mapping()
     
-    symbol_upper = symbol.upper()
-    if symbol_upper not in nasdaq_mapping:
-        raise HTTPException(
-            status_code=404,
-            detail=f"Symbol {symbol} not found in NASDAQ 100 mapping"
-        )
+    import pytz
+    from concurrent.futures import ThreadPoolExecutor, as_completed
     
-    stock_info = nasdaq_mapping[symbol_upper]
-    vwd_id = stock_info.get('degiro_vwd_id')
+    # Time calculations (same for all stocks)
+    et_now = datetime.now(pytz.timezone('US/Eastern'))
+    market_open = et_now.replace(hour=9, minute=30, second=0, microsecond=0)
     
-    if not vwd_id:
-        raise HTTPException(
-            status_code=503,
-            detail=f"No DEGIRO vwdId available for {symbol}"
-        )
+    if et_now < market_open:
+        market_open = market_open.replace(day=market_open.day - 1)
     
-    # Get real-time price data
-    return get_price_data(symbol_upper, vwd_id)
+    elapsed_minutes = max(1, (et_now - market_open).total_seconds() / 60)
+    
+    # Get all stock prices in batch first (more efficient)
+    all_degiro_ids = [stock_info.get('degiro_id') for stock_info in nasdaq_mapping.values() if stock_info.get('degiro_id')]
+    batch_prices = get_real_prices_batch(all_degiro_ids)
+    
+    def get_single_volume_data(symbol_data):
+        """Get volume data for a single stock"""
+        symbol, stock_info = symbol_data
+        try:
+            degiro_id = stock_info.get('degiro_id')
+            vwd_id = stock_info.get('degiro_vwd_id')
+            
+            if not degiro_id or not vwd_id:
+                return None
+            
+            # Get volume data using existing function but with shared price data
+            volume_response = get_volume_data(symbol, degiro_id, vwd_id)
+            
+            # Override price with batch-fetched price for efficiency
+            if degiro_id in batch_prices:
+                volume_response.current_price = batch_prices[degiro_id]
+            
+            return volume_response
+            
+        except Exception as e:
+            print(f"Failed to get volume data for {symbol}: {e}")
+            return None
+    
+    # Process all stocks concurrently
+    stocks_data = []
+    with ThreadPoolExecutor(max_workers=10) as executor:
+        # Submit all tasks
+        future_to_symbol = {
+            executor.submit(get_single_volume_data, (symbol, stock_info)): symbol 
+            for symbol, stock_info in nasdaq_mapping.items()
+        }
+        
+        # Collect results
+        for future in as_completed(future_to_symbol):
+            result = future.result()
+            if result:
+                stocks_data.append(result)
+    
+    # Sort by symbol for consistent ordering
+    stocks_data.sort(key=lambda x: x.symbol)
+    
+    return NasdaqBatchResponse(
+        market_open_time=market_open.isoformat(),
+        current_time=et_now.isoformat(), 
+        elapsed_minutes=elapsed_minutes,
+        stocks=stocks_data,
+        total_stocks=len(stocks_data),
+        timestamp=datetime.now().isoformat()
+    )
+
 
 @app.get("/api/health")
 async def health_check():
