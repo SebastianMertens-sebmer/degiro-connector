@@ -801,7 +801,10 @@ def get_volume_data(symbol: str, degiro_id: str, vwd_id: str) -> VolumeResponse:
         from degiro_connector.quotecast.tools.ticker_to_df import TickerToDF
         import pytz
         
-        # Get user token from config
+        # Use the existing trading API session to get user token
+        api = get_trading_api()  # This ensures we have an active session
+        
+        # Get user token from config using the same method as main API
         config_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', 'config', 'config.json')
         config_path = os.path.normpath(config_path)
         with open(config_path, 'r') as f:
@@ -927,7 +930,10 @@ def get_price_data(symbol: str, vwd_id: str) -> PriceResponse:
         from degiro_connector.quotecast.tools.ticker_to_df import TickerToDF
         import pytz
         
-        # Get user token from config
+        # Use the existing trading API session to get user token
+        api = get_trading_api()  # This ensures we have an active session
+        
+        # Get user token from config using the same method as main API
         config_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', 'config', 'config.json')
         config_path = os.path.normpath(config_path)
         with open(config_path, 'r') as f:
