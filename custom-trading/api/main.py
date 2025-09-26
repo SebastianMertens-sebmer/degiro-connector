@@ -8,7 +8,6 @@ import json
 import os
 from typing import Optional, List, Dict, Any
 from datetime import datetime
-from dotenv import load_dotenv
 import pytz
 
 from fastapi import FastAPI, HTTPException, Depends, status
@@ -22,7 +21,12 @@ from degiro_connector.trading.models.product_search import StocksRequest, Levera
 from degiro_connector.trading.models.order import Order
 
 # Load environment variables
-load_dotenv('config/.env')
+# Load environment variables from .env if available
+try:
+    from dotenv import load_dotenv
+    load_dotenv('config/.env')
+except ImportError:
+    pass
 
 # FastAPI app
 app = FastAPI(

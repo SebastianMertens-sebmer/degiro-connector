@@ -3,12 +3,14 @@
 ## Project Overview
 Production-ready FastAPI server for automated DEGIRO trading with leveraged products support.
 
+
 ## Key Features
 - Universal product search (ISIN, name, ticker symbols)
 - Leveraged products filtering by underlying assets
 - Two-step order validation (check → confirm)
 - Bearer token authentication
 - VPS deployment with auto-restart capabilities
+ssh -i ~/.ssh/rockettrader_key basti@152.53.200.195 "cd degiro-trading-api-new/custom-trading && source venv/bin/activate && source config/.env 
 
 ## API Endpoints
 
