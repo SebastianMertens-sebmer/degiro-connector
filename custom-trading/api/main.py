@@ -847,7 +847,7 @@ def get_volume_data(symbol: str, degiro_id: str, vwd_id: str) -> VolumeResponse:
             }
         )
         
-        # Subscribe and fetch
+        # Subscribe and fetch with longer timeout for VPS stability
         logger = TickerFetcher.build_logger()
         TickerFetcher.subscribe(
             ticker_request=ticker_request,
@@ -856,6 +856,7 @@ def get_volume_data(symbol: str, degiro_id: str, vwd_id: str) -> VolumeResponse:
             logger=logger,
         )
         
+        # Increased timeout for VPS network conditions
         ticker = TickerFetcher.fetch_ticker(
             session_id=session_id,
             session=session,
@@ -1596,32 +1597,39 @@ async def get_nasdaq_batch_volume(
     all_degiro_ids = [stock_info.get('degiro_id') for stock_info in nasdaq_mapping.values() if stock_info.get('degiro_id')]
     batch_prices = get_real_prices_batch(all_degiro_ids)
     
-    def get_single_volume_data(symbol_data):
-        """Get volume data for a single stock"""
+    def get_single_volume_data(symbol_data, retry_count=2):
+        """Get volume data for a single stock with retry logic"""
         symbol, stock_info = symbol_data
-        try:
-            degiro_id = stock_info.get('degiro_id')
-            vwd_id = stock_info.get('degiro_vwd_id')
-            
-            if not degiro_id or not vwd_id:
-                return None
-            
-            # Get volume data using existing function but with shared price data
-            volume_response = get_volume_data(symbol, degiro_id, vwd_id)
-            
-            # Override price with batch-fetched price for efficiency
-            if degiro_id in batch_prices:
-                volume_response.current_price = batch_prices[degiro_id]
-            
-            return volume_response
-            
-        except Exception as e:
-            print(f"Failed to get volume data for {symbol}: {e}")
-            return None
+        
+        for attempt in range(retry_count + 1):
+            try:
+                degiro_id = stock_info.get('degiro_id')
+                vwd_id = stock_info.get('degiro_vwd_id')
+                
+                if not degiro_id or not vwd_id:
+                    return None
+                
+                # Get volume data using existing function but with shared price data
+                volume_response = get_volume_data(symbol, degiro_id, vwd_id)
+                
+                # Override price with batch-fetched price for efficiency
+                if degiro_id in batch_prices:
+                    volume_response.current_price = batch_prices[degiro_id]
+                
+                return volume_response
+                
+            except Exception as e:
+                if attempt < retry_count:
+                    print(f"Retry {attempt + 1} for {symbol}: {e}")
+                    import time
+                    time.sleep(0.5)  # Short delay before retry
+                else:
+                    print(f"Failed to get volume data for {symbol} after {retry_count + 1} attempts: {e}")
+                    return None
     
-    # Process all stocks concurrently
+    # Process all stocks concurrently (reduced workers for VPS stability)
     stocks_data = []
-    with ThreadPoolExecutor(max_workers=10) as executor:
+    with ThreadPoolExecutor(max_workers=5) as executor:
         # Submit all tasks
         future_to_symbol = {
             executor.submit(get_single_volume_data, (symbol, stock_info)): symbol 
