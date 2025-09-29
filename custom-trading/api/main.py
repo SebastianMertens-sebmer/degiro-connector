@@ -1042,7 +1042,7 @@ async def root():
             "leveraged_search": "POST /api/leveraged/search",
             "legacy_search": "POST /api/products/search",
             "volume_data": "GET /api/volume/opening/{symbol}",
-            "price_data": "GET /api/price/opening/{symbol}",
+            "price_data": "GET /api/price/current/{symbol}",
             "check_order": "POST /api/orders/check",
             "place_order": "POST /api/orders/place"
         },
@@ -1654,8 +1654,8 @@ async def get_nasdaq_batch_volume(
         timestamp=datetime.now().isoformat()
     )
 
-@app.get("/api/price/opening/{symbol}", response_model=PriceResponse)
-async def get_price_opening(
+@app.get("/api/price/current/{symbol}", response_model=PriceResponse)
+async def get_price_current(
     symbol: str,
     api_key: str = Depends(verify_api_key)
 ):
