@@ -642,3 +642,69 @@ curl "http://152.53.200.195:7731/api/health"
 - Error handling: Graceful failures with proper HTTP codes
 - Data validation: Missing data handled appropriately
 - Concurrent requests: Supported without issues
+
+---
+
+# 🔄 VPS API Restart Process
+
+## Manual Restart Command
+```bash
+ssh -i ~/.ssh/rockettrader_key basti@152.53.200.195 "/home/basti/restart_trading_api.sh"
+```
+
+## When to Restart
+- **"Unable to fetch product metadata"** errors
+- API endpoints returning empty results despite healthy status
+- After DEGIRO session expiry (typically every few hours)
+- When search endpoints find 0 stocks for valid symbols
+
+## Restart Verification
+After restarting, verify endpoints work:
+
+```bash
+# 1. Check health status
+curl -H "Authorization: Bearer pjFJKB-iEd3_HOLchTcxglzV1yn27QncyzDQAhOhf1Y" \
+     "http://152.53.200.195:7731/api/health"
+
+# 2. Test stock search
+curl -H "Authorization: Bearer pjFJKB-iEd3_HOLchTcxglzV1yn27QncyzDQAhOhf1Y" \
+     -H "Content-Type: application/json" \
+     -X POST -d '{"q": "AAPL"}' \
+     "http://152.53.200.195:7731/api/stocks/search"
+
+# 3. Test volume endpoint
+curl -H "Authorization: Bearer pjFJKB-iEd3_HOLchTcxglzV1yn27QncyzDQAhOhf1Y" \
+     "http://152.53.200.195:7731/api/volume/opening/PYPL"
+```
+
+## Expected Results After Restart
+- ✅ Health endpoint shows: `"degiro_connection": "connected"`
+- ✅ Stock search returns actual results (not empty arrays)
+- ✅ Volume endpoints return real data with volume numbers
+- ✅ No more "Unable to fetch product metadata" errors
+
+## Automated Restart Schedule
+The VPS has automated restarts configured via cron:
+- **Trading hours**: Every hour at :45 minutes (6-22 UTC, Mon-Fri)
+- **Weekend**: Once daily at 10:45 UTC
+- **Health monitoring**: Every 5 minutes during trading hours
+
+## PYPL Volume Test Results
+After manual restart:
+```json
+{
+  "symbol": "PYPL",
+  "current_time": "2025-09-29T12:21:49.218323-04:00",
+  "market_open_time": "2025-09-29T09:30:00-04:00", 
+  "elapsed_minutes": 171.82,
+  "cumulative_volume": 13349572,
+  "last_volume": 100,
+  "volume_rate_per_minute": 77694.96,
+  "degiro_vwd_id": "350013441",
+  "degiro_id": "7201951",
+  "current_price": {"bid": 0.0, "ask": 0.0, "last": 0.0},
+  "timestamp": "2025-09-29T16:21:49.516838"
+}
+```
+
+**Note**: Price data shows 0.0 values - this suggests the price endpoint may need different implementation or PYPL may not have live price feeds available.

@@ -213,7 +213,7 @@ class PriceResponse(BaseModel):
     open_price: float
     high_price: float
     low_price: float
-    volume: int
+    volume: Optional[int] = None
     vwap: float
     market_open_time: str
     current_time: str
@@ -604,14 +604,14 @@ def get_real_prices_batch(product_ids: list[str]) -> dict[str, PriceInfo]:
                     product_id = valid_product_ids[0] if valid_product_ids else None
                 
                 if product_id:
-                    last = float(last_price)
-                    bid = float(bid_price) if bid_price is not None and not pd.isna(bid_price) else last * 0.999
-                    ask = float(ask_price) if ask_price is not None and not pd.isna(ask_price) else last * 1.001
+                    last = float(last_price) if last_price is not None and not pd.isna(last_price) else None
+                    bid = float(bid_price) if bid_price is not None and not pd.isna(bid_price) else None
+                    ask = float(ask_price) if ask_price is not None and not pd.isna(ask_price) else None
                     
                     results[product_id] = PriceInfo(
-                        bid=round(bid, 2),
-                        ask=round(ask, 2),
-                        last=round(last, 2)
+                        bid=round(bid, 2) if bid is not None else None,
+                        ask=round(ask, 2) if ask is not None else None,
+                        last=round(last, 2) if last is not None else None
                     )
         
         return results
@@ -754,15 +754,15 @@ def get_real_price(product_id: str) -> PriceInfo:
                 detail=f"No valid last price available for product {product_id}"
             )
         
-        # Convert to float and handle missing bid/ask
-        last = float(last_price)
-        bid = float(bid_price) if bid_price is not None and not pd.isna(bid_price) else last * 0.999
-        ask = float(ask_price) if ask_price is not None and not pd.isna(ask_price) else last * 1.001
+        # Convert to float and handle missing bid/ask - NO FAKE DATA
+        last = float(last_price) if last_price is not None and not pd.isna(last_price) else None
+        bid = float(bid_price) if bid_price is not None and not pd.isna(bid_price) else None
+        ask = float(ask_price) if ask_price is not None and not pd.isna(ask_price) else None
         
         return PriceInfo(
-            bid=round(bid, 2),
-            ask=round(ask, 2),
-            last=round(last, 2)
+            bid=round(bid, 2) if bid is not None else None,
+            ask=round(ask, 2) if ask is not None else None,
+            last=round(last, 2) if last is not None else None
         )
         
     except HTTPException:
@@ -922,8 +922,8 @@ def get_volume_data(symbol: str, degiro_id: str, vwd_id: str) -> VolumeResponse:
         price_info = get_real_prices_batch([degiro_id]).get(degiro_id)
         
         if not price_info:
-            # Fallback price if price lookup fails
-            price_info = PriceInfo(bid=0.0, ask=0.0, last=0.0)
+            # No fake data - return None values
+            price_info = PriceInfo(bid=None, ask=None, last=None)
         
         return VolumeResponse(
             symbol=symbol,
@@ -1696,18 +1696,23 @@ async def get_price_opening(
             )
         
         price_info = real_prices[product_id]
-        current_price = price_info.last or price_info.bid or price_info.ask or 0.0
+        current_price = price_info.last or price_info.bid or price_info.ask
         
-        # For ORB strategy, we need OHLC data - use current price as baseline
-        # In a real implementation, you'd get historical OHLC from DEGIRO
-        # For now, we'll simulate reasonable OHLC based on current price
-        open_price = current_price * 0.995  # Assume 0.5% gap from previous close
-        high_price = max(current_price, open_price) * 1.002  # Small high above current
-        low_price = min(current_price, open_price) * 0.998   # Small low below current
+        if current_price is None:
+            raise HTTPException(
+                status_code=503,
+                detail=f"No valid price data available for {symbol}"
+            )
+        
+        # For ORB strategy, we need OHLC data but we don't have historical data
+        # NO FAKE DATA - use current price for all OHLC values (real but incomplete)
+        open_price = current_price  # We don't know the real open, use current
+        high_price = current_price  # We don't know the real high, use current  
+        low_price = current_price   # We don't know the real low, use current
         
         # Volume data - try to get from NASDAQ mapping if available
         nasdaq_mapping = load_nasdaq_mapping()
-        volume = 0
+        volume = None
         vwd_id = None
         
         symbol_upper = symbol.upper()
@@ -1722,7 +1727,7 @@ async def get_price_opening(
                     volume_response = get_volume_data(symbol_upper, degiro_id, vwd_id)
                     volume = volume_response.cumulative_volume
                 except:
-                    volume = 1000000  # Fallback volume estimate
+                    volume = None  # No fake data
         
         # Calculate VWAP (simplified - in reality this requires historical data)
         vwap = (high_price + low_price + current_price) / 3  # Simplified VWAP
