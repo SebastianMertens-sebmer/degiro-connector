@@ -91,6 +91,34 @@ GET /api/health
 
 ## 🎯 API WORKFLOW
 
+### Quick Start: Find Leveraged Products
+
+**Step 1: Search Stock**
+```bash
+curl -H "Authorization: Bearer YOUR_API_KEY" \
+     -H "Content-Type: application/json" \
+     -d '{"q": "PYPL"}' \
+     "http://your-server:7731/api/stocks/search"
+```
+
+**Step 2: Find Leveraged Products**
+```bash
+curl -H "Authorization: Bearer YOUR_API_KEY" \
+     -H "Content-Type: application/json" \
+     -d '{
+       "underlying_id": "7201951",
+       "action": "LONG",
+       "min_leverage": 2.0,
+       "max_leverage": 10.0
+     }' \
+     "http://your-server:7731/api/leveraged/search"
+```
+
+**⚠️ Critical Requirements**: 
+- Must include BOTH `min_leverage` AND `max_leverage` parameters
+- If you get "503: Unable to fetch product metadata" errors, the API needs restart
+- Leveraged search depends on active DEGIRO session
+
 ### Step 1: Stock Search
 ```http
 POST /api/stocks/search
@@ -154,10 +182,10 @@ Content-Type: application/json
 ```
 
 **Parameters:**
-- `underlying_id` (string, required): Stock product ID from Step 1
+- `underlying_id` (string, required): Stock product ID from Step 1 
 - `action` (string, optional): "LONG" or "SHORT" (default: "LONG")
-- `min_leverage` (number, optional): Minimum leverage (default: 2.0)
-- `max_leverage` (number, optional): Maximum leverage (default: 10.0)
+- `min_leverage` (number, **REQUIRED**): Minimum leverage 
+- `max_leverage` (number, **REQUIRED**): Maximum leverage
 - `limit` (integer, optional): Max leveraged products to return (default: 50)
 - `issuer_id` (integer, optional): Issuer filter (-1=all)
 - `product_subtype` (string, optional): Filter by product type (default: "ALL")
@@ -586,9 +614,65 @@ Common error responses:
 # Test DEGIRO connection
 python ../examples/trading/login_2fa.py
 
-# Test API endpoints
-python tests/test_api_endpoints.py
+# Test all API endpoints
+cd _tests && python3 run_all_tests.py
 
 # Health check
 curl http://localhost:7731/api/health
 ```
+
+### Troubleshooting Leveraged Search
+
+If leveraged search returns **"503: Unable to fetch product metadata"**:
+
+1. **Check DEGIRO session**:
+   ```bash
+   curl -H "Authorization: Bearer YOUR_API_KEY" http://localhost:7731/api/health
+   ```
+
+2. **Restart API if needed**:
+   ```bash
+   # Kill current process
+   lsof -ti:7731 | xargs kill -9
+   
+   # Restart API
+   source config/.env && source venv/bin/activate && python api/main.py
+   ```
+
+3. **Test with complete parameters**:
+   ```bash
+   curl -H "Authorization: Bearer YOUR_API_KEY" \
+        -H "Content-Type: application/json" \
+        -d '{
+          "underlying_id": "1153605",
+          "action": "LONG",
+          "min_leverage": 5.0,
+          "max_leverage": 10.0,
+          "limit": 10
+        }' \
+        "http://localhost:7731/api/leveraged/search"
+   ```
+
+### Working Example: PYPL Leveraged Products
+
+```bash
+# 1. Get PYPL stock ID
+curl -H "Authorization: Bearer YOUR_API_KEY" \
+     -H "Content-Type: application/json" \
+     -d '{"q": "PYPL"}' \
+     "http://localhost:7731/api/stocks/search"
+
+# 2. Search leveraged products (using product_id from step 1)
+curl -H "Authorization: Bearer YOUR_API_KEY" \
+     -H "Content-Type: application/json" \
+     -d '{
+       "underlying_id": "7201951",
+       "action": "LONG",
+       "min_leverage": 2.0,
+       "max_leverage": 10.0,
+       "limit": 10
+     }' \
+     "http://localhost:7731/api/leveraged/search"
+```
+
+**Expected Results**: 10 BNP leveraged products with 2x-8x leverage.

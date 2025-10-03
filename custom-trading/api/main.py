@@ -237,6 +237,9 @@ def get_trading_api():
     """Get or create DEGIRO trading API connection"""
     global trading_api
     
+    # Always reconnect to ensure fresh session
+    trading_api = None
+    
     if trading_api is None:
         try:
             # Try environment variables first (secure)
@@ -974,49 +977,56 @@ def filter_by_product_subtype(products: list, subtype: str) -> list:
 
 def create_degiro_order(request: OrderRequest) -> Order:
     """Create DEGIRO Order object from request"""
-    order = Order()
+    from degiro_connector.trading.models.order import Action, OrderType, TimeType
     
-    # Action
+    # Action (use buy_sell parameter not action)
     if request.action.upper() == "BUY":
-        order.action = Order.Action.BUY
+        buy_sell = Action.BUY
     elif request.action.upper() == "SELL":
-        order.action = Order.Action.SELL
+        buy_sell = Action.SELL
     else:
         raise ValueError(f"Invalid action: {request.action}")
     
     # Order Type
     if request.order_type.upper() == "LIMIT":
-        order.order_type = Order.OrderType.LIMIT
+        order_type = OrderType.LIMIT
         if request.price is None:
             raise ValueError("Price required for LIMIT orders")
-        order.price = request.price
     elif request.order_type.upper() == "MARKET":
-        order.order_type = Order.OrderType.MARKET
+        order_type = OrderType.MARKET
     elif request.order_type.upper() == "STOP_LOSS":
-        order.order_type = Order.OrderType.STOP_LOSS
+        order_type = OrderType.STOP_LOSS
         if request.stop_price is None:
             raise ValueError("Stop price required for STOP_LOSS orders")
-        order.stop_price = request.stop_price
     elif request.order_type.upper() == "STOP_LIMIT":
-        order.order_type = Order.OrderType.STOP_LIMIT
+        order_type = OrderType.STOP_LIMIT
         if request.price is None or request.stop_price is None:
             raise ValueError("Both price and stop_price required for STOP_LIMIT orders")
-        order.price = request.price
-        order.stop_price = request.stop_price
     else:
         raise ValueError(f"Invalid order type: {request.order_type}")
     
     # Time Type
     if request.time_type.upper() == "DAY":
-        order.time_type = Order.TimeType.GOOD_TILL_DAY
+        time_type = TimeType.GOOD_TILL_DAY
     elif request.time_type.upper() == "GTC":
-        order.time_type = Order.TimeType.GOOD_TILL_CANCELED
+        time_type = TimeType.GOOD_TILL_CANCELED
     else:
         raise ValueError(f"Invalid time type: {request.time_type}")
     
-    # Basic fields
-    order.product_id = int(request.product_id)
-    order.size = request.quantity
+    # Create Order with correct parameter names
+    order = Order(
+        buy_sell=buy_sell,
+        order_type=order_type,
+        product_id=int(request.product_id),
+        size=request.quantity,
+        time_type=time_type
+    )
+    
+    # Set price/stop_price if needed
+    if request.price is not None:
+        order.price = request.price
+    if request.stop_price is not None:
+        order.stop_price = request.stop_price
     
     return order
 
