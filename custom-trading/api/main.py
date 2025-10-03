@@ -123,7 +123,7 @@ class LeveragedSearchRequest(BaseModel):
 
 class LeveragedSearchResponse(BaseModel):
     query: Dict[str, Any]
-    underlying_stock: StockOption
+    underlying_stock: Optional[StockOption]
     leveraged_products: List[LeveragedProduct]
     total_found: int
     timestamp: str
@@ -233,13 +233,13 @@ def verify_api_key(credentials: HTTPAuthorizationCredentials = Depends(security)
 
 # === DEGIRO CONNECTION ===
 
+# Global API instance - reused within single server lifetime
+trading_api = None
+
 def get_trading_api():
     """Get or create DEGIRO trading API connection"""
     global trading_api
-    
-    # Always reconnect to ensure fresh session
-    trading_api = None
-    
+
     if trading_api is None:
         try:
             # Try environment variables first (secure)
@@ -277,13 +277,13 @@ def get_trading_api():
             
             trading_api = TradingAPI(credentials=credentials)
             trading_api.connect()
-            
+
         except Exception as e:
             raise HTTPException(
                 status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
                 detail=f"Failed to connect to DEGIRO: {str(e)}"
             )
-    
+
     return trading_api
 
 # === DYNAMIC LEVERAGED SEARCH ===
@@ -509,16 +509,19 @@ def get_real_prices_batch(product_ids: list[str]) -> dict[str, PriceInfo]:
         api = get_trading_api()
         
         # Get product info for all products to determine vwdIds
-        product_info = api.get_products_info(
-            product_list=[int(pid) for pid in product_ids],
-            raw=True
-        )
-        
-        if not isinstance(product_info, dict) or 'data' not in product_info:
-            raise HTTPException(
-                status_code=503,
-                detail="Unable to fetch product metadata"
+        try:
+            product_info = api.get_products_info(
+                product_list=[int(pid) for pid in product_ids],
+                raw=True
             )
+        except Exception as e:
+            # If metadata fetch fails (rate limiting, session issues), return empty pricing
+            print(f"Product metadata fetch failed: {e}")
+            return {}
+
+        if not isinstance(product_info, dict) or 'data' not in product_info:
+            # Return empty pricing instead of throwing error
+            return {}
         
         # Build vwdId mapping for products that support real-time pricing
         vwd_id_to_product_id = {}
@@ -1150,48 +1153,86 @@ async def search_leveraged_products(
             detail="Invalid underlying_id format"
         )
     
-    # Create enhanced leveraged request
+    # First, try to get the underlying stock info to get symbol/name
+    underlying_stock_info = None
+    try:
+        product_info = api.get_products_info(
+            product_list=[underlying_id_int],
+            raw=True
+        )
+        if isinstance(product_info, dict) and 'data' in product_info:
+            underlying_stock_info = product_info['data'].get(str(underlying_id_int))
+    except Exception as e:
+        print(f"Could not fetch underlying stock info: {e}")
+
+    # Get search term from stock info (symbol or name)
+    search_term = ""
+    if underlying_stock_info:
+        # Try to get symbol or name for better search results
+        search_term = underlying_stock_info.get('symbol', underlying_stock_info.get('name', ''))
+        print(f"DEBUG: Using search term '{search_term}' for leveraged products")
+
+    # Create enhanced leveraged request with shortlong parameter
+    # DEGIRO uses numeric values: 0=SHORT, 1=LONG (from web interface URLs)
+    shortlong_value = "1" if request.action.upper() == "LONG" else "0"
+
     leveraged_request = LeveragedsRequest(
         popular_only=False,
         input_aggregate_types="",
         input_aggregate_values="",
-        search_text="",  # Use empty search when we have underlying_id
+        search_text="",  # Empty when using underlying_product_id
         offset=0,
-        limit=request.limit * 5,  # Get more to filter by leverage
+        limit=request.limit * 10,  # Get more to filter by leverage
         require_total=True,
-        sort_columns="name",
+        sort_columns="leverage",
         sort_types="asc",
-        underlying_product_id=underlying_id_int
+        underlying_product_id=underlying_id_int,
+        shortlong=shortlong_value  # 0=SHORT, 1=LONG
     )
-    
-    # Add direction filter
-    if request.action.upper() == "LONG":
-        leveraged_request.shortlong = "LONG"
-    elif request.action.upper() == "SHORT":
-        leveraged_request.shortlong = "SHORT"
-    
+
+    print(f"DEBUG: Set shortlong={shortlong_value} for action={request.action}")
+
     try:
         search_results = api.product_search(leveraged_request, raw=True)
-        
+
+        # Debug: print raw response
+        print(f"DEBUG: DEGIRO product_search response type: {type(search_results)}")
+        if isinstance(search_results, dict):
+            print(f"DEBUG: Response keys: {list(search_results.keys())}")
+            if 'products' in search_results:
+                print(f"DEBUG: Found {len(search_results['products'])} products from DEGIRO")
+
         leveraged_products_data = []
         if isinstance(search_results, dict) and 'products' in search_results:
             products = search_results['products']
-            
+
+            # Map action to DEGIRO direction value
             target_direction = "L" if request.action.upper() == "LONG" else "S"
-            
+
+            # Debug: Show first product's fields and count by direction
+            if products:
+                print(f"DEBUG: First product keys: {list(products[0].keys())}")
+                print(f"DEBUG: First product sample: leverage={products[0].get('leverage')}, shortlong={products[0].get('shortlong')}, tradable={products[0].get('tradable')}")
+                print(f"DEBUG: First product name: {products[0].get('name')}")
+                print(f"DEBUG: Target direction: {target_direction}")
+
+                # Count products by direction
+                long_count = sum(1 for p in products if p.get('shortlong') == 'L')
+                short_count = sum(1 for p in products if p.get('shortlong') == 'S')
+                print(f"DEBUG: Product direction counts - LONG: {long_count}, SHORT: {short_count}")
+
             for product in products:
-                # Extract leverage from name (if available)
-                leverage = extract_leverage_from_name(product.get('name', ''))
-                
-                # Filter by leverage range
-                if leverage and request.min_leverage <= leverage <= request.max_leverage:
-                    # Filter by direction in product name
-                    name = product.get('name', '').upper()
-                    if target_direction == "L" and ("CALL" in name or "LONG" in name or "BULL" in name):
-                        leveraged_products_data.append(product)
-                    elif target_direction == "S" and ("PUT" in name or "SHORT" in name or "BEAR" in name):
-                        leveraged_products_data.append(product)
-                
+                # Use DEGIRO's native fields (more reliable than name parsing)
+                leverage = product.get('leverage', 0)
+                shortlong = product.get('shortlong')  # DEGIRO direction field
+                tradable = product.get('tradable', False)
+
+                # Filter by leverage range, direction, and tradability
+                if (request.min_leverage <= leverage <= request.max_leverage and
+                    shortlong == target_direction and
+                    tradable):
+                    leveraged_products_data.append(product)
+
                 if len(leveraged_products_data) >= request.limit:
                     break
         
