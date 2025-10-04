@@ -1699,6 +1699,11 @@ async def get_nasdaq_batch_volume(
         symbol, stock_info = symbol_data
 
         try:
+            # Add random delay to avoid DEGIRO rate limiting (looks more human)
+            import time
+            import random
+            time.sleep(random.uniform(0.5, 1.5))
+
             degiro_id = stock_info.get('degiro_id')
             vwd_id = stock_info.get('degiro_vwd_id')
 
@@ -1718,9 +1723,9 @@ async def get_nasdaq_batch_volume(
             print(f"Failed to get volume data for {symbol}: {e}")
             return None
 
-    # Process all stocks concurrently (increased workers for faster completion)
+    # Process all stocks concurrently (reduced workers to avoid DEGIRO rate limiting)
     stocks_data = []
-    with ThreadPoolExecutor(max_workers=15) as executor:
+    with ThreadPoolExecutor(max_workers=5) as executor:
         # Submit all tasks
         future_to_symbol = {
             executor.submit(get_single_volume_data, (symbol, stock_info)): symbol 
