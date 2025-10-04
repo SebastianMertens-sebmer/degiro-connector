@@ -290,6 +290,32 @@ def get_trading_api():
 
 # === HELPER FUNCTIONS ===
 
+def is_session_expired(error_message: str) -> bool:
+    """
+    Detect if an error is due to DEGIRO session expiry
+
+    Common session expiry indicators:
+    - "401" or "Unauthorized"
+    - "session" in error message
+    - "login" or "authentication" errors
+    """
+    error_lower = str(error_message).lower()
+    return any([
+        '401' in error_lower,
+        'unauthorized' in error_lower,
+        'session' in error_lower and ('expired' in error_lower or 'invalid' in error_lower),
+        'login' in error_lower,
+        'authentication' in error_lower,
+        'credential' in error_lower
+    ])
+
+def reconnect_trading_api():
+    """Force reconnection to DEGIRO by resetting the global trading_api"""
+    global trading_api
+    print("⚠️  DEGIRO session expired - reconnecting...")
+    trading_api = None  # Reset global
+    return get_trading_api()  # This will create new connection
+
 def extract_leverage_from_name(product_name: str) -> Optional[float]:
     """Extract leverage value from product name"""
     import re
@@ -812,8 +838,13 @@ def load_nasdaq_mapping() -> dict:
         print(f"Warning: Could not load NASDAQ mapping: {e}")
         return {}
 
-def get_volume_data(symbol: str, degiro_id: str, vwd_id: str) -> VolumeResponse:
-    """Get real-time volume data for a symbol using DEGIRO quotecast API"""
+def get_volume_data(symbol: str, degiro_id: str, vwd_id: str, _retry_depth: int = 0) -> VolumeResponse:
+    """
+    Get real-time volume data for a symbol using DEGIRO quotecast API
+
+    Args:
+        _retry_depth: Internal counter to prevent infinite retry loops (max 1 retry)
+    """
     try:
         from degiro_connector.quotecast.models.ticker import TickerRequest
         from degiro_connector.quotecast.tools.ticker_fetcher import TickerFetcher
@@ -948,7 +979,22 @@ def get_volume_data(symbol: str, degiro_id: str, vwd_id: str) -> VolumeResponse:
     except HTTPException:
         raise
     except Exception as e:
-        raise HTTPException(status_code=503, detail=f"Volume data fetch failed: {str(e)}")
+        error_msg = str(e)
+
+        # Detect session expiry and attempt reconnection (prevent infinite loops)
+        if is_session_expired(error_msg) and _retry_depth == 0:
+            print(f"⚠️  Session expired during volume fetch for {symbol} - attempting reconnect...")
+            try:
+                reconnect_trading_api()
+                # Retry the volume fetch after reconnection (single retry only via _retry_depth)
+                return get_volume_data(symbol, degiro_id, vwd_id, _retry_depth=1)
+            except Exception as retry_error:
+                raise HTTPException(
+                    status_code=503,
+                    detail=f"Session expired and reconnect failed for {symbol}: {str(retry_error)}"
+                )
+
+        raise HTTPException(status_code=503, detail=f"Volume data fetch failed for {symbol}: {error_msg}")
 
 
 def filter_by_product_subtype(products: list, subtype: str) -> list:
@@ -1648,39 +1694,33 @@ async def get_nasdaq_batch_volume(
     all_degiro_ids = [stock_info.get('degiro_id') for stock_info in nasdaq_mapping.values() if stock_info.get('degiro_id')]
     batch_prices = get_real_prices_batch(all_degiro_ids)
     
-    def get_single_volume_data(symbol_data, retry_count=2):
-        """Get volume data for a single stock with retry logic"""
+    def get_single_volume_data(symbol_data):
+        """Get volume data for a single stock (no retries - handled by get_volume_data)"""
         symbol, stock_info = symbol_data
-        
-        for attempt in range(retry_count + 1):
-            try:
-                degiro_id = stock_info.get('degiro_id')
-                vwd_id = stock_info.get('degiro_vwd_id')
-                
-                if not degiro_id or not vwd_id:
-                    return None
-                
-                # Get volume data using existing function but with shared price data
-                volume_response = get_volume_data(symbol, degiro_id, vwd_id)
-                
-                # Override price with batch-fetched price for efficiency
-                if degiro_id in batch_prices:
-                    volume_response.current_price = batch_prices[degiro_id]
-                
-                return volume_response
-                
-            except Exception as e:
-                if attempt < retry_count:
-                    print(f"Retry {attempt + 1} for {symbol}: {e}")
-                    import time
-                    time.sleep(0.5)  # Short delay before retry
-                else:
-                    print(f"Failed to get volume data for {symbol} after {retry_count + 1} attempts: {e}")
-                    return None
-    
-    # Process all stocks concurrently (reduced workers for VPS stability)
+
+        try:
+            degiro_id = stock_info.get('degiro_id')
+            vwd_id = stock_info.get('degiro_vwd_id')
+
+            if not degiro_id or not vwd_id:
+                return None
+
+            # Get volume data using existing function (session expiry handled internally)
+            volume_response = get_volume_data(symbol, degiro_id, vwd_id)
+
+            # Override price with batch-fetched price for efficiency
+            if degiro_id in batch_prices:
+                volume_response.current_price = batch_prices[degiro_id]
+
+            return volume_response
+
+        except Exception as e:
+            print(f"Failed to get volume data for {symbol}: {e}")
+            return None
+
+    # Process all stocks concurrently (increased workers for faster completion)
     stocks_data = []
-    with ThreadPoolExecutor(max_workers=5) as executor:
+    with ThreadPoolExecutor(max_workers=15) as executor:
         # Submit all tasks
         future_to_symbol = {
             executor.submit(get_single_volume_data, (symbol, stock_info)): symbol 
