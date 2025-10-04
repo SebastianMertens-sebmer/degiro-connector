@@ -1,0 +1,1150 @@
+{
+  "SHORT": {
+    "MSFT": {
+      "symbol": "MSFT",
+      "action": "SHORT",
+      "error": "HTTPConnectionPool(host='localhost', port=7733): Read timed out. (read timeout=10)",
+      "total_found": 0,
+      "products": []
+    },
+    "PCAR": {
+      "symbol": "PCAR",
+      "action": "SHORT",
+      "error": "HTTPConnectionPool(host='localhost', port=7733): Read timed out. (read timeout=10)",
+      "total_found": 0,
+      "products": []
+    },
+    "PDD": {
+      "symbol": "PDD",
+      "action": "SHORT",
+      "total_found": 0,
+      "products": []
+    },
+    "PYPL": {
+      "symbol": "PYPL",
+      "action": "SHORT",
+      "total_found": 0,
+      "products": []
+    },
+    "QCOM": {
+      "symbol": "QCOM",
+      "action": "SHORT",
+      "total_found": 0,
+      "products": []
+    },
+    "AMZN": {
+      "symbol": "AMZN",
+      "action": "SHORT",
+      "total_found": 0,
+      "products": []
+    },
+    "ADI": {
+      "symbol": "ADI",
+      "action": "SHORT",
+      "total_found": 0,
+      "products": []
+    },
+    "ROST": {
+      "symbol": "ROST",
+      "action": "SHORT",
+      "total_found": 0,
+      "products": []
+    },
+    "ADP": {
+      "symbol": "ADP",
+      "action": "SHORT",
+      "total_found": 0,
+      "products": []
+    },
+    "AXON": {
+      "symbol": "AXON",
+      "action": "SHORT",
+      "total_found": 0,
+      "products": []
+    },
+    "SBUX": {
+      "symbol": "SBUX",
+      "action": "SHORT",
+      "total_found": 0,
+      "products": []
+    },
+    "SNPS": {
+      "symbol": "SNPS",
+      "action": "SHORT",
+      "total_found": 0,
+      "products": []
+    },
+    "CMCSA": {
+      "symbol": "CMCSA",
+      "action": "SHORT",
+      "total_found": 0,
+      "products": []
+    },
+    "CPRT": {
+      "symbol": "CPRT",
+      "action": "SHORT",
+      "total_found": 0,
+      "products": []
+    },
+    "COST": {
+      "symbol": "COST",
+      "action": "SHORT",
+      "total_found": 0,
+      "products": []
+    },
+    "CRWD": {
+      "symbol": "CRWD",
+      "action": "SHORT",
+      "total_found": 0,
+      "products": []
+    },
+    "DDOG": {
+      "symbol": "DDOG",
+      "action": "SHORT",
+      "total_found": 0,
+      "products": []
+    },
+    "TTD": {
+      "symbol": "TTD",
+      "action": "SHORT",
+      "total_found": 0,
+      "products": []
+    },
+    "FANG": {
+      "symbol": "FANG",
+      "action": "SHORT",
+      "total_found": 0,
+      "products": []
+    },
+    "TTWO": {
+      "symbol": "TTWO",
+      "action": "SHORT",
+      "total_found": 0,
+      "products": []
+    },
+    "ASML": {
+      "symbol": "ASML",
+      "action": "SHORT",
+      "total_found": 0,
+      "products": []
+    },
+    "AZN": {
+      "symbol": "AZN",
+      "action": "SHORT",
+      "total_found": 0,
+      "products": []
+    },
+    "TEAM": {
+      "symbol": "TEAM",
+      "action": "SHORT",
+      "total_found": 0,
+      "products": []
+    },
+    "ZS": {
+      "symbol": "ZS",
+      "action": "SHORT",
+      "total_found": 0,
+      "products": []
+    },
+    "CDNS": {
+      "symbol": "CDNS",
+      "action": "SHORT",
+      "total_found": 0,
+      "products": []
+    },
+    "ROP": {
+      "symbol": "ROP",
+      "action": "SHORT",
+      "total_found": 0,
+      "products": []
+    },
+    "AAPL": {
+      "symbol": "AAPL",
+      "action": "SHORT",
+      "total_found": 0,
+      "products": []
+    },
+    "ABNB": {
+      "symbol": "ABNB",
+      "action": "SHORT",
+      "total_found": 0,
+      "products": []
+    },
+    "ADSK": {
+      "symbol": "ADSK",
+      "action": "SHORT",
+      "total_found": 0,
+      "products": []
+    },
+    "AEP": {
+      "symbol": "AEP",
+      "action": "SHORT",
+      "total_found": 0,
+      "products": []
+    },
+    "AMD": {
+      "symbol": "AMD",
+      "action": "SHORT",
+      "total_found": 0,
+      "products": []
+    },
+    "ARM": {
+      "symbol": "ARM",
+      "action": "SHORT",
+      "total_found": 0,
+      "products": []
+    },
+    "DASH": {
+      "symbol": "DASH",
+      "action": "SHORT",
+      "total_found": 0,
+      "products": []
+    },
+    "AMAT": {
+      "symbol": "AMAT",
+      "action": "SHORT",
+      "total_found": 0,
+      "products": []
+    },
+    "AMGN": {
+      "symbol": "AMGN",
+      "action": "SHORT",
+      "total_found": 0,
+      "products": []
+    },
+    "BIIB": {
+      "symbol": "BIIB",
+      "action": "SHORT",
+      "total_found": 0,
+      "products": []
+    },
+    "BKNG": {
+      "symbol": "BKNG",
+      "action": "SHORT",
+      "total_found": 0,
+      "products": []
+    },
+    "BKR": {
+      "symbol": "BKR",
+      "action": "SHORT",
+      "total_found": 0,
+      "products": []
+    },
+    "CDW": {
+      "symbol": "CDW",
+      "action": "SHORT",
+      "total_found": 0,
+      "products": []
+    },
+    "CEG": {
+      "symbol": "CEG",
+      "action": "SHORT",
+      "total_found": 0,
+      "products": []
+    },
+    "CSGP": {
+      "symbol": "CSGP",
+      "action": "SHORT",
+      "total_found": 0,
+      "products": []
+    },
+    "CTAS": {
+      "symbol": "CTAS",
+      "action": "SHORT",
+      "total_found": 0,
+      "products": []
+    },
+    "CTSH": {
+      "symbol": "CTSH",
+      "action": "SHORT",
+      "total_found": 0,
+      "products": []
+    },
+    "CHTR": {
+      "symbol": "CHTR",
+      "action": "SHORT",
+      "total_found": 0,
+      "products": []
+    },
+    "FTNT": {
+      "symbol": "FTNT",
+      "action": "SHORT",
+      "total_found": 0,
+      "products": []
+    },
+    "CSX": {
+      "symbol": "CSX",
+      "action": "SHORT",
+      "total_found": 0,
+      "products": []
+    },
+    "EA": {
+      "symbol": "EA",
+      "action": "SHORT",
+      "total_found": 0,
+      "products": []
+    },
+    "EXC": {
+      "symbol": "EXC",
+      "action": "SHORT",
+      "total_found": 0,
+      "products": []
+    },
+    "GILD": {
+      "symbol": "GILD",
+      "action": "SHORT",
+      "total_found": 0,
+      "products": []
+    },
+    "IDXX": {
+      "symbol": "IDXX",
+      "action": "SHORT",
+      "total_found": 0,
+      "products": []
+    },
+    "INTU": {
+      "symbol": "INTU",
+      "action": "SHORT",
+      "total_found": 0,
+      "products": []
+    },
+    "GOOGL": {
+      "symbol": "GOOGL",
+      "action": "SHORT",
+      "total_found": 0,
+      "products": []
+    },
+    "LULU": {
+      "symbol": "LULU",
+      "action": "SHORT",
+      "total_found": 0,
+      "products": []
+    },
+    "MAR": {
+      "symbol": "MAR",
+      "action": "SHORT",
+      "total_found": 0,
+      "products": []
+    },
+    "META": {
+      "symbol": "META",
+      "action": "SHORT",
+      "total_found": 0,
+      "products": []
+    },
+    "INTC": {
+      "symbol": "INTC",
+      "action": "SHORT",
+      "total_found": 0,
+      "products": []
+    },
+    "MU": {
+      "symbol": "MU",
+      "action": "SHORT",
+      "total_found": 0,
+      "products": []
+    },
+    "NFLX": {
+      "symbol": "NFLX",
+      "action": "SHORT",
+      "total_found": 0,
+      "products": []
+    },
+    "NVDA": {
+      "symbol": "NVDA",
+      "action": "SHORT",
+      "total_found": 0,
+      "products": []
+    },
+    "ISRG": {
+      "symbol": "ISRG",
+      "action": "SHORT",
+      "total_found": 0,
+      "products": []
+    },
+    "KDP": {
+      "symbol": "KDP",
+      "action": "SHORT",
+      "total_found": 0,
+      "products": []
+    },
+    "PAYX": {
+      "symbol": "PAYX",
+      "action": "SHORT",
+      "total_found": 0,
+      "products": []
+    },
+    "REGN": {
+      "symbol": "REGN",
+      "action": "SHORT",
+      "total_found": 0,
+      "products": []
+    },
+    "ON": {
+      "symbol": "ON",
+      "action": "SHORT",
+      "total_found": 0,
+      "products": []
+    },
+    "KLAC": {
+      "symbol": "KLAC",
+      "action": "SHORT",
+      "total_found": 0,
+      "products": []
+    },
+    "LRCX": {
+      "symbol": "LRCX",
+      "action": "SHORT",
+      "total_found": 0,
+      "products": []
+    },
+    "TMUS": {
+      "symbol": "TMUS",
+      "action": "SHORT",
+      "total_found": 0,
+      "products": []
+    },
+    "TSLA": {
+      "symbol": "TSLA",
+      "action": "SHORT",
+      "total_found": 0,
+      "products": []
+    },
+    "TXN": {
+      "symbol": "TXN",
+      "action": "SHORT",
+      "total_found": 0,
+      "products": []
+    },
+    "WBD": {
+      "symbol": "WBD",
+      "action": "SHORT",
+      "total_found": 0,
+      "products": []
+    },
+    "WDAY": {
+      "symbol": "WDAY",
+      "action": "SHORT",
+      "total_found": 0,
+      "products": []
+    },
+    "ADBE": {
+      "symbol": "ADBE",
+      "action": "SHORT",
+      "total_found": 0,
+      "products": []
+    },
+    "APP": {
+      "symbol": "APP",
+      "action": "SHORT",
+      "total_found": 0,
+      "products": []
+    },
+    "AVGO": {
+      "symbol": "AVGO",
+      "action": "SHORT",
+      "total_found": 0,
+      "products": []
+    },
+    "CSCO": {
+      "symbol": "CSCO",
+      "action": "SHORT",
+      "total_found": 0,
+      "products": []
+    },
+    "DXCM": {
+      "symbol": "DXCM",
+      "action": "SHORT",
+      "total_found": 0,
+      "products": []
+    },
+    "FAST": {
+      "symbol": "FAST",
+      "action": "SHORT",
+      "total_found": 0,
+      "products": []
+    },
+    "GEHC": {
+      "symbol": "GEHC",
+      "action": "SHORT",
+      "total_found": 0,
+      "products": []
+    },
+    "GOOG": {
+      "symbol": "GOOG",
+      "action": "SHORT",
+      "total_found": 0,
+      "products": []
+    },
+    "HON": {
+      "symbol": "HON",
+      "action": "SHORT",
+      "total_found": 0,
+      "products": []
+    },
+    "KHC": {
+      "symbol": "KHC",
+      "action": "SHORT",
+      "total_found": 0,
+      "products": []
+    },
+    "MCHP": {
+      "symbol": "MCHP",
+      "action": "SHORT",
+      "total_found": 0,
+      "products": []
+    },
+    "MRVL": {
+      "symbol": "MRVL",
+      "action": "SHORT",
+      "total_found": 0,
+      "products": []
+    },
+    "MSTR": {
+      "symbol": "MSTR",
+      "action": "SHORT",
+      "total_found": 0,
+      "products": []
+    },
+    "ODFL": {
+      "symbol": "ODFL",
+      "action": "SHORT",
+      "total_found": 0,
+      "products": []
+    },
+    "PANW": {
+      "symbol": "PANW",
+      "action": "SHORT",
+      "total_found": 0,
+      "products": []
+    },
+    "PEP": {
+      "symbol": "PEP",
+      "action": "SHORT",
+      "total_found": 0,
+      "products": []
+    },
+    "PLTR": {
+      "symbol": "PLTR",
+      "action": "SHORT",
+      "total_found": 0,
+      "products": []
+    },
+    "VRSK": {
+      "symbol": "VRSK",
+      "action": "SHORT",
+      "total_found": 0,
+      "products": []
+    },
+    "XEL": {
+      "symbol": "XEL",
+      "action": "SHORT",
+      "total_found": 0,
+      "products": []
+    },
+    "ORLY": {
+      "symbol": "ORLY",
+      "action": "SHORT",
+      "total_found": 0,
+      "products": []
+    },
+    "VRTX": {
+      "symbol": "VRTX",
+      "action": "SHORT",
+      "total_found": 0,
+      "products": []
+    },
+    "MDLZ": {
+      "symbol": "MDLZ",
+      "action": "SHORT",
+      "total_found": 0,
+      "products": []
+    },
+    "MELI": {
+      "symbol": "MELI",
+      "action": "SHORT",
+      "total_found": 0,
+      "products": []
+    },
+    "MNST": {
+      "symbol": "MNST",
+      "action": "SHORT",
+      "total_found": 0,
+      "products": []
+    }
+  },
+  "LONG": {
+    "MSFT": {
+      "symbol": "MSFT",
+      "action": "LONG",
+      "error": "HTTPConnectionPool(host='localhost', port=7733): Read timed out. (read timeout=10)",
+      "total_found": 0,
+      "products": []
+    },
+    "PCAR": {
+      "symbol": "PCAR",
+      "action": "LONG",
+      "error": "HTTPConnectionPool(host='localhost', port=7733): Read timed out. (read timeout=10)",
+      "total_found": 0,
+      "products": []
+    },
+    "PDD": {
+      "symbol": "PDD",
+      "action": "LONG",
+      "total_found": 0,
+      "products": []
+    },
+    "PYPL": {
+      "symbol": "PYPL",
+      "action": "LONG",
+      "total_found": 0,
+      "products": []
+    },
+    "QCOM": {
+      "symbol": "QCOM",
+      "action": "LONG",
+      "total_found": 0,
+      "products": []
+    },
+    "AMZN": {
+      "symbol": "AMZN",
+      "action": "LONG",
+      "total_found": 0,
+      "products": []
+    },
+    "ADI": {
+      "symbol": "ADI",
+      "action": "LONG",
+      "total_found": 0,
+      "products": []
+    },
+    "ROST": {
+      "symbol": "ROST",
+      "action": "LONG",
+      "total_found": 0,
+      "products": []
+    },
+    "ADP": {
+      "symbol": "ADP",
+      "action": "LONG",
+      "total_found": 0,
+      "products": []
+    },
+    "AXON": {
+      "symbol": "AXON",
+      "action": "LONG",
+      "total_found": 0,
+      "products": []
+    },
+    "SBUX": {
+      "symbol": "SBUX",
+      "action": "LONG",
+      "total_found": 0,
+      "products": []
+    },
+    "SNPS": {
+      "symbol": "SNPS",
+      "action": "LONG",
+      "total_found": 0,
+      "products": []
+    },
+    "CMCSA": {
+      "symbol": "CMCSA",
+      "action": "LONG",
+      "total_found": 0,
+      "products": []
+    },
+    "CPRT": {
+      "symbol": "CPRT",
+      "action": "LONG",
+      "total_found": 0,
+      "products": []
+    },
+    "COST": {
+      "symbol": "COST",
+      "action": "LONG",
+      "total_found": 0,
+      "products": []
+    },
+    "CRWD": {
+      "symbol": "CRWD",
+      "action": "LONG",
+      "total_found": 0,
+      "products": []
+    },
+    "DDOG": {
+      "symbol": "DDOG",
+      "action": "LONG",
+      "total_found": 0,
+      "products": []
+    },
+    "TTD": {
+      "symbol": "TTD",
+      "action": "LONG",
+      "total_found": 0,
+      "products": []
+    },
+    "FANG": {
+      "symbol": "FANG",
+      "action": "LONG",
+      "total_found": 0,
+      "products": []
+    },
+    "TTWO": {
+      "symbol": "TTWO",
+      "action": "LONG",
+      "total_found": 0,
+      "products": []
+    },
+    "ASML": {
+      "symbol": "ASML",
+      "action": "LONG",
+      "total_found": 0,
+      "products": []
+    },
+    "AZN": {
+      "symbol": "AZN",
+      "action": "LONG",
+      "total_found": 0,
+      "products": []
+    },
+    "TEAM": {
+      "symbol": "TEAM",
+      "action": "LONG",
+      "total_found": 0,
+      "products": []
+    },
+    "ZS": {
+      "symbol": "ZS",
+      "action": "LONG",
+      "total_found": 0,
+      "products": []
+    },
+    "CDNS": {
+      "symbol": "CDNS",
+      "action": "LONG",
+      "total_found": 0,
+      "products": []
+    },
+    "ROP": {
+      "symbol": "ROP",
+      "action": "LONG",
+      "total_found": 0,
+      "products": []
+    },
+    "AAPL": {
+      "symbol": "AAPL",
+      "action": "LONG",
+      "total_found": 0,
+      "products": []
+    },
+    "ABNB": {
+      "symbol": "ABNB",
+      "action": "LONG",
+      "total_found": 0,
+      "products": []
+    },
+    "ADSK": {
+      "symbol": "ADSK",
+      "action": "LONG",
+      "total_found": 0,
+      "products": []
+    },
+    "AEP": {
+      "symbol": "AEP",
+      "action": "LONG",
+      "total_found": 0,
+      "products": []
+    },
+    "AMD": {
+      "symbol": "AMD",
+      "action": "LONG",
+      "total_found": 0,
+      "products": []
+    },
+    "ARM": {
+      "symbol": "ARM",
+      "action": "LONG",
+      "total_found": 0,
+      "products": []
+    },
+    "DASH": {
+      "symbol": "DASH",
+      "action": "LONG",
+      "total_found": 0,
+      "products": []
+    },
+    "AMAT": {
+      "symbol": "AMAT",
+      "action": "LONG",
+      "total_found": 0,
+      "products": []
+    },
+    "AMGN": {
+      "symbol": "AMGN",
+      "action": "LONG",
+      "total_found": 0,
+      "products": []
+    },
+    "BIIB": {
+      "symbol": "BIIB",
+      "action": "LONG",
+      "total_found": 0,
+      "products": []
+    },
+    "BKNG": {
+      "symbol": "BKNG",
+      "action": "LONG",
+      "total_found": 0,
+      "products": []
+    },
+    "BKR": {
+      "symbol": "BKR",
+      "action": "LONG",
+      "total_found": 0,
+      "products": []
+    },
+    "CDW": {
+      "symbol": "CDW",
+      "action": "LONG",
+      "total_found": 0,
+      "products": []
+    },
+    "CEG": {
+      "symbol": "CEG",
+      "action": "LONG",
+      "total_found": 0,
+      "products": []
+    },
+    "CSGP": {
+      "symbol": "CSGP",
+      "action": "LONG",
+      "total_found": 0,
+      "products": []
+    },
+    "CTAS": {
+      "symbol": "CTAS",
+      "action": "LONG",
+      "total_found": 0,
+      "products": []
+    },
+    "CTSH": {
+      "symbol": "CTSH",
+      "action": "LONG",
+      "total_found": 0,
+      "products": []
+    },
+    "CHTR": {
+      "symbol": "CHTR",
+      "action": "LONG",
+      "total_found": 0,
+      "products": []
+    },
+    "FTNT": {
+      "symbol": "FTNT",
+      "action": "LONG",
+      "total_found": 0,
+      "products": []
+    },
+    "CSX": {
+      "symbol": "CSX",
+      "action": "LONG",
+      "total_found": 0,
+      "products": []
+    },
+    "EA": {
+      "symbol": "EA",
+      "action": "LONG",
+      "total_found": 0,
+      "products": []
+    },
+    "EXC": {
+      "symbol": "EXC",
+      "action": "LONG",
+      "total_found": 0,
+      "products": []
+    },
+    "GILD": {
+      "symbol": "GILD",
+      "action": "LONG",
+      "total_found": 0,
+      "products": []
+    },
+    "IDXX": {
+      "symbol": "IDXX",
+      "action": "LONG",
+      "total_found": 0,
+      "products": []
+    },
+    "INTU": {
+      "symbol": "INTU",
+      "action": "LONG",
+      "total_found": 0,
+      "products": []
+    },
+    "GOOGL": {
+      "symbol": "GOOGL",
+      "action": "LONG",
+      "total_found": 0,
+      "products": []
+    },
+    "LULU": {
+      "symbol": "LULU",
+      "action": "LONG",
+      "total_found": 0,
+      "products": []
+    },
+    "MAR": {
+      "symbol": "MAR",
+      "action": "LONG",
+      "total_found": 0,
+      "products": []
+    },
+    "META": {
+      "symbol": "META",
+      "action": "LONG",
+      "total_found": 0,
+      "products": []
+    },
+    "INTC": {
+      "symbol": "INTC",
+      "action": "LONG",
+      "total_found": 0,
+      "products": []
+    },
+    "MU": {
+      "symbol": "MU",
+      "action": "LONG",
+      "total_found": 0,
+      "products": []
+    },
+    "NFLX": {
+      "symbol": "NFLX",
+      "action": "LONG",
+      "total_found": 0,
+      "products": []
+    },
+    "NVDA": {
+      "symbol": "NVDA",
+      "action": "LONG",
+      "total_found": 0,
+      "products": []
+    },
+    "ISRG": {
+      "symbol": "ISRG",
+      "action": "LONG",
+      "total_found": 0,
+      "products": []
+    },
+    "KDP": {
+      "symbol": "KDP",
+      "action": "LONG",
+      "total_found": 0,
+      "products": []
+    },
+    "PAYX": {
+      "symbol": "PAYX",
+      "action": "LONG",
+      "total_found": 0,
+      "products": []
+    },
+    "REGN": {
+      "symbol": "REGN",
+      "action": "LONG",
+      "total_found": 0,
+      "products": []
+    },
+    "ON": {
+      "symbol": "ON",
+      "action": "LONG",
+      "total_found": 0,
+      "products": []
+    },
+    "KLAC": {
+      "symbol": "KLAC",
+      "action": "LONG",
+      "total_found": 0,
+      "products": []
+    },
+    "LRCX": {
+      "symbol": "LRCX",
+      "action": "LONG",
+      "total_found": 0,
+      "products": []
+    },
+    "TMUS": {
+      "symbol": "TMUS",
+      "action": "LONG",
+      "total_found": 0,
+      "products": []
+    },
+    "TSLA": {
+      "symbol": "TSLA",
+      "action": "LONG",
+      "total_found": 0,
+      "products": []
+    },
+    "TXN": {
+      "symbol": "TXN",
+      "action": "LONG",
+      "total_found": 0,
+      "products": []
+    },
+    "WBD": {
+      "symbol": "WBD",
+      "action": "LONG",
+      "total_found": 0,
+      "products": []
+    },
+    "WDAY": {
+      "symbol": "WDAY",
+      "action": "LONG",
+      "total_found": 0,
+      "products": []
+    },
+    "ADBE": {
+      "symbol": "ADBE",
+      "action": "LONG",
+      "total_found": 0,
+      "products": []
+    },
+    "APP": {
+      "symbol": "APP",
+      "action": "LONG",
+      "total_found": 0,
+      "products": []
+    },
+    "AVGO": {
+      "symbol": "AVGO",
+      "action": "LONG",
+      "total_found": 0,
+      "products": []
+    },
+    "CSCO": {
+      "symbol": "CSCO",
+      "action": "LONG",
+      "total_found": 0,
+      "products": []
+    },
+    "DXCM": {
+      "symbol": "DXCM",
+      "action": "LONG",
+      "total_found": 0,
+      "products": []
+    },
+    "FAST": {
+      "symbol": "FAST",
+      "action": "LONG",
+      "total_found": 0,
+      "products": []
+    },
+    "GEHC": {
+      "symbol": "GEHC",
+      "action": "LONG",
+      "total_found": 0,
+      "products": []
+    },
+    "GOOG": {
+      "symbol": "GOOG",
+      "action": "LONG",
+      "total_found": 0,
+      "products": []
+    },
+    "HON": {
+      "symbol": "HON",
+      "action": "LONG",
+      "total_found": 0,
+      "products": []
+    },
+    "KHC": {
+      "symbol": "KHC",
+      "action": "LONG",
+      "total_found": 0,
+      "products": []
+    },
+    "MCHP": {
+      "symbol": "MCHP",
+      "action": "LONG",
+      "total_found": 0,
+      "products": []
+    },
+    "MRVL": {
+      "symbol": "MRVL",
+      "action": "LONG",
+      "total_found": 0,
+      "products": []
+    },
+    "MSTR": {
+      "symbol": "MSTR",
+      "action": "LONG",
+      "total_found": 0,
+      "products": []
+    },
+    "ODFL": {
+      "symbol": "ODFL",
+      "action": "LONG",
+      "total_found": 0,
+      "products": []
+    },
+    "PANW": {
+      "symbol": "PANW",
+      "action": "LONG",
+      "total_found": 0,
+      "products": []
+    },
+    "PEP": {
+      "symbol": "PEP",
+      "action": "LONG",
+      "total_found": 0,
+      "products": []
+    },
+    "PLTR": {
+      "symbol": "PLTR",
+      "action": "LONG",
+      "total_found": 0,
+      "products": []
+    },
+    "VRSK": {
+      "symbol": "VRSK",
+      "action": "LONG",
+      "total_found": 0,
+      "products": []
+    },
+    "XEL": {
+      "symbol": "XEL",
+      "action": "LONG",
+      "total_found": 0,
+      "products": []
+    },
+    "ORLY": {
+      "symbol": "ORLY",
+      "action": "LONG",
+      "total_found": 0,
+      "products": []
+    },
+    "VRTX": {
+      "symbol": "VRTX",
+      "action": "LONG",
+      "total_found": 0,
+      "products": []
+    },
+    "MDLZ": {
+      "symbol": "MDLZ",
+      "action": "LONG",
+      "total_found": 0,
+      "products": []
+    },
+    "MELI": {
+      "symbol": "MELI",
+      "action": "LONG",
+      "total_found": 0,
+      "products": []
+    },
+    "MNST": {
+      "symbol": "MNST",
+      "action": "LONG",
+      "total_found": 0,
+      "products": []
+    }
+  }
+}

@@ -25,9 +25,9 @@ python api/main.py
 
 ### 2. API Documentation
 
-- **Interactive Docs**: http://localhost:8000/docs
-- **ReDoc**: http://localhost:8000/redoc
-- **Health Check**: http://localhost:8000/api/health
+- **Interactive Docs**: http://localhost:7731/docs
+- **ReDoc**: http://localhost:7731/redoc
+- **Health Check**: http://localhost:7731/api/health
 
 ## Authentication
 
@@ -199,7 +199,7 @@ Execute validated order.
 ```python
 import requests
 
-API_URL = "http://localhost:8000"
+API_URL = "http://localhost:7731"
 headers = {"Authorization": "Bearer your-api-key"}
 
 # 1. Search for products
@@ -332,7 +332,7 @@ RUN pip install -r requirements.txt
 COPY api/ ./api/
 COPY config/ ./config/
 
-EXPOSE 8000
+EXPOSE 7731
 CMD ["python", "api/main.py"]
 ```
 
