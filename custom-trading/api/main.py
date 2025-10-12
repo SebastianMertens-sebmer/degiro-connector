@@ -13,6 +13,8 @@ import pytz
 from fastapi import FastAPI, HTTPException, Depends, status
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.openapi.docs import get_swagger_ui_html
+from fastapi.openapi.utils import get_openapi
 from pydantic import BaseModel, Field
 
 from degiro_connector.trading.api import API as TradingAPI
@@ -34,7 +36,8 @@ app = FastAPI(
     description="Production API for DEGIRO trading: search products, place orders, manage positions",
     version="2.0.0",
     docs_url=None,  # Disable public docs
-    redoc_url=None  # Disable public redoc
+    redoc_url=None,  # Disable public redoc
+    openapi_url=None  # Disable default openapi.json - we use custom auth-protected endpoint
 )
 
 # CORS middleware
@@ -1082,8 +1085,8 @@ def create_degiro_order(request: OrderRequest) -> Order:
 # === API ROUTES ===
 
 @app.get("/")
-async def root():
-    """API health check and information"""
+async def root(api_key: str = Depends(verify_api_key)):
+    """API information - requires authentication"""
     return {
         "service": "DEGIRO Trading API",
         "version": "2.0.0",
@@ -1108,6 +1111,27 @@ async def root():
         "documentation": "/docs",
         "timestamp": datetime.now().isoformat()
     }
+
+@app.get("/docs", include_in_schema=False)
+async def custom_swagger_ui_html(api_key: str = Depends(verify_api_key)):
+    """Swagger UI documentation - requires authentication"""
+    return get_swagger_ui_html(
+        openapi_url="/openapi.json",
+        title=app.title + " - Swagger UI",
+        oauth2_redirect_url=app.swagger_ui_oauth2_redirect_url,
+        swagger_js_url="https://cdn.jsdelivr.net/npm/swagger-ui-dist@5/swagger-ui-bundle.js",
+        swagger_css_url="https://cdn.jsdelivr.net/npm/swagger-ui-dist@5/swagger-ui.css",
+    )
+
+@app.get("/openapi.json", include_in_schema=False)
+async def get_open_api_endpoint(api_key: str = Depends(verify_api_key)):
+    """OpenAPI schema - requires authentication"""
+    return get_openapi(
+        title=app.title,
+        version=app.version,
+        description=app.description,
+        routes=app.routes,
+    )
 
 # NEW API ENDPOINTS
 
