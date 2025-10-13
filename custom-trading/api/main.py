@@ -1912,8 +1912,8 @@ async def get_price_current(
 
 
 @app.get("/api/health")
-async def health_check():
-    """Extended health check with DEGIRO connection status"""
+async def health_check(api_key: str = Depends(verify_api_key)):
+    """Extended health check with DEGIRO connection status - requires authentication"""
     try:
         api = get_trading_api()
         degiro_status = "connected" if api else "disconnected"
