@@ -10,8 +10,9 @@ from typing import Optional, List, Dict, Any
 from datetime import datetime
 import pytz
 
-from fastapi import FastAPI, HTTPException, Depends, status
+from fastapi import FastAPI, HTTPException, Depends, status, Query
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
+from typing import Optional as TypingOptional
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.openapi.docs import get_swagger_ui_html
 from fastapi.openapi.utils import get_openapi
@@ -49,8 +50,8 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# Security
-security = HTTPBearer()
+# Security (auto_error=False allows query param fallback)
+security = HTTPBearer(auto_error=False)
 
 # Configuration
 API_KEY = os.getenv("TRADING_API_KEY")
@@ -224,15 +225,29 @@ class PriceResponse(BaseModel):
 
 # === AUTHENTICATION ===
 
-def verify_api_key(credentials: HTTPAuthorizationCredentials = Depends(security)):
-    """Verify API key in Authorization header"""
-    if credentials.credentials != API_KEY:
-        raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Invalid API key",
-            headers={"WWW-Authenticate": "Bearer"},
-        )
-    return credentials.credentials
+def verify_api_key(
+    credentials: TypingOptional[HTTPAuthorizationCredentials] = Depends(security),
+    api_key: TypingOptional[str] = Query(None, description="API key for authentication")
+):
+    """
+    Verify API key from either:
+    1. Authorization: Bearer <token> header (preferred)
+    2. ?api_key=<token> query parameter (for browser/docs access)
+    """
+    # Try Bearer token first
+    if credentials and credentials.credentials == API_KEY:
+        return credentials.credentials
+
+    # Fall back to query parameter
+    if api_key and api_key == API_KEY:
+        return api_key
+
+    # Neither method provided valid key
+    raise HTTPException(
+        status_code=status.HTTP_401_UNAUTHORIZED,
+        detail="Invalid or missing API key. Use Authorization: Bearer <token> header or ?api_key=<token> query parameter",
+        headers={"WWW-Authenticate": "Bearer"},
+    )
 
 # === DEGIRO CONNECTION ===
 
@@ -1086,7 +1101,13 @@ def create_degiro_order(request: OrderRequest) -> Order:
 
 @app.get("/")
 async def root(api_key: str = Depends(verify_api_key)):
-    """API information - requires authentication"""
+    """
+    API information - requires authentication
+
+    Access via:
+    - Authorization: Bearer YOUR_API_KEY header
+    - Query parameter: /?api_key=YOUR_API_KEY
+    """
     return {
         "service": "DEGIRO Trading API",
         "version": "2.0.0",
@@ -1113,10 +1134,14 @@ async def root(api_key: str = Depends(verify_api_key)):
     }
 
 @app.get("/docs", include_in_schema=False)
-async def custom_swagger_ui_html(api_key: str = Depends(verify_api_key)):
-    """Swagger UI documentation - requires authentication"""
+async def custom_swagger_ui_html(verified_key: str = Depends(verify_api_key)):
+    """
+    Swagger UI documentation - requires authentication
+
+    Access via: /docs?api_key=YOUR_API_KEY
+    """
     return get_swagger_ui_html(
-        openapi_url="/openapi.json",
+        openapi_url=f"/openapi.json?api_key={verified_key}",
         title=app.title + " - Swagger UI",
         oauth2_redirect_url=app.swagger_ui_oauth2_redirect_url,
         swagger_js_url="https://cdn.jsdelivr.net/npm/swagger-ui-dist@5/swagger-ui-bundle.js",
@@ -1125,7 +1150,11 @@ async def custom_swagger_ui_html(api_key: str = Depends(verify_api_key)):
 
 @app.get("/openapi.json", include_in_schema=False)
 async def get_open_api_endpoint(api_key: str = Depends(verify_api_key)):
-    """OpenAPI schema - requires authentication"""
+    """
+    OpenAPI schema - requires authentication
+
+    Access via: /openapi.json?api_key=YOUR_API_KEY
+    """
     return get_openapi(
         title=app.title,
         version=app.version,
