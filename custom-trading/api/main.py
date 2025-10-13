@@ -233,6 +233,8 @@ def verify_api_key(
     Verify API key from either:
     1. Authorization: Bearer <token> header (preferred)
     2. ?api_key=<token> query parameter (for browser/docs access)
+
+    Used for documentation endpoints (/, /docs, /openapi.json)
     """
     # Try Bearer token first
     if credentials and credentials.credentials == API_KEY:
@@ -246,6 +248,24 @@ def verify_api_key(
     raise HTTPException(
         status_code=status.HTTP_401_UNAUTHORIZED,
         detail="Invalid or missing API key. Use Authorization: Bearer <token> header or ?api_key=<token> query parameter",
+        headers={"WWW-Authenticate": "Bearer"},
+    )
+
+def verify_api_key_header_only(
+    credentials: TypingOptional[HTTPAuthorizationCredentials] = Depends(security)
+):
+    """
+    Verify API key from Authorization: Bearer <token> header ONLY
+
+    Used for all API endpoints (/api/*)
+    Query parameter authentication is NOT supported for API endpoints.
+    """
+    if credentials and credentials.credentials == API_KEY:
+        return credentials.credentials
+
+    raise HTTPException(
+        status_code=status.HTTP_401_UNAUTHORIZED,
+        detail="Invalid or missing API key. Use Authorization: Bearer <token> header",
         headers={"WWW-Authenticate": "Bearer"},
     )
 
@@ -1167,7 +1187,7 @@ async def get_open_api_endpoint(api_key: str = Depends(verify_api_key)):
 @app.post("/api/stocks/search", response_model=StockSearchResponse)
 async def search_stocks(
     request: StockSearchRequest,
-    api_key: str = Depends(verify_api_key)
+    api_key: str = Depends(verify_api_key_header_only)
 ):
     """
     Search for stocks - returns ALL matching stock options for disambiguation
@@ -1222,7 +1242,7 @@ async def search_stocks(
 @app.post("/api/leveraged/search", response_model=LeveragedSearchResponse)
 async def search_leveraged_products(
     request: LeveragedSearchRequest,
-    api_key: str = Depends(verify_api_key)
+    api_key: str = Depends(verify_api_key_header_only)
 ):
     """
     Search for leveraged products based on specific underlying stock
@@ -1417,7 +1437,7 @@ async def search_leveraged_products(
 @app.post("/api/products/search", response_model=ProductSearchResponse)
 async def search_products(
     request: ProductSearchRequest,
-    api_key: str = Depends(verify_api_key)
+    api_key: str = Depends(verify_api_key_header_only)
 ):
     """
     DEPRECATED: Universal product search - use /api/stocks/search + /api/leveraged/search instead
@@ -1524,7 +1544,7 @@ async def search_products(
 @app.post("/api/orders/check", response_model=OrderCheckResponse)
 async def check_order(
     request: OrderRequest,
-    api_key: str = Depends(verify_api_key)
+    api_key: str = Depends(verify_api_key_header_only)
 ):
     """
     Validate order before placement - returns estimated costs and confirmation ID
@@ -1580,7 +1600,7 @@ async def check_order(
 @app.post("/api/orders/place", response_model=OrderResponse)
 async def place_order(
     request: OrderRequest,
-    api_key: str = Depends(verify_api_key)
+    api_key: str = Depends(verify_api_key_header_only)
 ):
     """
     Place order after validation - requires valid confirmation ID from check_order
@@ -1676,7 +1696,7 @@ async def place_order(
 @app.get("/api/volume/opening/{symbol}", response_model=VolumeResponse)
 async def get_volume_opening(
     symbol: str,
-    api_key: str = Depends(verify_api_key)
+    api_key: str = Depends(verify_api_key_header_only)
 ):
     """
     Get current daily volume data for a NASDAQ stock
@@ -1714,7 +1734,7 @@ async def get_volume_opening(
 
 @app.get("/api/volume/nasdaq", response_model=NasdaqBatchResponse)
 async def get_nasdaq_batch_volume(
-    api_key: str = Depends(verify_api_key)
+    api_key: str = Depends(verify_api_key_header_only)
 ):
     """
     Get real-time volume and price data for all 101 NASDAQ 100 stocks
@@ -1806,7 +1826,7 @@ async def get_nasdaq_batch_volume(
 @app.get("/api/price/current/{symbol}", response_model=PriceResponse)
 async def get_price_current(
     symbol: str,
-    api_key: str = Depends(verify_api_key)
+    api_key: str = Depends(verify_api_key_header_only)
 ):
     """
     Get current price data for a NASDAQ stock using stocks/search relay
@@ -1912,7 +1932,7 @@ async def get_price_current(
 
 
 @app.get("/api/health")
-async def health_check(api_key: str = Depends(verify_api_key)):
+async def health_check(api_key: str = Depends(verify_api_key_header_only)):
     """Extended health check with DEGIRO connection status - requires authentication"""
     try:
         api = get_trading_api()
