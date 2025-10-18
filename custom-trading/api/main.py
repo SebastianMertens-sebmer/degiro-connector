@@ -379,28 +379,57 @@ def extract_leverage_from_name(product_name: str) -> Optional[float]:
     return None
 
 def search_stocks_multiple(api: TradingAPI, query: str, limit: int = 20) -> List[Dict]:
-    """Search for multiple stocks - returns ALL matching options"""
-    try:
-        stock_request = StocksRequest(
-            search_text=query,
-            offset=0,
-            limit=limit,
-            require_total=True,
-            sort_columns="name",
-            sort_types="asc"
-        )
-        
-        search_results = api.product_search(stock_request, raw=True)
-        
-        if isinstance(search_results, dict) and 'products' in search_results:
-            products = search_results['products']
-            return products if products else []
-        
-        return []
-        
-    except Exception as e:
-        print(f"Stock search failed: {e}")
-        return []
+    """Search for multiple stocks - returns ALL matching options with retry logic"""
+    import time
+
+    max_retries = 3
+    retry_delay = 2  # seconds
+
+    for attempt in range(max_retries):
+        try:
+            stock_request = StocksRequest(
+                search_text=query,
+                offset=0,
+                limit=limit,
+                require_total=True,
+                sort_columns="name",
+                sort_types="asc"
+            )
+
+            search_results = api.product_search(stock_request, raw=True)
+
+            if isinstance(search_results, dict) and 'products' in search_results:
+                products = search_results['products']
+
+                # If we got products, return immediately
+                if products:
+                    if attempt > 0:
+                        print(f"✅ Stock search succeeded on attempt {attempt + 1}")
+                    return products
+
+                # Empty result - retry if we have attempts left
+                if attempt < max_retries - 1:
+                    print(f"⚠️  Empty stock search result (attempt {attempt + 1}/{max_retries}), retrying in {retry_delay}s...")
+                    time.sleep(retry_delay)
+                    retry_delay *= 1.5  # Exponential backoff
+                    continue
+                else:
+                    print(f"❌ Stock search returned empty after {max_retries} attempts")
+                    return []
+
+            return []
+
+        except Exception as e:
+            if attempt < max_retries - 1:
+                print(f"⚠️  Stock search error (attempt {attempt + 1}/{max_retries}): {e}, retrying in {retry_delay}s...")
+                time.sleep(retry_delay)
+                retry_delay *= 1.5  # Exponential backoff
+                continue
+            else:
+                print(f"❌ Stock search failed after {max_retries} attempts: {e}")
+                return []
+
+    return []
 
 def search_stock_universal(api: TradingAPI, query: str) -> Optional[Dict]:
     """Universal stock search with multiple strategies (legacy function)"""
