@@ -551,6 +551,7 @@ def search_leveraged_products(api: TradingAPI, search_term: str, action: str, mi
 
 def get_real_prices_batch(product_ids: list[str]) -> dict[str, PriceInfo]:
     """Get real price data for multiple products from DEGIRO using quotecast API"""
+    print(f"DEBUG get_real_prices_batch: Called with {len(product_ids)} product IDs")
     try:
         # First get user token from config file
         try:
@@ -574,17 +575,26 @@ def get_real_prices_batch(product_ids: list[str]) -> dict[str, PriceInfo]:
         
         # Get product info for all products to determine vwdIds
         try:
+            product_list_int = [int(pid) for pid in product_ids]
+            print(f"DEBUG: Calling get_products_info with {len(product_list_int)} IDs: {product_list_int[:3]}")
             product_info = api.get_products_info(
-                product_list=[int(pid) for pid in product_ids],
+                product_list=product_list_int,
                 raw=True
             )
+            print(f"DEBUG: get_products_info returned: {type(product_info)}")
         except Exception as e:
             # If metadata fetch fails (rate limiting, session issues), return empty pricing
-            print(f"Product metadata fetch failed: {e}")
+            print(f"❌ Product metadata fetch failed: {e}")
+            import traceback
+            traceback.print_exc()
             return {}
 
         if not isinstance(product_info, dict) or 'data' not in product_info:
             # Return empty pricing instead of throwing error
+            print(f"⚠️ Product info invalid format: {type(product_info)}")
+            if isinstance(product_info, dict):
+                print(f"⚠️ Product info keys: {list(product_info.keys())}")
+                print(f"⚠️ Product info content: {product_info}")
             return {}
         
         # Build vwdId mapping for products that support real-time pricing
@@ -600,7 +610,10 @@ def get_real_prices_batch(product_ids: list[str]) -> dict[str, PriceInfo]:
                     valid_product_ids.append(product_id)
         
         if not vwd_id_to_product_id:
+            print(f"⚠️ No products with vwdIds found")
             return {}  # No products support real-time pricing
+
+        print(f"✅ Found {len(vwd_id_to_product_id)} products with vwdIds: {list(vwd_id_to_product_id.keys())}")
         
         # Import quotecast components
         from degiro_connector.quotecast.models.ticker import TickerRequest
@@ -645,14 +658,20 @@ def get_real_prices_batch(product_ids: list[str]) -> dict[str, PriceInfo]:
         )
         
         if not ticker:
+            print(f"⚠️ No ticker data received")
             return {}  # No real-time data available
+
+        print(f"✅ Received ticker data")
         
         # Parse ticker data
         ticker_to_df = TickerToDF()
         df = ticker_to_df.parse(ticker=ticker)
         
         if df is None or len(df) == 0:
+            print(f"⚠️ Empty price data from ticker")
             return {}  # Empty price data
+
+        print(f"✅ Parsed {len(df)} price records")
         
         # Extract prices for each product
         results = {}
@@ -683,7 +702,8 @@ def get_real_prices_batch(product_ids: list[str]) -> dict[str, PriceInfo]:
                         ask=round(ask, 2) if ask is not None else None,
                         last=round(last, 2) if last is not None else None
                     )
-        
+
+        print(f"✅ Successfully got prices for {len(results)} products")
         return results
         
     except HTTPException:
@@ -1295,35 +1315,61 @@ async def search_leveraged_products(
     # DEGIRO uses numeric values: 0=SHORT, 1=LONG (from web interface URLs)
     shortlong_value = "1" if request.action.upper() == "LONG" else "0"
 
-    leveraged_request = LeveragedsRequest(
-        popular_only=False,
-        input_aggregate_types="",
-        input_aggregate_values="",
-        search_text="",  # Empty when using underlying_product_id
-        offset=0,
-        limit=request.limit * 10,  # Get more to filter by leverage
-        require_total=True,
-        sort_columns="leverage",
-        sort_types="asc",
-        underlying_product_id=underlying_id_int,
-        shortlong=shortlong_value  # 0=SHORT, 1=LONG
-    )
-
     print(f"DEBUG: Set shortlong={shortlong_value} for action={request.action}")
 
-    try:
-        search_results = api.product_search(leveraged_request, raw=True)
+    # Fetch ALL leveraged products using pagination
+    all_products = []
+    offset = 0
+    batch_size = 100  # Fetch 100 products per request
+    total_products = None
 
-        # Debug: print raw response
-        print(f"DEBUG: DEGIRO product_search response type: {type(search_results)}")
-        if isinstance(search_results, dict):
-            print(f"DEBUG: Response keys: {list(search_results.keys())}")
-            if 'products' in search_results:
-                print(f"DEBUG: Found {len(search_results['products'])} products from DEGIRO")
+    try:
+        while True:
+            leveraged_request = LeveragedsRequest(
+                popular_only=False,
+                input_aggregate_types="",
+                input_aggregate_values="",
+                search_text="",  # Empty when using underlying_product_id
+                offset=offset,
+                limit=batch_size,
+                require_total=True,
+                sort_columns="leverage",
+                sort_types="asc",
+                underlying_product_id=underlying_id_int,
+                shortlong=shortlong_value  # 0=SHORT, 1=LONG
+            )
+
+            search_results = api.product_search(leveraged_request, raw=True)
+
+            # Debug: print raw response
+            if offset == 0:
+                print(f"DEBUG: DEGIRO product_search response type: {type(search_results)}")
+                if isinstance(search_results, dict):
+                    print(f"DEBUG: Response keys: {list(search_results.keys())}")
+                    total_products = search_results.get('total', 0)
+                    print(f"DEBUG: Total products available: {total_products}")
+
+            if isinstance(search_results, dict) and 'products' in search_results:
+                products = search_results['products']
+                if not products:
+                    break  # No more products
+
+                all_products.extend(products)
+                print(f"DEBUG: Fetched batch at offset {offset}: {len(products)} products (total so far: {len(all_products)})")
+
+                offset += batch_size
+
+                # Stop if we've fetched all available products
+                if total_products and len(all_products) >= total_products:
+                    break
+            else:
+                break
+
+        print(f"DEBUG: Fetched {len(all_products)} total products from DEGIRO")
 
         leveraged_products_data = []
-        if isinstance(search_results, dict) and 'products' in search_results:
-            products = search_results['products']
+        if all_products:
+            products = all_products
 
             # Map action to DEGIRO direction value
             target_direction = "L" if request.action.upper() == "LONG" else "S"
@@ -1340,6 +1386,14 @@ async def search_leveraged_products(
                 short_count = sum(1 for p in products if p.get('shortlong') == 'S')
                 print(f"DEBUG: Product direction counts - LONG: {long_count}, SHORT: {short_count}")
 
+            # Debug: Check first few LONG products
+            long_products = [p for p in products if p.get('shortlong') == target_direction]
+            if long_products:
+                print(f"DEBUG: First 3 LONG products:")
+                for i, p in enumerate(long_products[:3], 1):
+                    lev = p.get('leverage', 0)
+                    print(f"  {i}. {p.get('name')[:50]}, leverage={lev}, tradable={p.get('tradable')}")
+
             for product in products:
                 # Use DEGIRO's native fields (more reliable than name parsing)
                 leverage = product.get('leverage', 0)
@@ -1351,9 +1405,13 @@ async def search_leveraged_products(
                     shortlong == target_direction and
                     tradable):
                     leveraged_products_data.append(product)
+                    if len(leveraged_products_data) <= 3:
+                        print(f"DEBUG: Added product {len(leveraged_products_data)}: {product.get('name')}, leverage={leverage}, ID={product.get('id')}")
 
                 if len(leveraged_products_data) >= request.limit:
                     break
+
+            print(f"DEBUG: After filtering: {len(leveraged_products_data)} products (min_lev={request.min_leverage}, max_lev={request.max_leverage})")
         
         # Filter by product subtype if specified
         if hasattr(request, 'product_subtype') and request.product_subtype != "ALL":
@@ -1389,13 +1447,19 @@ async def search_leveraged_products(
         
         # Get real prices for all products in batch
         product_ids = [str(product.get('id', '')) for product in leveraged_products_data if product.get('id')]
+        print(f"DEBUG: Filtered {len(leveraged_products_data)} products, attempting to get prices for {len(product_ids)} product IDs")
+        if product_ids:
+            print(f"DEBUG: First 3 product IDs: {product_ids[:3]}")
+
         real_prices = get_real_prices_batch(product_ids)
-        
-        # Convert to response format, excluding products without pricing data
+
+        print(f"DEBUG: Got real prices for {len(real_prices)} / {len(product_ids)} leveraged products")
+
+        # Convert to response format - ONLY include products with real pricing
         leveraged_products = []
         for product in leveraged_products_data:
             product_id = str(product.get('id', ''))
-            
+
             # Only include products that have real pricing data
             if product_id in real_prices:
                 leveraged_product = LeveragedProduct(
