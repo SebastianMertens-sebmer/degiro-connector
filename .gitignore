@@ -137,4 +137,9 @@ custom-trading/docs/UPSTREAM_WORKFLOW.md
 
 # Custom Trading API - Exclude development directories
 custom-trading/tests/
+custom-trading/_tests/
 custom-trading/scripts/
+
+# Security scripts containing credential patterns (never commit!)
+custom-trading/scripts/security_cleanup.py
+**/security_cleanup.py

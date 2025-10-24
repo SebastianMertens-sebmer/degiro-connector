@@ -21,7 +21,7 @@ def load_config():
         return None
     
     return {
-        "base_url": "http://152.53.200.195:7731",  # Using your VPS
+        "base_url": "http://rocket.etothepowerofx.com:7731",  # Using your VPS
         "headers": {
             "Authorization": f"Bearer {api_key}",
             "Content-Type": "application/json"
