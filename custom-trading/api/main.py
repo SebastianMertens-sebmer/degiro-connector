@@ -702,35 +702,43 @@ def get_real_prices_batch(product_ids: list[str]) -> dict[str, PriceInfo]:
 
         print(f"✅ Parsed {len(df)} price records")
         
-        # Extract prices for each product
-        results = {}
-        pandas_df = df.to_pandas()
-        
-        for index, row in pandas_df.iterrows():
-            last_price = row.get('LastPrice', None)
-            bid_price = row.get('BidPrice', None)
-            ask_price = row.get('AskPrice', None)
-            
-            # Only include products with valid last price
-            if last_price is not None and not pd.isna(last_price):
-                # Find corresponding product_id (since df doesn't include vwd_id directly)
-                # We'll match by position or look for vwd_key if available
-                if len(pandas_df) == len(valid_product_ids):
-                    product_id = valid_product_ids[index]
-                else:
-                    # Fallback: try to match first valid product
-                    product_id = valid_product_ids[0] if valid_product_ids else None
-                
-                if product_id:
-                    last = float(last_price) if last_price is not None and not pd.isna(last_price) else None
-                    bid = float(bid_price) if bid_price is not None and not pd.isna(bid_price) else None
-                    ask = float(ask_price) if ask_price is not None and not pd.isna(ask_price) else None
-                    
-                    results[product_id] = PriceInfo(
-                        bid=round(bid, 2) if bid is not None else None,
-                        ask=round(ask, 2) if ask is not None else None,
-                        last=round(last, 2) if last is not None else None
-                    )
+        # Extract prices for each product.
+        # NOTE: TickerToDF returns a Polars DF indexed by `product_id` which in this workflow is the VWD id
+        # used in the ticker request. We must map VWD id -> DeGiro product_id.
+        results: dict[str, PriceInfo] = {}
+
+        def _as_float(x: Any) -> Optional[float]:
+            try:
+                if x is None:
+                    return None
+                v = float(x)
+                # guard against nan/inf without importing numpy
+                if v != v or v == float("inf") or v == float("-inf"):
+                    return None
+                return v
+            except Exception:
+                return None
+
+        # Avoid `.to_pandas()` (requires `pyarrow`); iterate via dicts instead.
+        for rec in df.to_dicts():
+            vwd_id = str(rec.get("product_id") or "")
+            if not vwd_id:
+                continue
+            degiro_pid = vwd_id_to_product_id.get(vwd_id)
+            if not degiro_pid:
+                continue
+
+            last = _as_float(rec.get("LastPrice"))
+            bid = _as_float(rec.get("BidPrice"))
+            ask = _as_float(rec.get("AskPrice"))
+            if last is None:
+                continue
+
+            results[str(degiro_pid)] = PriceInfo(
+                bid=round(bid, 2) if bid is not None else None,
+                ask=round(ask, 2) if ask is not None else None,
+                last=round(last, 2) if last is not None else None,
+            )
 
         print(f"✅ Successfully got prices for {len(results)} products")
         return results
@@ -2025,19 +2033,55 @@ async def get_price_current(
 
 
 @app.get("/api/health")
-async def health_check(api_key: str = Depends(verify_api_key_header_only)):
+async def health_check(
+    api_key: str = Depends(verify_api_key_header_only),
+    deep: bool = Query(default=False, description="If true, performs a real DEGIRO API call to verify the session"),
+):
     """Extended health check with DEGIRO connection status - requires authentication"""
+    degiro_status = "unknown"
+    trading_ok: Optional[bool] = None
+    trading_error: Optional[str] = None
+
     try:
         api = get_trading_api()
         degiro_status = "connected" if api else "disconnected"
-    except:
+
+        if deep and api:
+            try:
+                # Cheap ping that requires a valid trading session.
+                req = StocksRequest(
+                    search_text="AAPL",
+                    offset=0,
+                    limit=1,
+                    require_total=False,
+                    sort_columns="name",
+                    sort_types="asc",
+                )
+                res = api.product_search(req, raw=True)
+                products = (res or {}).get("products") if isinstance(res, dict) else None
+                trading_ok = bool(products)
+                if not trading_ok:
+                    trading_error = "product_search returned no products"
+            except Exception as e:
+                trading_ok = False
+                trading_error = str(e)[:200]
+
+    except Exception as e:
         degiro_status = "connection_failed"
-    
+        if deep:
+            trading_ok = False
+            trading_error = str(e)[:200]
+
+    if deep and trading_ok is False:
+        degiro_status = "session_invalid"
+
     return {
         "status": "healthy",
         "degiro_connection": degiro_status,
+        "degiro_trading_ok": trading_ok,
+        "degiro_trading_error": trading_error,
         "api_version": "2.0.0",
-        "timestamp": datetime.now().isoformat()
+        "timestamp": datetime.now().isoformat(),
     }
 
 if __name__ == "__main__":
