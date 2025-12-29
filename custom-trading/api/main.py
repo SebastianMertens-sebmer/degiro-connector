@@ -1270,24 +1270,22 @@ async def search_stocks(
     stock_product_ids = [str(product.get('id', '')) for product in stock_products if product.get('id')]
     stock_real_prices = get_real_prices_batch(stock_product_ids)
     
-    # Convert to response format, excluding products without pricing data
+    # Convert to response format (pricing is best-effort; may be empty outside market hours)
     stock_options = []
     for product in stock_products:
         product_id = str(product.get('id', ''))
-        
-        # Only include products that have real pricing data
-        if product_id in stock_real_prices:
-            stock_option = StockOption(
-                product_id=product_id,
-                name=product.get('name', ''),
-                isin=product.get('isin', ''),
-                symbol=product.get('symbol'),
-                currency=product.get('currency', 'EUR'),
-                exchange_id=str(product.get('exchangeId', '')),
-                current_price=stock_real_prices[product_id],
-                tradable=product.get('tradable', True)
-            )
-            stock_options.append(stock_option)
+
+        stock_option = StockOption(
+            product_id=product_id,
+            name=product.get('name', ''),
+            isin=product.get('isin', ''),
+            symbol=product.get('symbol'),
+            currency=product.get('currency', 'EUR'),
+            exchange_id=str(product.get('exchangeId', '')),
+            current_price=stock_real_prices.get(product_id, PriceInfo()),
+            tradable=product.get('tradable', True),
+        )
+        stock_options.append(stock_option)
     
     return StockSearchResponse(
         query=request.q,
@@ -1665,8 +1663,15 @@ async def check_order(
         # Create DEGIRO order
         order = create_degiro_order(request)
         
-        # Check order with DEGIRO
-        checking_response = api.check_order(order=order)
+        # Check order with DEGIRO (auto-reconnect on expired sessions)
+        try:
+            checking_response = api.check_order(order=order)
+        except Exception as e:
+            if is_session_expired(str(e)) or "connection required" in str(e).lower():
+                api = reconnect_trading_api()
+                checking_response = api.check_order(order=order)
+            else:
+                raise
         
         # Parse response
         if checking_response and hasattr(checking_response, 'confirmation_id'):
@@ -1717,8 +1722,15 @@ async def place_order(
         # Create DEGIRO order
         order = create_degiro_order(request)
         
-        # Step 1: Check order
-        checking_response = api.check_order(order=order)
+        # Step 1: Check order (auto-reconnect on expired sessions)
+        try:
+            checking_response = api.check_order(order=order)
+        except Exception as e:
+            if is_session_expired(str(e)) or "connection required" in str(e).lower():
+                api = reconnect_trading_api()
+                checking_response = api.check_order(order=order)
+            else:
+                raise
         
         if not checking_response or not hasattr(checking_response, 'confirmation_id'):
             return OrderResponse(
@@ -1734,10 +1746,20 @@ async def place_order(
             )
         
         # Step 2: Confirm order
-        confirmation_response = api.confirm_order(
-            confirmation_id=checking_response.confirmation_id,
-            order=order
-        )
+        try:
+            confirmation_response = api.confirm_order(
+                confirmation_id=checking_response.confirmation_id,
+                order=order
+            )
+        except Exception as e:
+            if is_session_expired(str(e)) or "connection required" in str(e).lower():
+                api = reconnect_trading_api()
+                confirmation_response = api.confirm_order(
+                    confirmation_id=checking_response.confirmation_id,
+                    order=order
+                )
+            else:
+                raise
         
         if confirmation_response and hasattr(confirmation_response, 'order_id'):
             return OrderResponse(
